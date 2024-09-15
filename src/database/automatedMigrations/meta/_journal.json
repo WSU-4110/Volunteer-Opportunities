@@ -15,6 +15,13 @@
       "when": 1726073587298,
       "tag": "0001_glossy_guardian",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1726415028905,
+      "tag": "0002_wild_songbird",
+      "breakpoints": true
     }
   ]
 }

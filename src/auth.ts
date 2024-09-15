@@ -1,34 +1,44 @@
-import NextAuth from "next-auth"
-import Google from "next-auth/providers/google"
-import { DrizzleAdapter } from "@auth/drizzle-adapter"
-import { accounts, sessions, users, verificationTokens } from "@/database/schema"
-import { database } from "./database"
-import type { DefaultSession, NextAuthConfig } from "next-auth"
+import NextAuth from "next-auth";
+import Google from "next-auth/providers/google";
+import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import {
+  accounts,
+  sessions,
+  users,
+  verificationTokens,
+} from "@/database/schema";
+import { database } from "./database";
+import type { DefaultSession, NextAuthConfig } from "next-auth";
 
 const config = {
-    theme: { logo: "https://authjs.dev/img/logo-sm.png" },
-    adapter: DrizzleAdapter(database),
-    providers: [
-      Google({
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
-        clientId: process.env.GOOGLE_CLIENT_ID || ""
-      })
-    ],
-    callbacks: {
-      session({session, user}) {
-        session.user.id = user.id;
+  theme: { logo: "https://authjs.dev/img/logo-sm.png" },
+  adapter: DrizzleAdapter(database),
+  providers: [
+    Google({
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+      clientId: process.env.GOOGLE_CLIENT_ID || "",
+    }),
+  ],
+  callbacks: {
+    session({ session, user }) {
+      session.user.id = user.id;
 
-        return session;
-      }
-    }
-  } satisfies NextAuthConfig
+      return session;
+    },
+  },
+} satisfies NextAuthConfig;
 
-  declare module 'next-auth' {
-    interface Session {
-      user: {
-        id: string;
-      } & DefaultSession['user']
-    }
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+    } & DefaultSession["user"];
   }
-  
-  export const { auth, signIn, signOut, handlers: { GET, POST } } = NextAuth(config);
+}
+
+export const {
+  auth,
+  signIn,
+  signOut,
+  handlers: { GET, POST },
+} = NextAuth(config);
