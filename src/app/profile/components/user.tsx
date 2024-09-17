@@ -1,47 +1,45 @@
-'use client'
-import UserPicture from './userPicture';
-import Name from './name';
-import Talents from './orgTalents';
-import UserBio from './userBio';
-import Organization from './organization';
-import { useState } from 'react'
+"use client";
 
-export default function UserPage(props:any) {
-   
-    const [pageChoice, setChoice] = useState(props.state);
+import Organization from "./organization";
 
+import { useState } from "react";
 
-    const changeChoice:any = (check:any) =>{
+export default function UserPage({ children }: { children: React.ReactNode }) {
+  const state = true;
+  const [pageChoice, setChoice] = useState(state);
+
+  const changeChoice: any = (check: any) => {
     console.log(check.target.checked);
     setChoice(check.target.checked);
-    }
-    
-    if (pageChoice) {
-        return(
-            <div>
-                
-                <input type="checkbox" name="pageChoice"  id = "pageChoice"  checked = {pageChoice} onChange={changeChoice}></input>
-                <div>
-                    <UserPicture/>
-                    <Name />
-                    <Talents />
-                    <UserBio />
-                </div>     
-            </div>
-            );  
-    }
-    else
-    {
-        return(
-            <div>
-               
-                <input type="checkbox" name="pageChoice"  id = "pageChoice"  checked = {pageChoice} onChange={changeChoice}></input>
-                <div>
-                    <Organization />
-                </div>
-                
-            </div>
-            );  
-    }
-}
+  };
 
+  if (pageChoice) {
+    return (
+      <div>
+        <input
+          type="checkbox"
+          name="pageChoice"
+          id="pageChoice"
+          checked={pageChoice}
+          onChange={changeChoice}
+        ></input>
+        <div>{children}</div>
+      </div>
+    );
+  } else {
+    return (
+      <div>
+        <input
+          type="checkbox"
+          name="pageChoice"
+          id="pageChoice"
+          checked={pageChoice}
+          onChange={changeChoice}
+        ></input>
+        <div>
+          <Organization />
+        </div>
+      </div>
+    );
+  }
+}
