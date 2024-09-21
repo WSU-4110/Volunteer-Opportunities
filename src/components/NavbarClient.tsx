@@ -40,21 +40,21 @@ const Navbar = ({
 
   return (
     <>
-      <div className="flex w-[100%] flex-row justify-between items-center m-auto px-4 2xl:px-36 py-5 sticky z-[40] shadow-lg">
+      <div className="flex w-[100%] flex-row justify-between items-center m-auto px-4 py-4 lg:px-20 xl:px-36 sticky z-[40] shadow-lg">
         <Link className="text-2xl cursor-pointer min-w-[100px]" href="/">
           <div className="flex flex-col justify-center items-center">
             <img
               src="/Favicon.png"
               alt="Volunteer Opportunities Logo"
-              width={"100px"}
-              height={"100px"}
+              width={"50px"}
+              height={"50px"}
             />
-            <h1>Volunteer Opportunities</h1>
+            <h1 className="text-sm font-bold">Volunteer Opportunities</h1>
           </div>
         </Link>
         {authStatus?.user ? (
           <>
-            <div className="flex md:hidden relative z-[50] ">
+            <div className="flex lg:hidden relative z-[50] ">
               <Sheet onOpenChange={handleBurgerToggle}>
                 <SheetTrigger>
                   <div className="flex flex-col justify-between w-6 h-4 cursor-pointer">
@@ -100,11 +100,9 @@ const Navbar = ({
                               Explore
                             </h1>
                             <div className="ml-5 mb-5 flex flex-col gap-3">
-                              <Link
-                                href={"/explore/volunteers"}
-                                className="block"
-                              >
-                                Search for your volunteering needs
+                              <Link href={"/explore"} className="block">
+                                Search for your volunteering or organizational
+                                needs
                               </Link>
                             </div>
                           </div>
@@ -114,12 +112,23 @@ const Navbar = ({
                                 Message
                               </h1>
                               <div className="ml-5 mb-5 flex flex-col gap-3">
-                                <Link href={"/feed"} className="block">
-                                  Message other organizations who need help
+                                <Link href="/message">
+                                  Message other users who need your help
                                 </Link>
-                                <Link href="/volunteers/message">
-                                  Message other volunteers who seek to improve
-                                  their skills
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex justify-start flex-col gap-5">
+                            <div className="flex flex-col gap-5">
+                              <h1 className="font-medium text-xl text-black">
+                                Create
+                              </h1>
+                              <div className="ml-5 mb-5 flex flex-col gap-3">
+                                <Link href="/create/organization">
+                                  Create an organization for your account
+                                </Link>
+                                <Link href="/create/listing">
+                                  Create a listing for your current organization
                                 </Link>
                               </div>
                             </div>
@@ -135,12 +144,6 @@ const Navbar = ({
                                 </Link>
                                 <Link href={"/profile/edit"} className="block">
                                   Edit Profile
-                                </Link>
-                                <Link
-                                  href={"/profiles/search"}
-                                  className="block"
-                                >
-                                  Search for Other Profiles
                                 </Link>
                               </div>
                             </div>
@@ -168,22 +171,29 @@ const Navbar = ({
                 </SheetContent>
               </Sheet>
             </div>
-            <div className={cn("hidden md:block ", className)}>
+            <div className={cn("hidden lg:block ", className)}>
               <Menu setActive={setActive}>
                 <MenuItem setActive={setActive} active={active} item="Explore">
                   <div className="flex flex-col space-y-4 text-sm">
-                    <HoveredLink href="/explore/businesses">
-                      Search for your volunteering needs
+                    <HoveredLink href="/explore">
+                      Search for your volunteering or organizational needs
+                    </HoveredLink>
+                  </div>
+                </MenuItem>
+                <MenuItem setActive={setActive} active={active} item="Create">
+                  <div className="flex flex-col space-y-4 text-sm">
+                    <HoveredLink href="/create/organization">
+                      Create an organization for your account
+                    </HoveredLink>
+                    <HoveredLink href="/create/listing">
+                      Create a listing for your current organization
                     </HoveredLink>
                   </div>
                 </MenuItem>
                 <MenuItem setActive={setActive} active={active} item="Message">
                   <div className="flex flex-col space-y-4 text-sm">
-                    <HoveredLink href="/organizations/message">
-                      Message other organizations who need help
-                    </HoveredLink>
-                    <HoveredLink href="/volunteers/message">
-                      Message other volunteers who seek to improve their skills
+                    <HoveredLink href="/message">
+                      Message other users who need your help
                     </HoveredLink>
                   </div>
                 </MenuItem>
@@ -194,17 +204,9 @@ const Navbar = ({
                       description={authStatus?.user.email || ""}
                       src={authStatus?.user.image || "/blank_profile_pic.png"}
                     ></ProductItem>
-                    <HoveredLink href="/profile/edit ">
-                      Edit Profile
-                    </HoveredLink>
+                    <HoveredLink href="/profile/edit">Edit Profile</HoveredLink>
                     <HoveredLink href="/profile/view">View Profile</HoveredLink>
-                    <HoveredLink href="/profiles/search">
-                      Search for other Profiles
-                    </HoveredLink>
-                    <Button
-                      onClick={async () => await signOut()}
-                      variant={"destructive"}
-                    >
+                    <Button onClick={() => signOut()} variant={"destructive"}>
                       Sign Out
                     </Button>
                   </div>
@@ -214,7 +216,7 @@ const Navbar = ({
           </>
         ) : (
           <>
-            <div className="flex md:hidden ">
+            <div className="flex lg:hidden ">
               <Sheet onOpenChange={handleBurgerToggle}>
                 <SheetTrigger>
                   <div className="flex flex-col justify-between w-6 h-4 cursor-pointer">
@@ -242,8 +244,14 @@ const Navbar = ({
                 <SheetContent side="left">
                   <SheetHeader>
                     <SheetTitle>
-                      <div className="flex flex-col">
-                        <img src="/Favicon.png" width="100px" height="100px" />
+                      <div className="flex flex-col justify-center items-center">
+                        <img
+                          src="/Favicon.png"
+                          alt="Volunteer Opportunities Logo"
+                          width={"100px"}
+                          height={"100px"}
+                        />
+                        <h1>Volunteer Opportunities</h1>
                       </div>
                     </SheetTitle>
                     <SheetDescription>
@@ -251,10 +259,21 @@ const Navbar = ({
                         <div className="flex justify-start flex-col gap-5">
                           <div className="flex flex-col gap-5">
                             <h1 className="font-medium text-xl text-black">
+                              Explore
+                            </h1>
+                            <div className="ml-5 mb-5 flex flex-col gap-3">
+                              <Link href={"/explore"} className="block">
+                                Search for your volunteering or organizational
+                                needs
+                              </Link>
+                            </div>
+                          </div>
+                          <div className="flex flex-col gap-5">
+                            <h1 className="font-medium text-xl text-black">
                               Login/Register
                             </h1>
                             <div className="ml-5 mb-5 flex flex-col gap-3">
-                              <Link href={"/sign-in"} className="block">
+                              <Link href={"/api/auth/signin"} className="block">
                                 Sign In
                               </Link>
                             </div>
@@ -266,8 +285,15 @@ const Navbar = ({
                 </SheetContent>
               </Sheet>
             </div>
-            <div className={cn("hidden md:block relative z-500", className)}>
+            <div className={cn("hidden lg:block relative z-500", className)}>
               <Menu setActive={setActive}>
+                <MenuItem setActive={setActive} active={active} item="Explore">
+                  <div className="flex flex-col space-y-4 text-sm">
+                    <HoveredLink href="/explore">
+                      Search for your volunteering or organizational needs
+                    </HoveredLink>
+                  </div>
+                </MenuItem>
                 <MenuItem
                   setActive={setActive}
                   active={active}

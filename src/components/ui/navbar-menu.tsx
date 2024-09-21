@@ -36,7 +36,7 @@ export const MenuItem = ({
     <div onMouseEnter={() => setActive(item)} className="relative">
       <div
         className={cn(
-          `cursor-pointer flex-row group inline-flex w-max items-center justify-center rounded-md px-6 py-4 text-lg font-bold transition-colors hover:bg-transparent hover:text-accent-foreground focus:bg-transparent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 ${
+          `cursor-pointer flex-row group inline-flex w-max items-center justify-center rounded-md px-6 text-lg transition-colors hover:bg-transparent hover:text-accent-foreground focus:bg-transparent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 ${
             active == item ? "bg-transparent" : ""
           }`,
           className
@@ -131,7 +131,7 @@ export const ProductItem = ({
 
 export const HoveredLink = ({ children, ...rest }: any) => {
   return (
-    <Link {...rest} className="text-neutral-700  hover:text-black font-bold">
+    <Link {...rest} className="text-neutral-700  hover:text-black\">
       {children}
     </Link>
   );
