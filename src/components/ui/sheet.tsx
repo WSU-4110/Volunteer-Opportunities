@@ -1,3 +1,5 @@
+// This sheet component came from shadcn-ui (https://ui.shadcn.com/docs/components/sheet). Very few modifications were made and this is almost completely the same as the sheet from shadcn.
+
 "use client";
 
 import * as React from "react";

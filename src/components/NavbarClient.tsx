@@ -20,6 +20,9 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/components/ui/sheet";
+import { Switch } from "@/components/ui/switch";
+
+import { useUserStatusStore } from "@/providers/userStateStoreProvider";
 
 const Navbar = ({
   className,
@@ -38,10 +41,12 @@ const Navbar = ({
     setIsOpen((prevState) => !prevState);
   };
 
+  const { userStatus, changeUserStatus } = useUserStatusStore((state) => state);
+
   return (
     <>
-      <div className="flex w-[100%] flex-row justify-between items-center m-auto px-4 py-4 lg:px-20 xl:px-36 sticky z-[40] shadow-lg">
-        <Link className="text-2xl cursor-pointer min-w-[100px]" href="/">
+      <div className="flex w-[100%] flex-row justify-between items-center m-auto py-4 px-10 2xl:px-36 sticky z-[40] shadow-lg">
+        <Link className="text-2xl cursor-pointer min-w-[240px]" href="/">
           <div className="flex flex-col justify-center items-center">
             <img
               src="/Favicon.png"
@@ -49,12 +54,13 @@ const Navbar = ({
               width={"50px"}
               height={"50px"}
             />
-            <h1 className="text-sm font-bold">Volunteer Opportunities</h1>
+            <h1 className="text-xl font-bold">Volunteer Opportunities</h1>
           </div>
         </Link>
+
         {authStatus?.user ? (
           <>
-            <div className="flex lg:hidden relative z-[50] ">
+            <div className="flex xl:hidden relative z-[50] ">
               <Sheet onOpenChange={handleBurgerToggle}>
                 <SheetTrigger>
                   <div className="flex flex-col justify-between w-6 h-4 cursor-pointer">
@@ -79,7 +85,7 @@ const Navbar = ({
                     ></div>
                   </div>
                 </SheetTrigger>
-                <SheetContent side="left">
+                <SheetContent side="left" className="w-1/2">
                   <SheetHeader className="h-full">
                     <SheetTitle>
                       <div className="flex flex-col justify-center items-center">
@@ -101,8 +107,9 @@ const Navbar = ({
                             </h1>
                             <div className="ml-5 mb-5 flex flex-col gap-3">
                               <Link href={"/explore"} className="block">
-                                Search for your volunteering or organizational
-                                needs
+                                {!userStatus
+                                  ? "Search for the volunteer listings that correspond with your skills"
+                                  : "Search for the right volunteer for your organizational needs"}
                               </Link>
                             </div>
                           </div>
@@ -124,12 +131,16 @@ const Navbar = ({
                                 Create
                               </h1>
                               <div className="ml-5 mb-5 flex flex-col gap-3">
-                                <Link href="/create/organization">
-                                  Create an organization for your account
-                                </Link>
-                                <Link href="/create/listing">
-                                  Create a listing for your current organization
-                                </Link>
+                                {!userStatus ? (
+                                  <Link href="/create/organization">
+                                    Create an organization for your account
+                                  </Link>
+                                ) : (
+                                  <Link href="/create/listing">
+                                    Create a listing for your current
+                                    organization
+                                  </Link>
+                                )}
                               </div>
                             </div>
                           </div>
@@ -147,6 +158,17 @@ const Navbar = ({
                                 </Link>
                               </div>
                             </div>
+                          </div>
+                          <div className="flex flex-col items-center justify-center pl-5 min-w-[200px] text-black">
+                            {userStatus ? (
+                              <p>Organization</p>
+                            ) : (
+                              <p>Volunteer</p>
+                            )}
+                            <Switch
+                              checked={userStatus}
+                              setChecked={changeUserStatus}
+                            ></Switch>
                           </div>
                         </div>
                         <div className="flex flex-col w-full p-4 gap-3">
@@ -171,23 +193,28 @@ const Navbar = ({
                 </SheetContent>
               </Sheet>
             </div>
-            <div className={cn("hidden lg:block ", className)}>
+            <div className={cn("hidden xl:block ", className)}>
               <Menu setActive={setActive}>
                 <MenuItem setActive={setActive} active={active} item="Explore">
                   <div className="flex flex-col space-y-4 text-sm">
                     <HoveredLink href="/explore">
-                      Search for your volunteering or organizational needs
+                      {!userStatus
+                        ? "Search for the volunteer listings that correspond with your skills"
+                        : "Search for the right volunteer for your organizational needs"}
                     </HoveredLink>
                   </div>
                 </MenuItem>
                 <MenuItem setActive={setActive} active={active} item="Create">
                   <div className="flex flex-col space-y-4 text-sm">
-                    <HoveredLink href="/create/organization">
-                      Create an organization for your account
-                    </HoveredLink>
-                    <HoveredLink href="/create/listing">
-                      Create a listing for your current organization
-                    </HoveredLink>
+                    {!userStatus ? (
+                      <HoveredLink href="/create/organization">
+                        Create an organization for your account
+                      </HoveredLink>
+                    ) : (
+                      <HoveredLink href="/create/listing">
+                        Create a listing for your current organization
+                      </HoveredLink>
+                    )}
                   </div>
                 </MenuItem>
                 <MenuItem setActive={setActive} active={active} item="Message">
@@ -213,10 +240,21 @@ const Navbar = ({
                 </MenuItem>
               </Menu>
             </div>
+            <div className="flex flex-col items-center justify-center pl-5 hidden min-w-[200px] xl:block">
+              {userStatus ? (
+                <p className="text-center">Organization</p>
+              ) : (
+                <p className="text-center">Volunteer</p>
+              )}
+              <Switch
+                checked={userStatus}
+                setChecked={changeUserStatus}
+              ></Switch>
+            </div>
           </>
         ) : (
           <>
-            <div className="flex lg:hidden ">
+            <div className="flex xl:hidden ">
               <Sheet onOpenChange={handleBurgerToggle}>
                 <SheetTrigger>
                   <div className="flex flex-col justify-between w-6 h-4 cursor-pointer">
@@ -285,12 +323,14 @@ const Navbar = ({
                 </SheetContent>
               </Sheet>
             </div>
-            <div className={cn("hidden lg:block relative z-500", className)}>
+            <div className={cn("hidden xl:block relative z-500", className)}>
               <Menu setActive={setActive}>
                 <MenuItem setActive={setActive} active={active} item="Explore">
                   <div className="flex flex-col space-y-4 text-sm">
                     <HoveredLink href="/explore">
-                      Search for your volunteering or organizational needs
+                      {!userStatus
+                        ? "Search for the volunteer listings that correspond with your skills"
+                        : "Search for the right volunteer for your organizational needs"}
                     </HoveredLink>
                   </div>
                 </MenuItem>
