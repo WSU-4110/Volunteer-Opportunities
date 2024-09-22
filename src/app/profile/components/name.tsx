@@ -1,27 +1,45 @@
 "use client";
-import React from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { updateName } from "@/app/profile/actions";
-type FormValues = {
-  name: string;
-  id: string;
-};
-export default function Name(props: any) {
-  const { register, handleSubmit } = useForm<FormValues>({
-    defaultValues: { id: props?.id },
-  });
 
-  const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    //console.log(data);
-    await updateName(data.id, data.name);
+import Organization from "./organization";
+
+import { useState } from "react";
+
+export default function UserPage(props: any) {
+  const state = true;
+  const [pageChoice, setChoice] = useState(state);
+
+  const changeChoice: any = (check: any) => {
+    console.log(check.target.checked);
+    setChoice(check.target.checked);
   };
 
-  let userName = props.name;
-
-  return (
-    <form className="nameField" onSubmit={handleSubmit(onSubmit)}>
-      <input {...register("name")} type="text" placeholder={userName}></input>
-      <button type="submit">Edit</button>
-    </form>
-  );
+  if (pageChoice) {
+    return (
+      <div>
+        <input
+          type="checkbox"
+          name="pageChoice"
+          id="pageChoice"
+          checked={pageChoice}
+          onChange={changeChoice}
+        ></input>
+        <div></div>
+      </div>
+    );
+  } else {
+    return (
+      <div>
+        <input
+          type="checkbox"
+          name="pageChoice"
+          id="pageChoice"
+          checked={pageChoice}
+          onChange={changeChoice}
+        ></input>
+        <div>
+          <Organization />
+        </div>
+      </div>
+    );
+  }
 }

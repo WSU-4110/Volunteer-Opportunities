@@ -1,45 +1,70 @@
 "use client";
+import React from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { updateUser } from "@/app/profile/actions";
+import Talents from "./talents";
+type InputValues = {
+  name: string;
+  picture: string;
+  bio: string;
+  id: string;
+  skills: any;
+  children: any;
+};
 
-import Organization from "./organization";
+type FormValues = {
+  name: string;
+  picture: string;
+  bio: string;
+  id: string;
+};
+export default function Name(props: InputValues) {
+  const { register, handleSubmit } = useForm<FormValues>({
+    defaultValues: {
+      id: props?.id,
+      name: props?.name,
+      picture: props?.picture,
+      bio: props?.bio,
+    },
+  });
 
-import { useState } from "react";
-
-export default function UserPage({ children }: { children: React.ReactNode }) {
-  const state = true;
-  const [pageChoice, setChoice] = useState(state);
-
-  const changeChoice: any = (check: any) => {
-    console.log(check.target.checked);
-    setChoice(check.target.checked);
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    //console.log(data);
+    await updateUser(data.id, data.picture, data.name, data.bio);
   };
 
-  if (pageChoice) {
-    return (
-      <div>
+  console.log(props.skills.length);
+  return (
+    <div>
+      <header>Volunteer Form</header>
+      <form className="nameField" onSubmit={handleSubmit(onSubmit)}>
+        <label htmlFor="picture">Picture: </label>
         <input
-          type="checkbox"
-          name="pageChoice"
-          id="pageChoice"
-          checked={pageChoice}
-          onChange={changeChoice}
+          {...register("picture")}
+          type="text"
+          placeholder="picture"
+          id="picture"
         ></input>
-        <div>{children}</div>
-      </div>
-    );
-  } else {
-    return (
-      <div>
+        <br />
+        <label htmlFor="name">Name: </label>
         <input
-          type="checkbox"
-          name="pageChoice"
-          id="pageChoice"
-          checked={pageChoice}
-          onChange={changeChoice}
+          {...register("name")}
+          type="text"
+          placeholder="Your name"
+          id="name"
         ></input>
-        <div>
-          <Organization />
-        </div>
-      </div>
-    );
-  }
+        <br />
+        <label htmlFor="bio">Bio: </label>
+        <input
+          {...register("bio")}
+          type="text"
+          placeholder="Your bio"
+          id="bio"
+        ></input>
+        <br />
+        {props.children}
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  );
 }

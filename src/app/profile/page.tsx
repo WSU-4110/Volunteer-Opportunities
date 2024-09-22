@@ -1,31 +1,30 @@
 import UserPage from "./components/user";
 import React from "react";
-import { userData } from "./actions";
+import { userData, getSkills } from "./actions";
 import { auth } from "@/auth";
-import Name from "./components/name";
-import UserPicture from "./components/userPicture";
 import Talents from "./components/talents";
-import UserBio from "./components/userBio";
 
 export default async function EditProfile() {
   // Temp sould be replaced with sessioned user ID.
 
   const user = await auth();
+  const skills = await getSkills("11111111-1111-1111-1111111111");
 
   if (!user?.user.id && user != null) {
-    const data = await userData(user.user.id || "");
+    const data = await userData(user.user.id);
+
+    const picture = data[0].field2 || "";
     return (
       <div>
-        <header>profile</header>
-        <UserPage>
-          {
-            <div>
-              <UserPicture />
-              <Name name={data[0].field1} id={user.user.id} />
-              <Talents />
-              <UserBio />
-            </div>
-          }
+        <header></header>
+        <UserPage
+          name={data[0].field1}
+          picture={picture}
+          bio={data[0].field3}
+          id={user.user.id}
+          skills={skills}
+        >
+          {<Talents id={user.user.id} skills={skills} />}
         </UserPage>
       </div>
     );
@@ -33,18 +32,20 @@ export default async function EditProfile() {
     // Add error handling
     // This is for testing without auth
     const data = await userData("11111111-1111-1111-1111111111");
+
+    const picture = data[0].field2 || "";
     return (
       <div>
-        <header>profile</header>
-        <UserPage>
-          {
-            <div>
-              <UserPicture />
-              <Name name={data[0].field1} id="11111111-1111-1111-1111111111" />
-              <Talents />
-              <UserBio />
-            </div>
-          }
+        <header></header>
+        <p></p>
+        <UserPage
+          name={data[0].field1}
+          picture={picture}
+          bio={data[0].field3}
+          id="11111111-1111-1111-1111111111"
+          skills={skills}
+        >
+          {<Talents id="11111111-1111-1111-1111111111" skills={skills} />}
         </UserPage>
       </div>
     );
