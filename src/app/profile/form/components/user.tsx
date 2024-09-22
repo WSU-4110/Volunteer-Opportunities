@@ -1,14 +1,21 @@
 "use client";
 import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { updateUser } from "@/app/profile/actions";
-import Talents from "./talents";
+import { updateUser, userSkills } from "@/app/profile/form/actions";
+import { useEffect, useState } from "react";
+import Talent from "./talent";
+
 type InputValues = {
   name: string;
   picture: string;
   bio: string;
   id: string;
   skills: any;
+  userSkills: {
+    field1: string;
+    field2: string;
+    field3: string;
+  }[];
   children: any;
 };
 
@@ -29,11 +36,9 @@ export default function Name(props: InputValues) {
   });
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    //console.log(data);
     await updateUser(data.id, data.picture, data.name, data.bio);
   };
 
-  console.log(props.skills.length);
   return (
     <div>
       <header>Volunteer Form</header>
@@ -62,9 +67,20 @@ export default function Name(props: InputValues) {
           id="bio"
         ></input>
         <br />
-        {props.children}
+
         <button type="submit">Submit</button>
       </form>
+      {props.userSkills.map(
+        (skill: { field1: string; field2: string; field3: string }) => (
+          <Talent
+            userId={props.id}
+            skillName={skill.field2}
+            skillId={skill.field1}
+            key={skill.field2}
+          />
+        )
+      )}
+      {props.children}
     </div>
   );
 }

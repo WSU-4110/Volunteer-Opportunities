@@ -29,33 +29,6 @@ export async function userSkills(id: string) {
   return data;
 }
 
-export async function userName(id: string) {
-  const data = await database
-    .select({ field1: users.name })
-    .from(users)
-    .where(eq(users.id, id));
-
-  return data;
-}
-
-export async function userBio(id: string) {
-  const data = await database
-    .select({ field1: users.bio })
-    .from(users)
-    .where(eq(users.id, id));
-
-  return data;
-}
-
-export async function userImage(id: string) {
-  const data = await database
-    .select({ field1: users.image })
-    .from(users)
-    .where(eq(users.id, id));
-
-  return data;
-}
-
 export async function getSkills(id: any) {
   const userSkills = database
     .select({
@@ -103,15 +76,3 @@ export async function updateUser(
     .set({ name: username, image: picture, bio: bio })
     .where(eq(users.id, id));
 }
-
-export async function updateImage(id: string, userImage: string) {
-  await database.update(users).set({ name: userImage }).where(eq(users.id, id));
-}
-
-export async function updateBio(id: string, userBio: string) {
-  await database.update(users).set({ name: userBio }).where(eq(users.id, id));
-}
-
-// Select Statements for Org Profile
-
-// Update and delete statements for Org Profile
