@@ -3,8 +3,6 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 
-import { UserStatusStoreProvider } from "@/providers/userStateStoreProvider";
-
 const geistSans = localFont({
   src: "/fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -31,12 +29,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <UserStatusStoreProvider>
-          <div className="min-h-screen w-full h-full">
-            <Navbar />
-            {children}
-          </div>
-        </UserStatusStoreProvider>
+        <div className="min-h-screen w-full h-full">
+          <Navbar />
+          {children}
+        </div>
       </body>
     </html>
   );

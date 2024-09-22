@@ -3,6 +3,7 @@
 
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { useState } from "react";
 export const Switch = ({
   checked,
   setChecked,
@@ -12,6 +13,9 @@ export const Switch = ({
   setChecked: () => void;
   className?: string;
 }) => {
+  const [hasInteracted, setHasInteracted] = useState(false);
+
+  console.log(checked);
   return (
     <form
       className={cn(className, "flex justify-center antialiased items-center")}
@@ -24,13 +28,17 @@ export const Switch = ({
         <motion.div
           initial={{
             width: "20px",
-            x: checked ? 0 : 32,
+            x: hasInteracted ? (checked ? 0 : 32) : checked ? 32 : 0,
           }}
-          animate={{
-            height: ["20px", "10px", "20px"],
-            width: ["20px", "30px", "20px", "20px"],
-            x: checked ? 32 : 0,
-          }}
+          animate={
+            hasInteracted
+              ? {
+                  height: ["20px", "10px", "20px"],
+                  width: ["20px", "30px", "20px", "20px"],
+                  x: checked ? 32 : 0,
+                }
+              : { x: checked ? 32 : 0 } // Just position on initial load
+          }
           transition={{
             duration: 1,
             delay: 0.1,
@@ -41,7 +49,10 @@ export const Switch = ({
         <input
           type="checkbox"
           checked={checked}
-          onChange={() => setChecked()}
+          onChange={() => {
+            setChecked();
+            setHasInteracted(true);
+          }}
           className="hidden"
           id="checkbox"
         />

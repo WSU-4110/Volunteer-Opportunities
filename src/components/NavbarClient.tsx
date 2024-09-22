@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   HoveredLink,
   Menu,
@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/sheet";
 import { Switch } from "@/components/ui/switch";
 
-import { useUserStatusStore } from "@/providers/userStateStoreProvider";
+import { useUserStatusStore } from "@/stores/userStatusStore";
 
 const Navbar = ({
   className,
