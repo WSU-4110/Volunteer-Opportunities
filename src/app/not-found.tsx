@@ -5,7 +5,7 @@ export default function NotFoundPage() {
         We couldn't find what you were looking for. Please try navigating to a
         different page.
       </h1>
-      <p>404 -- Not Found</p>
+      <p>404 &ndash; Not Found</p>
     </div>
   );
 }
