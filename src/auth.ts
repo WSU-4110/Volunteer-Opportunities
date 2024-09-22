@@ -1,12 +1,6 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
-import {
-  accounts,
-  sessions,
-  users,
-  verificationTokens,
-} from "@/database/schema";
 import { database } from "./database";
 import type { DefaultSession, NextAuthConfig } from "next-auth";
 
