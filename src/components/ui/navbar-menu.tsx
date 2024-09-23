@@ -1,3 +1,9 @@
+// This code was provided from a combination of shadcn-ui (https://ui.shadcn.com/docs/components/navigation-menu),
+// and aceternity ui (https://ui.aceternity.com/components/navbar-menu). The chevron component came from shadcn-ui.
+// The animation that flips the Chevron 180% when the navbar item is being hovered or focused also came from shadcn. The rest of the navbar came from Aceternity ui.
+// This includes the boxes of links that appear underneath the navbar when hovering over different parts of the navbar, along with the animations for those boxes when you drag the cursor across the navbar.
+// The profile item styling with the user image on the left and the username and email on the right also came from aceternity ui.
+
 "use client";
 import React from "react";
 import { motion } from "framer-motion";
@@ -36,7 +42,7 @@ export const MenuItem = ({
     <div onMouseEnter={() => setActive(item)} className="relative">
       <div
         className={cn(
-          `cursor-pointer flex-row group inline-flex w-max items-center justify-center rounded-md px-6 py-4 text-lg font-bold transition-colors hover:bg-transparent hover:text-accent-foreground focus:bg-transparent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 ${
+          `cursor-pointer flex-row group inline-flex w-max items-center justify-center rounded-md px-6 text-lg transition-colors hover:bg-transparent hover:text-accent-foreground focus:bg-transparent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 ${
             active == item ? "bg-transparent" : ""
           }`,
           className
@@ -96,7 +102,7 @@ export const Menu = ({
   return (
     <nav
       onMouseLeave={() => setActive(null)} // resets the state
-      className="relative rounded-full border border-transparent bg-transparent flex justify-center space-x-4 px-8 py-6 "
+      className="relative rounded-full border border-transparent bg-transparent flex justify-center items-center space-x-4 px-8 py-6 "
     >
       {children}
     </nav>
@@ -131,7 +137,7 @@ export const ProductItem = ({
 
 export const HoveredLink = ({ children, ...rest }: any) => {
   return (
-    <Link {...rest} className="text-neutral-700  hover:text-black font-bold">
+    <Link {...rest} className="text-neutral-700  hover:text-black\">
       {children}
     </Link>
   );

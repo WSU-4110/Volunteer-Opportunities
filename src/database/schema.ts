@@ -9,7 +9,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 import { AdapterAccount } from "next-auth/adapters";
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 
 export const accountTypeEnum = pgEnum("type", ["email", "google", "github"]);
 
@@ -23,8 +23,8 @@ export const users = pgTable("user", {
   image: text("image"),
   bio: text("bio").notNull().default(""),
   createdAt: timestamp("createdAt", { mode: "date" })
-    .notNull()
-    .$defaultFn(() => new Date()),
+    .default(sql`NOW()`)
+    .notNull(),
 });
 
 export const accounts = pgTable(
@@ -102,7 +102,10 @@ export const organizations = pgTable("organizations", {
   imageUrl: text("imageUrl"),
   createdAt: timestamp("createdOn", { mode: "date" })
     .notNull()
-    .$defaultFn(() => new Date()),
+    .default(sql`NOW()`),
+  creator: text("creatorId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
 });
 
 export const skills = pgTable("skills", {
@@ -141,7 +144,7 @@ export const messages = pgTable(
     messageType: text("messageType").notNull(), // 'text' or 'image'
     createdAt: timestamp("createdAt", { mode: "date" })
       .notNull()
-      .$defaultFn(() => new Date()), // Timestamp
+      .default(sql`NOW()`), // Timestamp
   },
   (table) => ({
     pk: primaryKey({ columns: [table.senderId, table.recipientId] }),
@@ -178,9 +181,16 @@ export const skillsToUsers = pgTable(
   })
 );
 
-export const organizationsRelations = relations(organizations, ({ many }) => ({
-  listings: many(listings),
-}));
+export const organizationsRelations = relations(
+  organizations,
+  ({ many, one }) => ({
+    listings: many(listings),
+    users: one(users, {
+      fields: [organizations.creator],
+      references: [users.id],
+    }),
+  })
+);
 
 export const skillsRelations = relations(skills, ({ many }) => ({
   listings: many(skillsToListings),
@@ -191,6 +201,7 @@ export const volunteerRelations = relations(users, ({ many }) => ({
   skills: many(skillsToUsers),
   senderMessages: many(messages, { relationName: "sender" }),
   receiverMessages: many(messages, { relationName: "receiver" }),
+  organizations: many(organizations),
 }));
 
 export const listingsRelations = relations(listings, ({ many, one }) => ({
