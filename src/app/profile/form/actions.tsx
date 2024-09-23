@@ -1,26 +1,27 @@
 "use server";
-// Will Delete pg if it is not used not sure if I will need it at some point
 import { eq, notExists, notInArray } from "drizzle-orm";
 import { users, skills, skillsToUsers } from "@/database/schema";
-import { database, pg } from "@/database/index";
+import { database } from "@/database/index";
+
+import { z } from "zod";
 
 // Select Statements for User Profile
-
-export async function userData(id: string) {
+// Convert to internal fumctions
+export async function userData() {
   const data = await database
-    .select({ field1: users.name, field2: users.image, field3: users.bio })
+    .select({ name: users.name, image: users.image, bio: users.bio })
     .from(users)
     .where(eq(users.id, id));
 
   return data;
 }
 
-export async function userSkills(id: string) {
+export async function userSkills() {
   const data = await database
     .select({
-      field1: skillsToUsers.skillId,
-      field2: skills.name,
-      field3: skills.iconUrl,
+      skillId: skillsToUsers.skillId,
+      skillName: skills.name,
+      url: skills.iconUrl,
     })
     .from(skillsToUsers)
     .innerJoin(skills, eq(skills.id, skillsToUsers.skillId))
@@ -29,7 +30,7 @@ export async function userSkills(id: string) {
   return data;
 }
 
-export async function getSkills(id: any) {
+export async function getSkills() {
   const userSkills = database
     .select({
       data: skillsToUsers.skillId,
@@ -39,8 +40,8 @@ export async function getSkills(id: any) {
 
   const data = await database
     .select({
-      field1: skills.id,
-      field2: skills.name,
+      skillId: skills.id,
+      skillName: skills.name,
     })
     .from(skills)
     .where(notInArray(skills.id, userSkills));
@@ -51,7 +52,7 @@ export async function getSkills(id: any) {
 // Update and delete Statements for UserProfile
 // Will add returns latter not sure what to do with them.
 
-export async function deleteUserSkill(id: string, skill: string) {
+export async function deleteUserSkill(skill: string) {
   await database
     .delete(skillsToUsers)
     .where(
@@ -66,7 +67,6 @@ export async function addUserSkill(id: string, skill: string) {
 }
 
 export async function updateUser(
-  id: string,
   picture: string,
   username: string,
   bio: string

@@ -2,6 +2,7 @@
 import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { deleteUserSkill } from "../actions";
+import { evalManifestWithRetries } from "next/dist/server/load-components";
 
 type skill = {
   skillId: string;
@@ -14,19 +15,21 @@ type Input = {
   skillName: string;
 };
 export default function Talent(props: Input) {
+
   const { register, handleSubmit } = useForm<skill>({
     defaultValues: {
       id: props?.userId,
       skillId: props?.skillId,
     },
   });
-
+  
   const onSubmit: SubmitHandler<skill> = async (data) => {
     console.log(data);
-    await deleteUserSkill(data.id, data.skillId);
-    console.log(data);
+    await deleteUserSkill(data.skillId);
   };
+
   console.log(props);
+  if(props.skillName != null){
   return (
     <div>
       <form className="skill" onSubmit={handleSubmit(onSubmit)}>
@@ -35,4 +38,8 @@ export default function Talent(props: Input) {
       </form>
     </div>
   );
+}
+else{
+  return <div></div>
+}
 }

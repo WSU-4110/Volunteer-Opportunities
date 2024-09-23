@@ -10,12 +10,7 @@ type InputValues = {
   picture: string;
   bio: string;
   id: string;
-  skills: any;
-  userSkills: {
-    field1: string;
-    field2: string;
-    field3: string;
-  }[];
+
   children: any;
 };
 
@@ -70,16 +65,7 @@ export default function Name(props: InputValues) {
 
         <button type="submit">Submit</button>
       </form>
-      {props.userSkills.map(
-        (skill: { field1: string; field2: string; field3: string }) => (
-          <Talent
-            userId={props.id}
-            skillName={skill.field2}
-            skillId={skill.field1}
-            key={skill.field2}
-          />
-        )
-      )}
+
       {props.children}
     </div>
   );
