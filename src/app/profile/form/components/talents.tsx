@@ -1,22 +1,40 @@
 "use client";
 import React from "react";
-import {
-  addUserSkill,
-  userSkills,
-  getSkills,
-} from "@/app/profile/form/actions";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { useState, useEffect } from "react";
+import { addUserSkill } from "@/app/profile/form/actions";
+import { useForm } from "react-hook-form";
+import { useState } from "react";
 import Talent from "./talent";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 
-type Updates = {
-  id: string;
-  skill: string;
-};
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+import { z } from "zod";
+
+const formSchema = z.object({
+  skillId: z.string(),
+  skillName: z.string(),
+});
+
 type input = {
-  skill : Skills;
+  skill: Skills;
   userS: UserSkills;
-}
+};
 type Skills = {
   skillId: string;
   skillName: string;
@@ -25,82 +43,106 @@ type Skills = {
 type UserSkills = {
   skillId: string;
   skillName: string;
-  url: string;
 }[];
 
+type skill = {
+  skill: string;
+};
+
 export default function Talents(props: input) {
-  console.log("Talents");
-  const skills: Skills = props.skill
-  const userS: UserSkills = props.userS
-  //const [skills, setSkills] = useState<Skills>();
-  //const [userS, setUSkills] = useState<UserSkills>();
-
-  //setSkills(props.skill)
-  //setUSkills(props.userSkills)
-
-  //useEffect(() => {
-  //  async function fetchUser() {
-  //    const skills = await getSkills("11111111-1111-1111-1111111111");
-  //    const skillList = await userSkills("11111111-1111-1111-1111111111");
-  //    console.log(skills);
-  //    console.log(skillList);
-  //    setSkills(skills);
-  //    setUSkills(skillList);
-  //  }
-
-  //  fetchUser();
-  //}, []);
-
-  const { register, handleSubmit } = useForm<Updates>({
+  const [userS, setUserS] = useState<UserSkills>(props.userS);
+  const [skills, setSkills] = useState<Skills>(props.skill);
+  const [render, setRender] = useState(0);
+  // 1. Define your form.
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
-      id: "11111111-1111-1111-1111111111",
-      skill: "0",
+      skillId: "0",
+      skillName: "0",
     },
   });
-  
 
-  const onSubmit: SubmitHandler<Updates> = async (data) => {
-    console.log(data);
-    await addUserSkill(data.id, data.skill);
-    //setSkills(await getSkills("11111111-1111-1111-1111111111"))
-    //setUSkills(await userSkills("11111111-1111-1111-1111111111"))
+  // 2. Define a submit handler.
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    // Do something with the form values.
+    // ✅ This will be type-safe and validated.
+    const skill: skill = { skill: values.skillId };
+    if (skill.skill != "0") {
+      setRender(render + 1);
+      await addUserSkill(skill);
 
-    //refresh element
-  };
+      for (let i = 0; i < skills.length; i++) {
+        if (skills[i].skillId == skill.skill) {
+          values.skillName = skills[i].skillName;
+          setSkills(skills.toSpliced(i, 1));
+        }
+      }
 
+      const length = userS.push(values);
+      setUserS(userS);
+    }
+  }
+  if (userS != undefined) {
+    // Issue with reusing keys on rerenders
 
-  
-    console.log("Render")
     return (
       <div>
-        {userS.map(
-          (skill: { skillId: string; skillName: string; url: string }) => (
-            <Talent
-              userId={"11111111-1111-1111-1111111111"}
-              skillName={skill.skillName}
-              skillId={skill.skillId}
-              key={skill.skillName}
+        <table>
+          <tbody>
+            <tr>
+              {userS.map((skill: { skillId: string; skillName: string }) => (
+                <td key={skill.skillName}>
+                  <Talent
+                    skillName={skill.skillName}
+                    skillId={skill.skillId}
+                    skills={skills}
+                    setSkills={setSkills}
+                  />
+                </td>
+              ))}
+            </tr>
+          </tbody>
+        </table>
+        <br />
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <FormField
+              control={form.control}
+              name="skillId"
+              render={({ field }) => (
+                <FormItem>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a verified email to display" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {skills.map(
+                        (skill: { skillId: string; skillName: string }) => (
+                          <SelectItem
+                            value={skill.skillId}
+                            key={skill.skillId + render}
+                            id={skill.skillId}
+                          >
+                            {skill.skillName}
+                          </SelectItem>
+                        )
+                      )}
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>Add another skill</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          )
-        )}
-        <form name="SkillForm" onSubmit={handleSubmit(onSubmit)}>
-          <label htmlFor="skills">Add A Skill </label>
-          <select id="skills" {...register("skill")}>
-            <option value="" key="0"></option>
-            {skills.map((skill: { skillId: string; skillName: string }) => (
-              <option
-                value={skill.skillId}
-                key={skill.skillId}
-                id={skill.skillId}
-              >
-                {skill.skillName}
-              </option>
-            ))}
-          </select>
-          <br />
-          <button type="submit">Add</button>
-        </form>
+            <Button type="submit">Add</Button>
+          </form>
+        </Form>
       </div>
     );
   }
-
+}

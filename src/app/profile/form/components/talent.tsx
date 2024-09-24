@@ -2,44 +2,57 @@
 import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { deleteUserSkill } from "../actions";
-import { evalManifestWithRetries } from "next/dist/server/load-components";
+import { Badge } from "@/components/ui/badge";
+import { useEffect, useState } from "react";
 
 type skill = {
   skillId: string;
-  id: string;
-};
-
-type Input = {
-  userId: string;
-  skillId: string;
   skillName: string;
 };
-export default function Talent(props: Input) {
+type Skills = {
+  skillId: string;
+  skillName: string;
+}[];
+
+type input = {
+  skillName: string;
+  skillId: string;
+  skills: Skills;
+  setSkills: React.Dispatch<React.SetStateAction<Skills>>;
+};
+type deleteSkill = {
+  skill: string;
+};
+export default function Talent({ ...props }: input) {
+  const [show, setShow] = useState(true);
 
   const { register, handleSubmit } = useForm<skill>({
     defaultValues: {
-      id: props?.userId,
       skillId: props?.skillId,
+      skillName: props?.skillName,
     },
   });
-  
+
   const onSubmit: SubmitHandler<skill> = async (data) => {
-    console.log(data);
-    await deleteUserSkill(data.skillId);
+    const skill: deleteSkill = { skill: data.skillId };
+    await deleteUserSkill(skill);
+
+    setShow(false);
+    let newSkills = props.skills;
+    newSkills.unshift(data);
+    props.setSkills(newSkills);
   };
 
-  console.log(props);
-  if(props.skillName != null){
-  return (
-    <div>
+  if (show) {
+    return (
       <form className="skill" onSubmit={handleSubmit(onSubmit)}>
-        <h1>{props.skillName}</h1>
-        <button>X</button>
+        <Badge>
+          {props.skillName}&emsp;
+          <button>x</button>
+        </Badge>
       </form>
-    </div>
-  );
-}
-else{
-  return <div></div>
-}
+    );
+  } else {
+    return <div></div>;
+  }
 }

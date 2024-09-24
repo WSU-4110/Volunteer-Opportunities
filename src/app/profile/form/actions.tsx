@@ -2,12 +2,25 @@
 import { eq, notExists, notInArray } from "drizzle-orm";
 import { users, skills, skillsToUsers } from "@/database/schema";
 import { database } from "@/database/index";
+import { authenticatedAction } from "@/lib/safe-action";
+import { unauthenticatedAction } from "@/lib/safe-action";
 
 import { z } from "zod";
 
 // Select Statements for User Profile
 // Convert to internal fumctions
-export async function userData() {
+
+export const userData = authenticatedAction
+  .createServerAction()
+  .handler(async ({ ctx: { user } }) => {
+    if (user != undefined) {
+      return internalUserData(user.id);
+    } else {
+      return null;
+    }
+  });
+
+async function internalUserData(id: string) {
   const data = await database
     .select({ name: users.name, image: users.image, bio: users.bio })
     .from(users)
@@ -16,7 +29,17 @@ export async function userData() {
   return data;
 }
 
-export async function userSkills() {
+export const userSkills = authenticatedAction
+  .createServerAction()
+  .handler(async ({ ctx: { user } }) => {
+    if (user != undefined) {
+      return internalUserSkills(user.id);
+    } else {
+      return null;
+    }
+  });
+
+async function internalUserSkills(id: string) {
   const data = await database
     .select({
       skillId: skillsToUsers.skillId,
@@ -30,7 +53,17 @@ export async function userSkills() {
   return data;
 }
 
-export async function getSkills() {
+export const getSkills = authenticatedAction
+  .createServerAction()
+  .handler(async ({ ctx: { user } }) => {
+    if (user != undefined) {
+      return internalGetSkills(user.id);
+    } else {
+      return null;
+    }
+  });
+
+async function internalGetSkills(id: string) {
   const userSkills = database
     .select({
       data: skillsToUsers.skillId,
@@ -52,7 +85,20 @@ export async function getSkills() {
 // Update and delete Statements for UserProfile
 // Will add returns latter not sure what to do with them.
 
-export async function deleteUserSkill(skill: string) {
+export const deleteUserSkill = authenticatedAction
+  .createServerAction()
+  .input(
+    z.object({
+      skill: z.string(),
+    })
+  )
+  .handler(async ({ ctx: { user }, input: { skill } }) => {
+    if (user != undefined) {
+      return interalDeleteUserSkill(skill, user.id);
+    }
+  });
+
+async function interalDeleteUserSkill(skill: string, id: string) {
   await database
     .delete(skillsToUsers)
     .where(
@@ -60,16 +106,45 @@ export async function deleteUserSkill(skill: string) {
     );
 }
 
-export async function addUserSkill(id: string, skill: string) {
+export const addUserSkill = authenticatedAction
+  .createServerAction()
+  .input(
+    z.object({
+      skill: z.string(),
+    })
+  )
+  .handler(async ({ ctx: { user }, input: { skill } }) => {
+    if (user != undefined) {
+      return internalAddUserSkill(user.id, skill);
+    }
+  });
+
+async function internalAddUserSkill(id: string, skill: string) {
   await database
     .insert(skillsToUsers)
     .values({ skillId: skill, volunteerId: id });
 }
 
-export async function updateUser(
+export const updateUser = authenticatedAction
+  .createServerAction()
+  .input(
+    z.object({
+      picture: z.string(),
+      username: z.string(),
+      bio: z.string(),
+    })
+  )
+  .handler(async ({ ctx: { user }, input: { picture, username, bio } }) => {
+    if (user != undefined) {
+      return internalUpdateUser(picture, username, bio, user.id);
+    }
+  });
+
+export async function internalUpdateUser(
   picture: string,
   username: string,
-  bio: string
+  bio: string,
+  id: string
 ) {
   await database
     .update(users)
