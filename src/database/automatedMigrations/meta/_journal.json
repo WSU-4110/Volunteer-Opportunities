@@ -19,22 +19,8 @@
     {
       "idx": 2,
       "version": "7",
-      "when": 1726415028905,
-      "tag": "0002_wild_songbird",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1726589019291,
-      "tag": "0003_fantastic_bloodscream",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1726589338424,
-      "tag": "0004_shallow_black_tom",
+      "when": 1727201753761,
+      "tag": "0002_shocking_vance_astro",
       "breakpoints": true
     }
   ]

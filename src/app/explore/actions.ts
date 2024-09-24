@@ -29,4 +29,6 @@ export const getListingsBySkill = authenticatedAction
         listings: true,
       },
     });
+
+    return results;
   });

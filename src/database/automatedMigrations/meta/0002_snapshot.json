@@ -1,5 +1,5 @@
 {
-  "id": "4f4c3526-40c8-47a7-a032-ee18100e7c01",
+  "id": "520d050e-6332-4f36-b5bc-062182841a28",
   "prevId": "38825a2d-b9fb-4ad2-8144-3f86e2371018",
   "version": "7",
   "dialect": "postgresql",
@@ -190,6 +190,61 @@
         }
       }
     },
+    "public.conversations": {
+      "name": "conversations",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "senderId": {
+          "name": "senderId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "recipientId": {
+          "name": "recipientId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "conversations_senderId_user_id_fk": {
+          "name": "conversations_senderId_user_id_fk",
+          "tableFrom": "conversations",
+          "tableTo": "user",
+          "columnsFrom": [
+            "senderId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "conversations_recipientId_user_id_fk": {
+          "name": "conversations_recipientId_user_id_fk",
+          "tableFrom": "conversations",
+          "tableTo": "user",
+          "columnsFrom": [
+            "recipientId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "public.listings": {
       "name": "listings",
       "schema": "",
@@ -248,33 +303,21 @@
       "name": "messages",
       "schema": "",
       "columns": {
-        "senderId": {
-          "name": "senderId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "recipientId": {
-          "name": "recipientId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "content": {
-          "name": "content",
+        "id": {
+          "name": "id",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "imageUrl": {
-          "name": "imageUrl",
-          "type": "text",
+        "content": {
+          "name": "content",
+          "type": "json",
           "primaryKey": false,
           "notNull": false
         },
         "messageType": {
           "name": "messageType",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
@@ -282,47 +325,27 @@
           "name": "createdAt",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "NOW()"
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "messages_senderId_user_id_fk": {
-          "name": "messages_senderId_user_id_fk",
+        "messages_id_conversations_id_fk": {
+          "name": "messages_id_conversations_id_fk",
           "tableFrom": "messages",
-          "tableTo": "user",
+          "tableTo": "conversations",
           "columnsFrom": [
-            "senderId"
+            "id"
           ],
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "messages_recipientId_user_id_fk": {
-          "name": "messages_recipientId_user_id_fk",
-          "tableFrom": "messages",
-          "tableTo": "user",
-          "columnsFrom": [
-            "recipientId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
+          "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {
-        "messages_senderId_recipientId_pk": {
-          "name": "messages_senderId_recipientId_pk",
-          "columns": [
-            "senderId",
-            "recipientId"
-          ]
-        }
-      },
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
     "public.organizations": {
@@ -351,11 +374,32 @@
           "name": "createdOn",
           "type": "timestamp",
           "primaryKey": false,
+          "notNull": true,
+          "default": "NOW()"
+        },
+        "creatorId": {
+          "name": "creatorId",
+          "type": "text",
+          "primaryKey": false,
           "notNull": true
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "organizations_creatorId_user_id_fk": {
+          "name": "organizations_creatorId_user_id_fk",
+          "tableFrom": "organizations",
+          "tableTo": "user",
+          "columnsFrom": [
+            "creatorId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
@@ -588,7 +632,8 @@
           "name": "createdAt",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "NOW()"
         }
       },
       "indexes": {},
