@@ -1,9 +1,15 @@
 "use client";
 import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { updateUser, userSkills } from "@/app/profile/form/actions";
+import {
+  addUserSkill,
+  deleteUserSkill,
+  updateUser,
+  userSkills,
+} from "@/app/profile/form/actions";
 import { useEffect, useState } from "react";
 import Talents from "./talents";
+import Viewer from "./viewer";
 
 import {
   Form,
@@ -18,6 +24,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 //From https://ui.shadcn.com/docs/components/form
 import { z } from "zod";
@@ -56,28 +63,84 @@ type userInput = {
   bio: string;
 };
 
+type skills = {
+  skillId: string;
+  skillName: string;
+}[];
+
+type skill = {
+  skill: string;
+};
+
+type UserSkill = {
+  skillId: string;
+  skillName: string;
+};
+
 const EditUserPage = ({ ...props }: any) => {
   //From https://ui.shadcn.com/docs/components/form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      picture: props?.picture,
-      username: props?.name,
-      bio: props?.bio,
+      picture: props.values.picture,
+      username: props.values.name,
+      bio: props.values.bio,
     },
   });
 
-  const [skillsList, editSkillsList] = useState();
-  const [skillDeleteList, editSkillDeleteList] = useState();
+  const [skillsList, editSkillsList] = useState<skills>();
+  const [skillDeleteList, editSkillDeleteList] = useState<skills>();
 
-  function addSkill(props: any) {
-    editSkillDeleteList(props);
-    editSkillsList(props);
+  function addSkill(props: skills) {
+    if (skillDeleteList == undefined) {
+      if (skillsList == undefined) {
+        editSkillsList(props);
+      } else {
+        editSkillsList(skillsList.concat(props));
+      }
+    } else {
+      let found: boolean = false;
+      for (let i = 0; i < skillDeleteList.length; i++) {
+        if (skillDeleteList[i].skillId == props[0].skillId) {
+          found = true;
+
+          editSkillDeleteList(skillDeleteList.toSpliced(i, 1));
+        }
+      }
+      if (!found) {
+        if (skillsList == undefined) {
+          editSkillsList(props);
+        } else {
+          editSkillsList(skillsList.concat(props));
+        }
+      }
+    }
   }
 
-  function removeSkill(props: any) {
-    editSkillsList(props);
-    editSkillDeleteList(props);
+  function removeSkill(props: skills) {
+    if (skillsList == undefined) {
+      if (skillDeleteList == undefined) {
+        editSkillDeleteList(props);
+      } else {
+        editSkillDeleteList(skillDeleteList.concat(props));
+      }
+    } else {
+      let found: boolean = false;
+      for (let i = 0; i < skillsList.length; i++) {
+        if (skillsList[i].skillId == props[0].skillId) {
+          found = true;
+
+          editSkillsList(skillsList.toSpliced(i, 1));
+        }
+      }
+      if (!found) {
+        if (skillDeleteList == undefined) {
+          editSkillDeleteList(props);
+        } else {
+          editSkillDeleteList(skillDeleteList.concat(props));
+        }
+      }
+    }
   }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -86,24 +149,72 @@ const EditUserPage = ({ ...props }: any) => {
       username: values.username,
       bio: values.bio,
     };
-    console.log(values);
+
+    if (skillsList != undefined) {
+      for (let i = 0; i < skillsList.length; i++) {
+        let skillID: skill = { skill: skillsList[i].skillId };
+        await addUserSkill(skillID);
+      }
+    }
+
+    if (skillDeleteList != undefined) {
+      for (let i = 0; i < skillDeleteList.length; i++) {
+        let skillID: skill = { skill: skillDeleteList[i].skillId };
+        await deleteUserSkill(skillID);
+      }
+    }
     await updateUser(input);
-    //Add for loops to add and delete skills
+
     props.setEditProfile(false);
+    let newValues = props.values;
+    //For user skills remove skills from the remove list and add the skills from the add list
+    if (skillDeleteList != undefined) {
+      for (let i = 0; i < skillDeleteList.length; i++) {
+        for (let j = 0; j < newValues.userS.length; j++)
+          if (skillDeleteList[i].skillId == newValues.userS[j].skillId) {
+            newValues.userS = newValues.userS.toSpliced(j, 1);
+          }
+      }
+    }
+    if (skillsList != undefined) {
+      for (let i = 0; i < skillsList.length; i++) {
+        for (let j = 0; j < newValues.skills.length; j++)
+          if (skillsList[i].skillId == newValues.skills[j].skillId) {
+            newValues.skills = newValues.skills.toSpliced(j, 1);
+          }
+      }
+    }
+    newValues.name = values.username;
+    newValues.bio = values.bio;
+    newValues.picture = values.picture;
+
+    props.setValues(newValues);
+    editSkillsList(undefined);
+    editSkillDeleteList(undefined);
   }
+
   // Form layout from https://ui.shadcn.com/docs/components/form
+
   return (
     <div className="w-1/2 m-auto mt-20">
       <header className="text-2xl text-center font-bold">Volunteer Form</header>
 
       <div className="w-full m-auto mt-10">
         <img
-          src={props?.picture}
+          src={props.values.picture}
           alt="User Profile Picture"
           className="m-auto rounded-xl"
         />
       </div>
-      <Talents skill={props.skills} userS={props.userS} />
+
+      <div id="skills">
+        <Talents
+          skill={props.values.skills}
+          userS={props.values.userS}
+          addSkill={addSkill}
+          removeSkill={removeSkill}
+        />
+      </div>
       <br />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -165,6 +276,7 @@ const EditUserPage = ({ ...props }: any) => {
 
 export default function UserPage(props: InputValues) {
   const [editProfile, setEditProfile] = useState(true);
+  const [values, setValues] = useState<InputValues>(props);
 
   return (
     <>
@@ -172,9 +284,12 @@ export default function UserPage(props: InputValues) {
         <EditUserPage
           editProfile={editProfile}
           setEditProfile={setEditProfile}
-          {...props}
+          values={values}
+          setValues={setValues}
         />
-      ) : null}
+      ) : (
+        <Viewer values={values} setEditProfile={setEditProfile} />
+      )}
     </>
   );
 }

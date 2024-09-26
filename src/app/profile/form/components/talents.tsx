@@ -34,6 +34,8 @@ const formSchema = z.object({
 type input = {
   skill: Skills;
   userS: UserSkills;
+  addSkill: any;
+  removeSkill: any;
 };
 type Skills = {
   skillId: string;
@@ -50,7 +52,7 @@ type skill = {
 };
 
 export default function Talents(props: input) {
-  const [userS, setUserS] = useState<UserSkills>(props.userS);
+  const [userS, setUserS] = useState<Skills>(props.userS);
   const [skills, setSkills] = useState<Skills>(props.skill);
   const [render, setRender] = useState(0);
   // 1. Define your form.
@@ -69,7 +71,8 @@ export default function Talents(props: input) {
     const skill: skill = { skill: values.skillId };
     if (skill.skill != "0") {
       setRender(render + 1);
-      await addUserSkill(skill);
+
+      //await addUserSkill(skill);
 
       for (let i = 0; i < skills.length; i++) {
         if (skills[i].skillId == skill.skill) {
@@ -78,13 +81,18 @@ export default function Talents(props: input) {
         }
       }
 
+      props.addSkill([
+        { skillId: values.skillId, skillName: values.skillName },
+      ]);
+
       const length = userS.push(values);
       setUserS(userS);
     }
   }
   if (userS != undefined) {
     // Issue with reusing keys on rerenders
-
+    // Form layout from https://ui.shadcn.com/docs/components/form
+    // Select layout from https://ui.shadcn.com/docs/components/select
     return (
       <div>
         <table>
@@ -97,6 +105,9 @@ export default function Talents(props: input) {
                     skillId={skill.skillId}
                     skills={skills}
                     setSkills={setSkills}
+                    removeSkill={props.removeSkill}
+                    setUserS={setUserS}
+                    userS={userS}
                   />
                 </td>
               ))}
@@ -117,7 +128,7 @@ export default function Talents(props: input) {
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a verified email to display" />
+                        <SelectValue placeholder="skillId" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>

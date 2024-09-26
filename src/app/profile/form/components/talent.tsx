@@ -3,7 +3,7 @@ import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { deleteUserSkill } from "../actions";
 import { Badge } from "@/components/ui/badge";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 type skill = {
   skillId: string;
@@ -19,6 +19,9 @@ type input = {
   skillId: string;
   skills: Skills;
   setSkills: React.Dispatch<React.SetStateAction<Skills>>;
+  removeSkill: any;
+  setUserS: React.Dispatch<React.SetStateAction<Skills>>;
+  userS: Skills;
 };
 type deleteSkill = {
   skill: string;
@@ -34,12 +37,19 @@ export default function Talent({ ...props }: input) {
   });
 
   const onSubmit: SubmitHandler<skill> = async (data) => {
-    const skill: deleteSkill = { skill: data.skillId };
-    await deleteUserSkill(skill);
-
+    //await deleteUserSkill(skill);
+    let newUserSkill = props.userS;
+    for (let i = 0; i < newUserSkill.length; i++) {
+      if (newUserSkill[i].skillId == data.skillId) {
+        newUserSkill = newUserSkill.toSpliced(i, 1);
+        props.setUserS(newUserSkill);
+      }
+    }
+    props.removeSkill([{ skillId: data.skillId, skillName: data.skillName }]);
     setShow(false);
     let newSkills = props.skills;
     newSkills.unshift(data);
+
     props.setSkills(newSkills);
   };
 
@@ -53,6 +63,6 @@ export default function Talent({ ...props }: input) {
       </form>
     );
   } else {
-    return <div></div>;
+    return null;
   }
 }
