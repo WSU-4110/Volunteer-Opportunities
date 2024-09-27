@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1726071166268,
-      "tag": "0000_magenta_hercules",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1726073587298,
-      "tag": "0001_glossy_guardian",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1727201753761,
-      "tag": "0002_shocking_vance_astro",
+      "when": 1727290863327,
+      "tag": "0000_known_malice",
       "breakpoints": true
     }
   ]
