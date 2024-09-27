@@ -35,4 +35,4 @@ next-env.d.ts
 
 #package.json and eslintrc.json files
 .eslintrc.json
-package.json
+package-lock.json
