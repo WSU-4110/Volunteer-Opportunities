@@ -10,7 +10,7 @@ import {
 import { useEffect, useState } from "react";
 import Talents from "./talents";
 import Viewer from "./viewer";
-
+import Organization from "./organization";
 import {
   Form,
   FormControl,
@@ -25,6 +25,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+
+import { useUserStatusStore } from "@/stores/userStatusStore";
 
 //From https://ui.shadcn.com/docs/components/form
 import { z } from "zod";
@@ -49,6 +51,13 @@ type InputValues = {
     skillName: string;
     url: string;
   }[];
+  organizations: {
+    id: string;
+    name: string;
+    image: any;
+  }[];
+
+  listings: any;
 };
 
 type FormValues = {
@@ -277,18 +286,29 @@ const EditUserPage = ({ ...props }: any) => {
 export default function UserPage(props: InputValues) {
   const [editProfile, setEditProfile] = useState(false);
   const [values, setValues] = useState<InputValues>(props);
+  const userStatus = useUserStatusStore((state) => state);
 
   return (
     <>
-      {editProfile ? (
-        <EditUserPage
-          editProfile={editProfile}
-          setEditProfile={setEditProfile}
-          values={values}
-          setValues={setValues}
-        />
+      {userStatus.userStatus || props.organizations.length == 0 ? (
+        <>
+          {editProfile ? (
+            <EditUserPage
+              editProfile={editProfile}
+              setEditProfile={setEditProfile}
+              values={values}
+              setValues={setValues}
+            />
+          ) : (
+            <Viewer values={values} setEditProfile={setEditProfile} />
+          )}
+        </>
       ) : (
-        <Viewer values={values} setEditProfile={setEditProfile} />
+        <>
+          <div>
+            <Organization props={props} />
+          </div>
+        </>
       )}
     </>
   );

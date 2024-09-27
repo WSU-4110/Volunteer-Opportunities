@@ -1,5 +1,5 @@
 "use server";
-import { eq, notExists, notInArray } from "drizzle-orm";
+import { eq, notExists, notInArray, and } from "drizzle-orm";
 import {
   users,
   skills,
@@ -108,7 +108,7 @@ async function interalDeleteUserSkill(skill: string, id: string) {
   await database
     .delete(skillsToUsers)
     .where(
-      eq(skillsToUsers.volunteerId, id) && eq(skillsToUsers.skillId, skill)
+      and(eq(skillsToUsers.volunteerId, id), eq(skillsToUsers.skillId, skill))
     );
 }
 
@@ -172,9 +172,7 @@ export const getOrganizations = authenticatedAction
         })
         .from(organizations)
         .where(eq(organizations.id, user.id));
-    } else {
-      return null;
-    }
+    } else return null;
   });
 
 export const getListings = authenticatedAction
