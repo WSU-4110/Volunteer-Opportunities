@@ -1,11 +1,13 @@
 "use server";
-import { eq, notExists, notInArray } from "drizzle-orm";
+import { and, eq, inArray, notExists, notInArray } from "drizzle-orm";
 import { users, skills, skillsToUsers } from "@/database/schema";
 import { database } from "@/database/index";
 import { authenticatedAction } from "@/lib/safe-action";
 import { unauthenticatedAction } from "@/lib/safe-action";
+import { revalidatePath } from "next/cache";
 
 import { z } from "zod";
+import { redirect } from "next/navigation";
 
 // Select Statements for User Profile
 // Convert to internal fumctions
@@ -89,20 +91,24 @@ export const deleteUserSkill = authenticatedAction
   .createServerAction()
   .input(
     z.object({
-      skill: z.string(),
+      skill: z.array(z.string()),
     })
   )
   .handler(async ({ ctx: { user }, input: { skill } }) => {
     if (user != undefined) {
-      return interalDeleteUserSkill(skill, user.id);
+      return internalDeleteUserSkill(skill, user.id);
     }
   });
 
-async function interalDeleteUserSkill(skill: string, id: string) {
+async function internalDeleteUserSkill(deleteUserSkills: string[], id: string) {
+  console.log(deleteUserSkills);
   await database
     .delete(skillsToUsers)
     .where(
-      eq(skillsToUsers.volunteerId, id) && eq(skillsToUsers.skillId, skill)
+      and(
+        eq(skillsToUsers.volunteerId, id),
+        inArray(skillsToUsers.skillId, deleteUserSkills)
+      )
     );
 }
 
@@ -110,7 +116,7 @@ export const addUserSkill = authenticatedAction
   .createServerAction()
   .input(
     z.object({
-      skill: z.string(),
+      skill: z.array(z.string()),
     })
   )
   .handler(async ({ ctx: { user }, input: { skill } }) => {
@@ -119,10 +125,12 @@ export const addUserSkill = authenticatedAction
     }
   });
 
-async function internalAddUserSkill(id: string, skill: string) {
-  await database
-    .insert(skillsToUsers)
-    .values({ skillId: skill, volunteerId: id });
+async function internalAddUserSkill(id: string, skills: string[]) {
+  await database.insert(skillsToUsers).values(
+    skills.map((skill) => {
+      return { skillId: skill, volunteerId: id };
+    })
+  );
 }
 
 export const updateUser = authenticatedAction
@@ -151,3 +159,7 @@ export async function internalUpdateUser(
     .set({ name: username, image: picture, bio: bio })
     .where(eq(users.id, id));
 }
+
+export const revalidatePathAction = () => {
+  revalidatePath("/profile/form");
+};

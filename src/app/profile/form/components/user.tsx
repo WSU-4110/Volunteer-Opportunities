@@ -20,6 +20,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { revalidatePathAction } from "@/app/profile/form/actions";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -50,33 +51,10 @@ type InputValues = {
     url: string;
   }[];
 };
-
-type FormValues = {
-  name: string;
-  picture: string;
-  bio: string;
-};
-
-type userInput = {
-  picture: string;
-  username: string;
-  bio: string;
-};
-
 type skills = {
   skillId: string;
   skillName: string;
 }[];
-
-type skill = {
-  skill: string;
-};
-
-type UserSkill = {
-  skillId: string;
-  skillName: string;
-};
-
 const EditUserPage = ({ ...props }: any) => {
   //From https://ui.shadcn.com/docs/components/form
   const form = useForm<z.infer<typeof formSchema>>({
@@ -88,109 +66,55 @@ const EditUserPage = ({ ...props }: any) => {
     },
   });
 
-  const [skillsList, editSkillsList] = useState<skills>();
-  const [skillDeleteList, editSkillDeleteList] = useState<skills>();
+  const [skillsList, editSkillsList] = useState<skills>([]);
+  const [skillDeleteList, editSkillDeleteList] = useState<skills>([]);
+  const [skillsUserDoesntHave, setSkillsUserDoesntHave] = useState<skills>(
+    props.skills
+  );
+  const [skillsUserHas, setSkillsUserHas] = useState<skills>(props.userS);
 
   function addSkill(props: skills) {
-    if (skillDeleteList == undefined) {
-      if (skillsList == undefined) {
-        editSkillsList(props);
-      } else {
-        editSkillsList(skillsList.concat(props));
-      }
-    } else {
-      let found: boolean = false;
-      for (let i = 0; i < skillDeleteList.length; i++) {
-        if (skillDeleteList[i].skillId == props[0].skillId) {
-          found = true;
-
-          editSkillDeleteList(skillDeleteList.toSpliced(i, 1));
-        }
-      }
-      if (!found) {
-        if (skillsList == undefined) {
-          editSkillsList(props);
-        } else {
-          editSkillsList(skillsList.concat(props));
-        }
-      }
-    }
+    console.log(props);
+    editSkillsList((prevState) => [...prevState, ...props]);
+    editSkillDeleteList((prevState) =>
+      prevState.filter((skill) => skill.skillId != props[0].skillId)
+    );
+    setSkillsUserDoesntHave((prevState) =>
+      prevState.filter((skill) => skill.skillId != props[0].skillId)
+    );
+    setSkillsUserHas((prevState) => [...prevState, ...props]);
   }
 
   function removeSkill(props: skills) {
-    if (skillsList == undefined) {
-      if (skillDeleteList == undefined) {
-        editSkillDeleteList(props);
-      } else {
-        editSkillDeleteList(skillDeleteList.concat(props));
-      }
-    } else {
-      let found: boolean = false;
-      for (let i = 0; i < skillsList.length; i++) {
-        if (skillsList[i].skillId == props[0].skillId) {
-          found = true;
-
-          editSkillsList(skillsList.toSpliced(i, 1));
-        }
-      }
-      if (!found) {
-        if (skillDeleteList == undefined) {
-          editSkillDeleteList(props);
-        } else {
-          editSkillDeleteList(skillDeleteList.concat(props));
-        }
-      }
-    }
+    editSkillDeleteList((prevState) => [...prevState, ...props]);
+    editSkillsList((prevState) =>
+      prevState.filter((skill) => skill.skillId != props[0].skillId)
+    );
+    setSkillsUserHas((prevState) => {
+      return prevState.filter((skill) => skill.skillId != props[0].skillId);
+    });
+    setSkillsUserDoesntHave((prevState) => [...prevState, ...props]);
   }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const input: userInput = {
+    const input = {
       picture: values.picture,
       username: values.username,
       bio: values.bio,
     };
-
-    if (skillsList != undefined) {
-      for (let i = 0; i < skillsList.length; i++) {
-        let skillID: skill = { skill: skillsList[i].skillId };
-        await addUserSkill(skillID);
-      }
+    if (skillsList.length > 0) {
+      await addUserSkill({
+        skill: skillsList.map((skill) => skill.skillId),
+      });
     }
-
-    if (skillDeleteList != undefined) {
-      for (let i = 0; i < skillDeleteList.length; i++) {
-        let skillID: skill = { skill: skillDeleteList[i].skillId };
-        await deleteUserSkill(skillID);
-      }
+    if (skillDeleteList.length > 0) {
+      await deleteUserSkill({
+        skill: skillDeleteList.map((skill) => skill.skillId),
+      });
     }
     await updateUser(input);
-
+    revalidatePathAction();
     props.setEditProfile(false);
-    let newValues = props.values;
-    //For user skills remove skills from the remove list and add the skills from the add list
-    if (skillDeleteList != undefined) {
-      for (let i = 0; i < skillDeleteList.length; i++) {
-        for (let j = 0; j < newValues.userS.length; j++)
-          if (skillDeleteList[i].skillId == newValues.userS[j].skillId) {
-            newValues.userS = newValues.userS.toSpliced(j, 1);
-          }
-      }
-    }
-    if (skillsList != undefined) {
-      for (let i = 0; i < skillsList.length; i++) {
-        for (let j = 0; j < newValues.skills.length; j++)
-          if (skillsList[i].skillId == newValues.skills[j].skillId) {
-            newValues.skills = newValues.skills.toSpliced(j, 1);
-          }
-      }
-    }
-    newValues.name = values.username;
-    newValues.bio = values.bio;
-    newValues.picture = values.picture;
-
-    props.setValues(newValues);
-    editSkillsList(undefined);
-    editSkillDeleteList(undefined);
   }
 
   // Form layout from https://ui.shadcn.com/docs/components/form
@@ -209,10 +133,10 @@ const EditUserPage = ({ ...props }: any) => {
 
       <div id="skills">
         <Talents
-          skill={props.values.skills}
-          userS={props.values.userS}
           addSkill={addSkill}
           removeSkill={removeSkill}
+          skillsUserHas={skillsUserHas}
+          skillsUserDoesntHave={skillsUserDoesntHave}
         />
       </div>
       <br />
@@ -276,7 +200,6 @@ const EditUserPage = ({ ...props }: any) => {
 
 export default function UserPage(props: InputValues) {
   const [editProfile, setEditProfile] = useState(true);
-  const [values, setValues] = useState<InputValues>(props);
 
   return (
     <>
@@ -284,11 +207,12 @@ export default function UserPage(props: InputValues) {
         <EditUserPage
           editProfile={editProfile}
           setEditProfile={setEditProfile}
-          values={values}
-          setValues={setValues}
+          values={props}
+          skills={props.skills}
+          userS={props.userS}
         />
       ) : (
-        <Viewer values={values} setEditProfile={setEditProfile} />
+        <Viewer values={props} setEditProfile={setEditProfile} />
       )}
     </>
   );

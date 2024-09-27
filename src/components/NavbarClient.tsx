@@ -166,7 +166,7 @@ const Navbar = ({
                             <Switch
                               checked={userStatus}
                               setChecked={changeUserStatus}
-                              key={"switch1"}
+                              specialKey={"switch1"}
                             />
                           </div>
                         </div>
@@ -247,7 +247,7 @@ const Navbar = ({
               <Switch
                 checked={userStatus}
                 setChecked={changeUserStatus}
-                key={"switch2"}
+                specialKey={"switch2"}
               />
             </div>
           </>

@@ -2,31 +2,14 @@ import react from "react";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { useForm } from "react-hook-form";
 
 import { cn } from "@/lib/utils";
 
-type InputValues = {
-  name: string;
-  picture: string;
-  bio: string;
-  skills: {
-    skillId: string;
-    skillName: string;
-  }[];
-  userS: {
-    skillId: string;
-    skillName: string;
-    url: string;
-  }[];
-};
-
 export default function Viewer(props: any) {
-  const form = useForm();
-
-  async function onSubmit() {
+  const onSubmit = async () => {
     props.setEditProfile(true);
-  }
+  };
+
   return (
     <div className="w-1/2 m-auto mt-20">
       <header className="text-2xl text-center font-bold">Volunteer Page</header>
@@ -69,9 +52,9 @@ export default function Viewer(props: any) {
       <Label htmlFor="organizations">Organizations</Label>
       <p id="organizations">placeholder for organizations</p>
       <br />
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <Button type="submit">edit</Button>
-      </form>
+      <Button onClick={onSubmit} type="submit">
+        edit
+      </Button>
     </div>
   );
 }
