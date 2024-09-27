@@ -4,69 +4,10 @@ import { userData, getSkills, userSkills } from "./actions";
 
 import { useState, useEffect } from "react";
 
-type skill =
-  | [
-      (
-        | {
-            skillId: string;
-            skillName: string;
-          }[]
-        | null
-      ),
-      null
-    ]
-  | [
-      null,
-      {
-        code: string;
-        message: string;
-      }
-    ];
-
-type uData =
-  | [
-      null,
-      {
-        code: string;
-        message: string;
-      }
-    ]
-  | [
-      (
-        | {
-            name: string;
-            image: string | null;
-            bio: string;
-          }[]
-        | null
-      ),
-      null
-    ];
-
-type uSkills =
-  | [
-      (
-        | {
-            skillId: string;
-            skillName: string;
-            url: string;
-          }[]
-        | null
-      ),
-      null
-    ]
-  | [
-      null,
-      {
-        code: any;
-        message: string;
-      }
-    ];
-
 export default async function EditProfile() {
-  const skills: skill = await getSkills();
-  const userD: uData = await userData();
-  const userSkill: uSkills = await userSkills();
+  const skills = await getSkills();
+  const userD = await userData();
+  const userSkill = await userSkills();
 
   if (skills != null && userD != null && userSkill != null) {
     const picture = userD[0]![0].image || "";

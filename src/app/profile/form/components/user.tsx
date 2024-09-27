@@ -275,7 +275,7 @@ const EditUserPage = ({ ...props }: any) => {
 };
 
 export default function UserPage(props: InputValues) {
-  const [editProfile, setEditProfile] = useState(true);
+  const [editProfile, setEditProfile] = useState(false);
   const [values, setValues] = useState<InputValues>(props);
 
   return (

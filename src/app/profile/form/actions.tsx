@@ -1,6 +1,12 @@
 "use server";
 import { eq, notExists, notInArray } from "drizzle-orm";
-import { users, skills, skillsToUsers } from "@/database/schema";
+import {
+  users,
+  skills,
+  skillsToUsers,
+  organizations,
+  listings,
+} from "@/database/schema";
 import { database } from "@/database/index";
 import { authenticatedAction } from "@/lib/safe-action";
 import { unauthenticatedAction } from "@/lib/safe-action";
@@ -140,7 +146,7 @@ export const updateUser = authenticatedAction
     }
   });
 
-export async function internalUpdateUser(
+async function internalUpdateUser(
   picture: string,
   username: string,
   bio: string,
@@ -151,3 +157,43 @@ export async function internalUpdateUser(
     .set({ name: username, image: picture, bio: bio })
     .where(eq(users.id, id));
 }
+
+//Organization database calls
+
+export const getOrganizations = authenticatedAction
+  .createServerAction()
+  .handler(async ({ ctx: { user } }) => {
+    if (user != undefined) {
+      return await database
+        .select({
+          id: organizations.id,
+          name: organizations.name,
+          image: organizations,
+        })
+        .from(organizations)
+        .where(eq(organizations.id, user.id));
+    } else {
+      return null;
+    }
+  });
+
+export const getListings = authenticatedAction
+  .createServerAction()
+  .input(
+    z.object({
+      orgID: z.string(),
+    })
+  )
+  .handler(async ({ ctx: { user }, input: { orgID } }) => {
+    if (user != undefined) {
+      return await database
+        .select({
+          id: listings.id,
+          name: listings.name,
+          description: listings.description,
+        })
+        .from(listings)
+        .where(eq(listings.organizationId, orgID));
+    }
+  });
+//Listings database calls
