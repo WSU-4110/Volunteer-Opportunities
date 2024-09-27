@@ -35,8 +35,4 @@ next-env.d.ts
 
 #package.json and eslintrc.json files
 .eslintrc.json
-package.json
-
-
-# vscode settings
-/.vscode
+package-lock.json

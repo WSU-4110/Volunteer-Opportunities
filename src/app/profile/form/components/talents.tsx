@@ -32,29 +32,17 @@ const formSchema = z.object({
 });
 
 type input = {
-  skill: Skills;
-  userS: UserSkills;
   addSkill: any;
   removeSkill: any;
+  skillsUserHas: Skills;
+  skillsUserDoesntHave: Skills;
 };
 type Skills = {
   skillId: string;
   skillName: string;
 }[];
 
-type UserSkills = {
-  skillId: string;
-  skillName: string;
-}[];
-
-type skill = {
-  skill: string;
-};
-
 export default function Talents(props: input) {
-  const [userS, setUserS] = useState<Skills>(props.userS);
-  const [skills, setSkills] = useState<Skills>(props.skill);
-  const [render, setRender] = useState(0);
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -66,94 +54,65 @@ export default function Talents(props: input) {
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    const skill: skill = { skill: values.skillId };
-    if (skill.skill != "0") {
-      setRender(render + 1);
-
-      //await addUserSkill(skill);
-
-      for (let i = 0; i < skills.length; i++) {
-        if (skills[i].skillId == skill.skill) {
-          values.skillName = skills[i].skillName;
-          setSkills(skills.toSpliced(i, 1));
-        }
-      }
-
-      props.addSkill([
-        { skillId: values.skillId, skillName: values.skillName },
-      ]);
-
-      const length = userS.push(values);
-      setUserS(userS);
-    }
-  }
-  if (userS != undefined) {
-    // Issue with reusing keys on rerenders
-    // Form layout from https://ui.shadcn.com/docs/components/form
-    // Select layout from https://ui.shadcn.com/docs/components/select
-    return (
-      <div>
-        <table>
-          <tbody>
-            <tr>
-              {userS.map((skill: { skillId: string; skillName: string }) => (
-                <td key={skill.skillName}>
-                  <Talent
-                    skillName={skill.skillName}
-                    skillId={skill.skillId}
-                    skills={skills}
-                    setSkills={setSkills}
-                    removeSkill={props.removeSkill}
-                    setUserS={setUserS}
-                    userS={userS}
-                  />
-                </td>
-              ))}
-            </tr>
-          </tbody>
-        </table>
-        <br />
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <FormField
-              control={form.control}
-              name="skillId"
-              render={({ field }) => (
-                <FormItem>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="skillId" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {skills.map(
-                        (skill: { skillId: string; skillName: string }) => (
-                          <SelectItem
-                            value={skill.skillId}
-                            key={skill.skillId + render}
-                            id={skill.skillId}
-                          >
-                            {skill.skillName}
-                          </SelectItem>
-                        )
-                      )}
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>Add another skill</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button type="submit">Add</Button>
-          </form>
-        </Form>
-      </div>
+    const selectedSkill = props.skillsUserDoesntHave.find(
+      (skill) => skill.skillId === values.skillId
     );
+    props.addSkill([
+      { skillId: values.skillId, skillName: selectedSkill?.skillName },
+    ]);
   }
+  return (
+    <>
+      <div className="flex flex-row items-center gap-4 w-full">
+        {props.skillsUserHas.map((skill) => (
+          <div key={skill.skillId}>
+            <Talent
+              skillName={skill.skillName}
+              skillId={skill.skillId}
+              removeSkill={props.removeSkill}
+            />
+          </div>
+        ))}
+      </div>
+      <br />
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <FormField
+            control={form.control}
+            name="skillId"
+            render={({ field }) => (
+              <FormItem>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="skillId" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {props.skillsUserDoesntHave.map(
+                      (skill: { skillId: string; skillName: string }) => (
+                        <SelectItem
+                          value={skill.skillId}
+                          key={skill.skillId}
+                          id={skill.skillId}
+                        >
+                          {skill.skillName}
+                        </SelectItem>
+                      )
+                    )}
+                  </SelectContent>
+                </Select>
+                <FormDescription>Add another skill</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit">Add</Button>
+        </form>
+      </Form>
+    </>
+  );
 }

@@ -19,6 +19,9 @@ export default async function EditProfile() {
   const userD = await userData();
   const userSkill = await userSkills();
 
+  console.log(userSkill);
+  console.log(skills);
+
   const organizations = await getOrganizations();
 
   if (

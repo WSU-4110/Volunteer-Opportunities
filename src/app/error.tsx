@@ -1,6 +1,6 @@
 "use client";
 
-import { AUTHENTICATION_ERROR_MESSAGE, CustomError } from "./util";
+import { AUTHENTICATION_ERROR_MESSAGE, CustomError } from "@/util";
 
 export default function ErrorPage({
   error,
