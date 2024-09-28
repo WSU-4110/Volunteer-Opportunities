@@ -7,9 +7,6 @@ export default async function EditProfile() {
   const userD = await userData();
   const userSkill = await userSkills();
 
-  console.log(userSkill);
-  console.log(skills);
-
   if (skills != null && userD != null && userSkill != null) {
     const picture = userD[0]![0].image || "";
     return (
