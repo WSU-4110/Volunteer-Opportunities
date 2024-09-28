@@ -204,7 +204,9 @@ const EditUserPage = ({ ...props }: any) => {
           <table>
             <tbody>
               <tr>
-                <Button type="submit">Submit</Button>
+                <td>
+                  <Button type="submit">Submit</Button>
+                </td>
                 <td>
                   <Button
                     onClick={() => {
