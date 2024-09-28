@@ -15,6 +15,7 @@ import { revalidatePath } from "next/cache";
 
 import { z } from "zod";
 import { redirect } from "next/navigation";
+import { timeStamp } from "console";
 
 // Select Statements for User Profile
 // Convert to internal fumctions
@@ -177,10 +178,10 @@ export const getOrganizations = authenticatedAction
         .select({
           id: organizations.id,
           name: organizations.name,
-          image: organizations,
+          image: organizations.imageUrl,
         })
         .from(organizations)
-        .where(eq(organizations.id, user.id));
+        .where(eq(organizations.creator, user.id));
     } else return null;
   });
 
@@ -195,7 +196,9 @@ export const getListings = authenticatedAction
     if (user != undefined) {
       return await database
         .select({
+          organizationId: listings.organizationId,
           id: listings.id,
+
           name: listings.name,
           description: listings.description,
         })
@@ -203,6 +206,51 @@ export const getListings = authenticatedAction
         .where(eq(listings.organizationId, orgID));
     }
   });
+
+export const updateOrganization = authenticatedAction
+  .createServerAction()
+  .input(
+    z.object({
+      picture: z.string(),
+      name: z.string(),
+      id: z.string(),
+    })
+  )
+  .handler(async ({ ctx: { user }, input: { picture, name, id } }) => {
+    if (user != undefined) {
+      return internalUpdateOrg(picture, name, id, user.id);
+    }
+  });
+
+async function internalUpdateOrg(
+  picture: string,
+  name: string,
+  id: string,
+  userID: string
+) {
+  console.log(name);
+  await database
+    .update(organizations)
+    .set({ name: name, imageUrl: picture })
+    .where(eq(organizations.id, id));
+}
+
+export const addOrganization = authenticatedAction
+  .createServerAction()
+  .input(
+    z.object({
+      picture: z.string(),
+      name: z.string(),
+    })
+  )
+  .handler(async ({ ctx: { user }, input: { picture, name } }) => {
+    if (user != undefined) {
+      return await database
+        .insert(organizations)
+        .values({ name: name, imageUrl: picture, creator: user.id });
+    }
+  });
+
 export const revalidatePathAction = () => {
   revalidatePath("/profile/form");
 };

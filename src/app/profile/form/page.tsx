@@ -19,9 +19,6 @@ export default async function EditProfile() {
   const userD = await userData();
   const userSkill = await userSkills();
 
-  console.log(userSkill);
-  console.log(skills);
-
   const organizations = await getOrganizations();
 
   if (
@@ -32,9 +29,6 @@ export default async function EditProfile() {
   ) {
     const picture = userD[0]![0].image || "";
     const listings = [];
-    console.log("Stuff");
-    console.log(organizations[0]!.length);
-    console.log(organizations);
     for (let i = 0; i < organizations[0]!.length; i++) {
       let id: organizationId = { orgID: organizations[0]![i].id };
       listings[i] = await getListings(id);
@@ -50,7 +44,7 @@ export default async function EditProfile() {
           skills={skills[0]!}
           userS={userSkill[0]!}
           organizations={organizations[0]!}
-          listings={listings[0]!}
+          listings={listings}
         ></UserPage>
       </div>
     );
