@@ -26,6 +26,8 @@ export const users = pgTable("user", {
   createdAt: timestamp("createdAt", { mode: "date" })
     .default(sql`NOW()`)
     .notNull(),
+  customFile: boolean("customImage").default(false),
+  userImage: json("customUserImage"),
 });
 
 export const accounts = pgTable(
@@ -100,13 +102,14 @@ export const organizations = pgTable("organizations", {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   name: text("name").notNull(),
-  imageUrl: text("imageUrl"),
+  thumbnail: json("thumbnail"),
   createdAt: timestamp("createdOn", { mode: "date" })
     .notNull()
     .default(sql`NOW()`),
   creator: text("creatorId")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
+  images: json("images"),
 });
 
 export const skills = pgTable("skills", {

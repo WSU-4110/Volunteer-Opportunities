@@ -33,6 +33,10 @@ export const authenticatedAction = createServerActionProcedure()
     const user = await database.query.users.findFirst({
       where: eq(users.id, userInfo?.user.id || ""),
     });
+
+    if (!user) {
+      throw new CustomError(AUTHENTICATION_ERROR_MESSAGE, 401);
+    }
     return { user };
   });
 
