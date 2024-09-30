@@ -35,7 +35,7 @@ export const authenticatedAction = createServerActionProcedure()
     });
 
     if (!user) {
-      throw new CustomError(AUTHENTICATION_ERROR_MESSAGE, 401);
+      throw new CustomError(AUTHENTICATION_ERROR_MESSAGE, 404);
     }
     return { user };
   });

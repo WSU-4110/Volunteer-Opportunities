@@ -118,7 +118,7 @@ export const uploadFileToDatabaseForUser = authenticatedAction
 
       await database
         .update(users)
-        .set({ userImage: listOfAddedStorageIds })
+        .set({ userImage: listOfAddedStorageIds, image: storageId })
         .where(eq(users.id, user.id));
 
       const deleteFileMutation = useMutation(api.mutations.deleteById);
