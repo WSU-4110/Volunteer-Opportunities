@@ -21,6 +21,7 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 import { Switch } from "@/components/ui/switch";
+import { v4 } from "uuid";
 
 import { useUserStatusStore } from "@/stores/userStatusStore";
 
@@ -45,16 +46,16 @@ const Navbar = ({
 
   return (
     <>
-      <div className="flex w-[100%] flex-row justify-between items-center m-auto py-4 px-10 2xl:px-36 sticky z-[40] shadow-lg">
+      <div className="flex w-[100%] flex-row justify-between items-center m-auto py-1 px-10 2xl:px-20 sticky z-[40] shadow-lg">
         <Link className="text-2xl cursor-pointer min-w-[240px]" href="/">
           <div className="flex flex-col justify-center items-center">
             <img
               src="/Favicon.png"
               alt="Volunteer Opportunities Logo"
-              width={"50px"}
-              height={"50px"}
+              width={"30px"}
+              height={"30px"}
             />
-            <h1 className="text-xl font-bold">Volunteer Opportunities</h1>
+            <h1 className="text-lg font-bold">Volunteer Opportunities</h1>
           </div>
         </Link>
 
@@ -153,9 +154,6 @@ const Navbar = ({
                                 <Link href={"/profile/view"} className="block">
                                   View Profile
                                 </Link>
-                                <Link href={"/profile/edit"} className="block">
-                                  Edit Profile
-                                </Link>
                               </div>
                             </div>
                           </div>
@@ -168,7 +166,8 @@ const Navbar = ({
                             <Switch
                               checked={userStatus}
                               setChecked={changeUserStatus}
-                            ></Switch>
+                              specialKey={"switch1"}
+                            />
                           </div>
                         </div>
                         <div className="flex flex-col w-full p-4 gap-3">
@@ -231,7 +230,6 @@ const Navbar = ({
                       description={authStatus?.user.email || ""}
                       src={authStatus?.user.image || "/blank_profile_pic.png"}
                     ></ProductItem>
-                    <HoveredLink href="/profile/edit">Edit Profile</HoveredLink>
                     <HoveredLink href="/profile/view">View Profile</HoveredLink>
                     <Button onClick={() => signOut()} variant={"destructive"}>
                       Sign Out
@@ -249,7 +247,8 @@ const Navbar = ({
               <Switch
                 checked={userStatus}
                 setChecked={changeUserStatus}
-              ></Switch>
+                specialKey={"switch2"}
+              />
             </div>
           </>
         ) : (

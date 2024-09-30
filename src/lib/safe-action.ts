@@ -1,21 +1,17 @@
-import { PublicError } from "@/app/Errors/errors";
 import { auth } from "@/auth";
 import { database } from "@/database";
 import { createServerActionProcedure } from "zsa";
 import { users } from "@/database/schema";
 import { eq } from "drizzle-orm";
+import { AUTHENTICATION_ERROR_MESSAGE, CustomError } from "@/util";
 
 function shapeErrors({ err }: any) {
-  const isAllowedError = err instanceof PublicError;
-  // let's all errors pass through to the UI so debugging locally is easier
-  const isDev = process.env.NODE_ENV === "development";
-  if (isAllowedError || isDev) {
+  const isAllowedError = err instanceof CustomError;
+  if (isAllowedError) {
     console.error(err);
     return {
-      code: err.code ?? "ERROR",
-      message: `${!isAllowedError && isDev ? "DEV ONLY ENABLED - " : ""}${
-        err.message
-      }`,
+      code: err.statusCode ?? "ERROR",
+      message: err.message,
     };
   } else {
     return {
@@ -30,9 +26,17 @@ export const authenticatedAction = createServerActionProcedure()
   .handler(async () => {
     const userInfo = await auth();
 
+    if (!userInfo?.user) {
+      throw new CustomError(AUTHENTICATION_ERROR_MESSAGE, 401);
+    }
+
     const user = await database.query.users.findFirst({
       where: eq(users.id, userInfo?.user.id || ""),
     });
+
+    if (!user) {
+      throw new CustomError(AUTHENTICATION_ERROR_MESSAGE, 404);
+    }
     return { user };
   });
 
