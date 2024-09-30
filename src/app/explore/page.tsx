@@ -1,17 +1,22 @@
 import { useEffect, useState } from "react";
-import { getListingsBySkill } from "./actions";
+import getListings, { getListingsBySkill } from "./actions";
 
 import Listing from "./(components)/Listing";
 
-export default function Explore() {
+export default async function Explore() {
+  const listings = await getListings();
   return (
-    <Listing
-      image={
-        <img src="https://static.vecteezy.com/system/resources/previews/024/193/043/non_2x/modern-office-building-business-center-neural-network-ai-generated-photo.jpg" />
-      }
-      title="Organization Inc."
-      description="This is an organization looking for talent"
-      talents={["Janitor", "Hardworking"]}
-    />
+    <>
+      {listings.map((item) => (
+        <Listing
+          image={
+            <img src={item.thumbnail == null ? undefined : item.thumbnail} />
+          }
+          title={item.name}
+          description={item.description}
+          talents={["WIP"]}
+        />
+      ))}
+    </>
   );
 }

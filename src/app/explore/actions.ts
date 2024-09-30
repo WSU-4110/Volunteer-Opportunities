@@ -9,6 +9,10 @@ import { skills, listings } from "@/database/schema";
 import { z } from "zod";
 import { eq } from "drizzle-orm";
 
+export default async function getListings() {
+  return await database.select().from(listings);
+}
+
 export const getListingsBySkill = authenticatedAction
   .createServerAction()
   .input(
