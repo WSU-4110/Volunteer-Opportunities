@@ -109,7 +109,6 @@ export const deleteUserSkill = authenticatedAction
   });
 
 async function internalDeleteUserSkill(deleteUserSkills: string[], id: string) {
-  console.log(deleteUserSkills);
   await database
     .delete(skillsToUsers)
     .where(

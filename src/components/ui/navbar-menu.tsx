@@ -120,10 +120,10 @@ export const ProductItem = ({
 }) => {
   return (
     <div className="flex space-x-2">
-      <Image
+      <img
         src={src}
-        width={140}
-        height={70}
+        width={"140px"}
+        height={"70px"}
         alt={title}
         className="flex-shrink-0 rounded-md shadow-2xl"
       />
