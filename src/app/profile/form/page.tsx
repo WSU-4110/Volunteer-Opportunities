@@ -15,6 +15,7 @@ type organizationId = {
 };
 
 export default async function EditProfile() {
+  console.log(await getSkills());
   const skills = await getSkills();
   const userD = await userData();
   const userSkill = await userSkills();
@@ -29,10 +30,11 @@ export default async function EditProfile() {
   ) {
     const picture = userD[0]![0].image || "";
     const listings = [];
-    for (let i = 0; i < organizations[0]!.length; i++) {
-      let id: organizationId = { orgID: organizations[0]![i].id };
-      listings[i] = await getListings(id);
-    }
+    if (organizations[0]! != null && organizations[0]! != undefined)
+      for (let i = 0; i < organizations[0]!.length; i++) {
+        let id: organizationId = { orgID: organizations[0]![i].id };
+        listings[i] = await getListings(id);
+      }
     return (
       <div>
         <header></header>

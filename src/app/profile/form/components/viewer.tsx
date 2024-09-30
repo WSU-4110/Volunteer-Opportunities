@@ -45,23 +45,28 @@ export default function Viewer(props: any) {
 
       <Label htmlFor="organizations">Organizations</Label>
       <table>
-        <tbody>
-          {props.values.organizations.map(
-            (org: { id: string; name: string; image: string }) => (
-              <tr key={org.id}>
-                <td>
-                  <img
-                    src={org.image}
-                    alt="Organization Profile Picture"
-                    className="m-auto rounded-xl"
-                  />
-                </td>
+        {props.values.organizations != null &&
+        props.values.organizations != undefined ? (
+          <tbody>
+            {props.values.organizations.map(
+              (org: { id: string; name: string; image: string }) => (
+                <tr key={org.id}>
+                  <td>
+                    <img
+                      src={org.image}
+                      alt="Organization Profile Picture"
+                      className="m-auto rounded-xl"
+                    />
+                  </td>
 
-                <td>{org.name}</td>
-              </tr>
-            )
-          )}
-        </tbody>
+                  <td>{org.name}</td>
+                </tr>
+              )
+            )}
+          </tbody>
+        ) : (
+          <tbody></tbody>
+        )}
       </table>
       <Button
         onClick={() => {

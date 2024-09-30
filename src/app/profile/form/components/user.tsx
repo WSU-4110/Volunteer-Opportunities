@@ -238,7 +238,9 @@ export default function UserPage(props: InputValues) {
   if (!addOrg) {
     return (
       <>
-        {!userStatus.userStatus || props.organizations!.length == 0 ? (
+        {!userStatus.userStatus ||
+        props.organizations == undefined ||
+        props.organizations == null ? (
           <>
             {editProfile ? (
               <EditUserPage
