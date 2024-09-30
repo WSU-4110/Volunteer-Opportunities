@@ -145,14 +145,12 @@ const InitializeMessageComponent = ({
                 </TabsTrigger>
               </TabsList>
               <TabsContent value="users">
-                {messagesOthers.map((otherUser: any) => {
-                  return (
-                    <div
-                      className="grid grid-cols-3 gap-4 justify-start items-center mt-20"
-                      key={otherUser.id}
-                    >
+                <div className="grid grid-cols-3 gap-4 mt-20">
+                  {messagesOthers.map((otherUser: any) => {
+                    return (
                       <Card
                         className={`p-4 shadow-lg cursor-pointer ${otherUser.selected ? "bg-slate-400" : ""}`}
+                        key={otherUser.id}
                         onClick={() => changePersonSelection(otherUser.id)}
                       >
                         <div className="flex flex-col gap-4 items-center justify-center w-full">
@@ -231,9 +229,9 @@ const InitializeMessageComponent = ({
                           </div>
                         </div>
                       </Card>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </TabsContent>
               <TabsContent value="organizations"></TabsContent>
             </Tabs>
