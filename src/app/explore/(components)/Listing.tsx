@@ -1,14 +1,5 @@
 import { ReactNode } from "react";
 
-// li {
-//     background-color: lightblue;
-//     width : fit-content;
-//     padding : 5px;
-//     margin : 5px;
-//     border-radius: 5px;
-//     float: left;
-// }
-
 interface ListingProps {
   image: ReactNode;
   title: string;
@@ -29,13 +20,15 @@ export default function Listing({
       <p>{description}</p>
       <p>Looking for the following talent:</p>
       <div>
-        <ul>
-          {talents.map((item) => (
-            <li className="bg-pink-300 w-fit p-[5px] m-[5px] rounded-[5px]">
-              {item}
-            </li>
-          ))}
-        </ul>
+        {talents.map((item) => (
+          <button
+            type="button"
+            key={item}
+            className="bg-pink-300 w-fit p-[5px] m-[5px] rounded-[5px]"
+          >
+            {item}
+          </button>
+        ))}
       </div>
     </div>
   );
