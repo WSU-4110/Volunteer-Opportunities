@@ -4,12 +4,26 @@ import { database } from "@/database/index";
 
 import { authenticatedAction } from "@/lib/safe-action";
 import { unauthenticatedAction } from "@/lib/safe-action";
-import { skills, listings } from "@/database/schema";
+import { skills, listings, skillsToListings } from "@/database/schema";
 
 import { z } from "zod";
 import { eq } from "drizzle-orm";
 
-export default async function getListings() {
+export async function getSkills() {
+  const listingSkillsQuery = await database.query.skillsToListings.findMany({
+    with: {
+      skills: true,
+    },
+  })
+
+  const listingSkills = listingSkillsQuery.map((item) => (
+    item.skills.name
+  ))
+
+  return listingSkills;
+}
+
+export async function getListings() {
   return await database.select().from(listings);
 }
 
