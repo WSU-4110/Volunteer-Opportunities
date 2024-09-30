@@ -36,7 +36,7 @@ type input = {
   organizations: {
     id: string;
     name: string;
-    image: string | null;
+    image: unknown;
   }[];
 
   listings: any;
@@ -65,14 +65,11 @@ const EditOrgPage = ({ ...props }: any) => {
     },
   });
   async function onSubmit(values: z.infer<typeof orgSchema>) {
-    console.log("submit");
-    console.log(
-      await updateOrganization({
-        picture: props.organizaitons[props.org.pos].image,
-        name: values.name,
-        id: props.org.id,
-      })
-    );
+    const error = await updateOrganization({
+      name: values.name,
+      id: props.org.id,
+    });
+
     revalidatePathAction();
     props.setEditProfile(false);
   }
@@ -129,7 +126,7 @@ const EditOrgPage = ({ ...props }: any) => {
 
 const ViewOrgPage = (props: any) => {
   return (
-    <div className="w-1/2 m-auto mt-20">
+    <div>
       <div className="w-full m-auto mt-10">
         <img
           src={props.organizaitons[props.org.pos].image}

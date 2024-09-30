@@ -57,7 +57,7 @@ type InputValues = {
   organizations: {
     id: string;
     name: string;
-    image: string | null;
+    image: unknown;
   }[];
 
   listings: any;
@@ -85,7 +85,7 @@ const EditUserPage = ({ ...props }: any) => {
   const [skillsUserHas, setSkillsUserHas] = useState<skills>(props.userS);
 
   function addSkill(props: skills) {
-    console.log(props);
+    //console.log(props);
     editSkillsList((prevState) => [...prevState, ...props]);
     editSkillDeleteList((prevState) =>
       prevState.filter((skill) => skill.skillId != props[0].skillId)
@@ -234,7 +234,7 @@ export default function UserPage(props: InputValues) {
   function addOrganization(value: boolean) {
     setAddOrg(value);
   }
-  console.log(userStatus);
+
   if (!addOrg) {
     return (
       <>

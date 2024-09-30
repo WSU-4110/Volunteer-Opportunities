@@ -15,13 +15,13 @@ type organizationId = {
 };
 
 export default async function EditProfile() {
-  console.log(await getSkills());
+  //console.log(await getSkills());
   const skills = await getSkills();
   const userD = await userData();
   const userSkill = await userSkills();
 
   const organizations = await getOrganizations();
-
+  //console.log(organizations);
   if (
     skills != null &&
     userD != null &&

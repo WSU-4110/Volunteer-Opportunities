@@ -177,7 +177,7 @@ export const getOrganizations = authenticatedAction
         .select({
           id: organizations.id,
           name: organizations.name,
-          image: organizations.imageUrl,
+          image: organizations.thumbnail,
         })
         .from(organizations)
         .where(eq(organizations.creator, user.id));
@@ -210,27 +210,21 @@ export const updateOrganization = authenticatedAction
   .createServerAction()
   .input(
     z.object({
-      picture: z.string(),
       name: z.string(),
       id: z.string(),
     })
   )
-  .handler(async ({ ctx: { user }, input: { picture, name, id } }) => {
+  .handler(async ({ ctx: { user }, input: { name, id } }) => {
     if (user != undefined) {
-      return internalUpdateOrg(picture, name, id, user.id);
+      return internalUpdateOrg(name, id, user.id);
     }
   });
 
-async function internalUpdateOrg(
-  picture: string,
-  name: string,
-  id: string,
-  userID: string
-) {
-  console.log(name);
+async function internalUpdateOrg(name: string, id: string, userID: string) {
+  //console.log(name);
   await database
     .update(organizations)
-    .set({ name: name, imageUrl: picture })
+    .set({ name: name })
     .where(eq(organizations.id, id));
 }
 
@@ -246,7 +240,7 @@ export const addOrganization = authenticatedAction
     if (user != undefined) {
       return await database
         .insert(organizations)
-        .values({ name: name, imageUrl: picture, creator: user.id });
+        .values({ name: name, thumbnail: picture, creator: user.id });
     }
   });
 
