@@ -11,9 +11,7 @@ export default async function Explore() {
     <>
       {listings.map((item) => (
         <Listing
-          image={
-            <img src={item.thumbnail == null ? undefined : item.thumbnail} />
-          }
+          imageURL={item.thumbnail == null ? "" : item.thumbnail}
           title={item.name}
           description={item.description}
           talents={skills}
