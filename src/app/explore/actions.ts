@@ -8,13 +8,14 @@ import { skills, listings, skillsToListings } from "@/database/schema";
 
 import { z } from "zod";
 import { eq } from "drizzle-orm";
+import { list } from "postcss";
 
-export async function getSkills() {
-  const listingSkillsQuery = await database.query.skillsToListings.findMany({
-    with: {
-      skills: true,
-    },
-  })
+export async function getSkills(listingID : string) {
+  const listingSkillsQuery = await database
+  .select()
+  .from(skillsToListings)
+  .innerJoin(skills, eq(skillsToListings.skillId, skills.id))
+  .where(eq(skillsToListings.listingId, listingID))
 
   const listingSkills = listingSkillsQuery.map((item) => (
     item.skills.name
