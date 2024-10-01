@@ -15,6 +15,7 @@ export default async function Explore() {
           title={item.name}
           description={item.description}
           talents={skills}
+          key={item.id}
         />
       ))}
     </>
