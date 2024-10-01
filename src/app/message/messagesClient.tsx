@@ -69,6 +69,7 @@ const InitializeMessageComponent = ({
   };
 
   const getAllVolunteers = async () => {
+    setUserMessageId("");
     setLoading(true);
     const [otherUsers, error] = await getOtherVolunteersAction();
 
@@ -80,7 +81,6 @@ const InitializeMessageComponent = ({
       setMessageOthers(usersWithSelected);
     }
 
-    setUserMessageId("");
     setLoading(false);
   };
 
