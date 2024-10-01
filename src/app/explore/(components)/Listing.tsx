@@ -1,21 +1,21 @@
 import { ReactNode } from "react";
 
 interface ListingProps {
-  image: ReactNode;
+  imageURL: string;
   title: string;
   description: string;
   talents: string[];
 }
 
 export default function Listing({
-  image,
+  imageURL,
   title,
   description,
   talents,
 }: ListingProps) {
   return (
-    <div className="p-[20px] my-[20px] mx-auto block w-[800px] rounded-[20px] bg-slate-200">
-      {image}
+    <div className="p-[20px] my-[20px] w-[50%] mx-auto rounded-[20px] bg-slate-200">
+      <img className="w-[300px] mx-auto block" src={imageURL} />
       <h1 className="text-2xl">{title}</h1>
       <p>{description}</p>
       <p>Looking for the following talent:</p>
