@@ -170,7 +170,7 @@ const InitializeMessageComponent = ({
                               <div className="flex flex-row m-4 overflow-y-scroll shadow-lg max-h-[200px]">
                                 {otherUser.listings.map((listings: any) => {
                                   return (
-                                    <Card
+                                    <div
                                       className={`w-full p-5 bg-inherit border-none`}
                                       key={listings.listingId}
                                     >
@@ -213,7 +213,7 @@ const InitializeMessageComponent = ({
                                           </div>
                                         </div>
                                       </div>
-                                    </Card>
+                                    </div>
                                   );
                                 })}
                               </div>
