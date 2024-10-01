@@ -12,16 +12,12 @@ import { list } from "postcss";
 
 export async function getSkills(listingID : string) {
   const listingSkillsQuery = await database
-  .select()
+  .select({name: skills.name})
   .from(skillsToListings)
   .innerJoin(skills, eq(skillsToListings.skillId, skills.id))
   .where(eq(skillsToListings.listingId, listingID))
 
-  const listingSkills = listingSkillsQuery.map((item) => (
-    item.skills.name
-  ))
-
-  return listingSkills;
+  return listingSkillsQuery.map((item) => item.name);
 }
 
 export async function getListings() {
