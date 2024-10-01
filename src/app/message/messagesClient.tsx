@@ -37,6 +37,7 @@ import { z } from "zod";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { startNewUserToUserConversation } from "./actions";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const InitializeMessageComponent = ({
   authStatus,
@@ -69,10 +70,10 @@ const InitializeMessageComponent = ({
 
   const getAllVolunteers = async () => {
     setLoading(true);
-    const otherUsers = await getOtherVolunteersAction();
+    const [otherUsers, error] = await getOtherVolunteersAction();
 
-    if (otherUsers[0]) {
-      const usersWithSelected = otherUsers[0].map((user) => ({
+    if (otherUsers) {
+      const usersWithSelected = otherUsers.map((user) => ({
         ...user,
         selected: false,
       }));
@@ -85,10 +86,10 @@ const InitializeMessageComponent = ({
 
   const getAllOrganizations = async () => {
     setLoading(true);
-    const otherOrganizations = await getOtherOrganizationsAction();
+    const [otherOrganizations, error] = await getOtherOrganizationsAction();
 
-    if (otherOrganizations[0]) {
-      const organizationsWithSelected = otherOrganizations[0].map((org) => ({
+    if (otherOrganizations) {
+      const organizationsWithSelected = otherOrganizations.map((org) => ({
         ...org,
         selected: false,
       }));
@@ -191,12 +192,15 @@ const InitializeMessageComponent = ({
                                             </p>
                                           </div>
                                           <div className="flex flex-row justify-end items-center w-full">
-                                            <h1 className="font-bold">
+                                            <Link
+                                              href={`/view/organization/${listings.listings.organizations.id}`}
+                                              className="font-bold hover:text-blue-500"
+                                            >
                                               {
                                                 listings.listings.organizations
                                                   .name
                                               }
-                                            </h1>
+                                            </Link>
                                             <img
                                               src={
                                                 listings.listings.organizations
