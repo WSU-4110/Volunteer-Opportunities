@@ -93,7 +93,7 @@ const EditOrgPage = ({ ...props }: any) => {
             name="name"
             render={({ field }) => (
               <FormItem>
-                g<FormLabel>Organization Name</FormLabel>
+                <FormLabel>Organization Name</FormLabel>
                 <FormControl>
                   <Input placeholder="name" {...field} />
                 </FormControl>
