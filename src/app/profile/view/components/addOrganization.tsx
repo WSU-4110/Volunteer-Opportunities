@@ -19,7 +19,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   revalidatePathAction,
   addOrganization,
-} from "@/app/profile/form/actions";
+} from "@/app/profile/view/actions";
 
 export default function AddAnOrganization(props: any) {
   const orgSchema = z.object({
@@ -48,7 +48,7 @@ export default function AddAnOrganization(props: any) {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
             control={form.control}
-            name="name"
+            name="imageUrl"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Placeholder for image upload</FormLabel>

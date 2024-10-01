@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { userData, userSkills } from "./form/actions";
+import { userData, userSkills } from "./view/actions";
 
 type uData = {
   name: string;

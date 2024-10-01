@@ -177,7 +177,7 @@ export const getOrganizations = authenticatedAction
         .select({
           id: organizations.id,
           name: organizations.name,
-          image: organizations.imageUrl,
+          image: organizations.thumbnail,
         })
         .from(organizations)
         .where(eq(organizations.creator, user.id));
@@ -230,7 +230,7 @@ async function internalUpdateOrg(
   console.log(name);
   await database
     .update(organizations)
-    .set({ name: name, imageUrl: picture })
+    .set({ name: name, thumbnail: { storageId: picture } })
     .where(eq(organizations.id, id));
 }
 
@@ -246,7 +246,11 @@ export const addOrganization = authenticatedAction
     if (user != undefined) {
       return await database
         .insert(organizations)
-        .values({ name: name, imageUrl: picture, creator: user.id });
+        .values({
+          name: name,
+          thumbnail: { storageId: picture },
+          creator: user.id,
+        });
     }
   });
 

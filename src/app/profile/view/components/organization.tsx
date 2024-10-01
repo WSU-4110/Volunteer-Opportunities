@@ -30,13 +30,13 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { updateOrganization } from "../actions";
-import { revalidatePathAction } from "@/app/profile/form/actions";
+import { revalidatePathAction } from "@/app/profile/view/actions";
 
 type input = {
   organizations: {
     id: string;
     name: string;
-    image: string | null;
+    image: unknown;
   }[];
 
   listings: any;
@@ -81,7 +81,7 @@ const EditOrgPage = ({ ...props }: any) => {
     <div>
       <div className="w-full m-auto mt-10">
         <img
-          src={props.organizaitons[props.org.pos].image}
+          src={props.organizaitons[props.org.pos].thumbnail.storageId}
           alt="Organization Profile Picture"
           className="m-auto rounded-xl"
         />
@@ -132,7 +132,7 @@ const ViewOrgPage = (props: any) => {
     <div className="w-1/2 m-auto mt-20">
       <div className="w-full m-auto mt-10">
         <img
-          src={props.organizaitons[props.org.pos].image}
+          src={props.organizaitons[props.org.pos].thumbnail.storageId}
           alt="Organization Profile Picture"
           className="m-auto rounded-xl"
         />

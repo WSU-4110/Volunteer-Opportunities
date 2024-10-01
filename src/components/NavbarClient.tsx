@@ -133,7 +133,7 @@ const Navbar = ({
                               </h1>
                               <div className="ml-5 mb-5 flex flex-col gap-3">
                                 {!userStatus ? (
-                                  <Link href="/create/organization">
+                                  <Link href="/profile/view">
                                     Create an organization for your account
                                   </Link>
                                 ) : (
@@ -206,7 +206,7 @@ const Navbar = ({
                 <MenuItem setActive={setActive} active={active} item="Create">
                   <div className="flex flex-col space-y-4 text-sm">
                     {!userStatus ? (
-                      <HoveredLink href="/create/organization">
+                      <HoveredLink href="/profile/view">
                         Create an organization for your account
                       </HoveredLink>
                     ) : (

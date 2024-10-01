@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { addUserSkill } from "@/app/profile/form/actions";
+import { addUserSkill } from "@/app/profile/view/actions";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import Talent from "./talent";

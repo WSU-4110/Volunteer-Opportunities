@@ -46,21 +46,23 @@ export default function Viewer(props: any) {
       <Label htmlFor="organizations">Organizations</Label>
       <table>
         <tbody>
-          {props.values.organizations.map(
-            (org: { id: string; name: string; image: string }) => (
+          {props.values.organizations.map((org: any) => {
+            return (
               <tr key={org.id}>
                 <td>
                   <img
-                    src={org.image}
+                    src={org.image.storageId}
                     alt="Organization Profile Picture"
                     className="m-auto rounded-xl"
+                    width={"70px"}
+                    height={"70px"}
                   />
                 </td>
 
                 <td>{org.name}</td>
               </tr>
-            )
-          )}
+            );
+          })}
         </tbody>
       </table>
       <Button

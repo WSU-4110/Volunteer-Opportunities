@@ -6,7 +6,7 @@ import {
   deleteUserSkill,
   updateUser,
   userSkills,
-} from "@/app/profile/form/actions";
+} from "@/app/profile/view/actions";
 import { useEffect, useState } from "react";
 import Talents from "./talents";
 import Viewer from "./viewer";
@@ -20,7 +20,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { revalidatePathAction } from "@/app/profile/form/actions";
+import { revalidatePathAction } from "@/app/profile/view/actions";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -57,7 +57,7 @@ type InputValues = {
   organizations: {
     id: string;
     name: string;
-    image: string | null;
+    image: unknown;
   }[];
 
   listings: any;
