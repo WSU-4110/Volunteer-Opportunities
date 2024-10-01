@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import {
   addUserSkill,
   deleteUserSkill,
@@ -10,7 +10,7 @@ import {
 import { useEffect, useState } from "react";
 import Talents from "./talents";
 import Viewer from "./viewer";
-
+import Organization from "./organization";
 import {
   Form,
   FormControl,
@@ -27,9 +27,13 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 
+import { useUserStatusStore } from "@/stores/userStatusStore";
+import AddAnOrganization from "./addOrganization";
 //From https://ui.shadcn.com/docs/components/form
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Url } from "next/dist/shared/lib/router/router";
+import { listings } from "@/database/schema";
 
 const formSchema = z.object({
   username: z.string().min(1).max(50),
@@ -50,6 +54,13 @@ type InputValues = {
     skillName: string;
     url: string;
   }[];
+  organizations: {
+    id: string;
+    name: string;
+    image: string | null;
+  }[];
+
+  listings: any;
 };
 type skills = {
   skillId: string;
@@ -190,8 +201,25 @@ const EditUserPage = ({ ...props }: any) => {
               </FormItem>
             )}
           />
-
-          <Button type="submit">Submit</Button>
+          <table>
+            <tbody>
+              <tr>
+                <td>
+                  <Button type="submit">Submit</Button>
+                </td>
+                <td>
+                  <Button
+                    onClick={() => {
+                      props.setEditProfile(false);
+                    }}
+                    type="button"
+                  >
+                    Cancel
+                  </Button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </form>
       </Form>
     </div>
@@ -199,21 +227,54 @@ const EditUserPage = ({ ...props }: any) => {
 };
 
 export default function UserPage(props: InputValues) {
-  const [editProfile, setEditProfile] = useState(true);
+  const [editProfile, setEditProfile] = useState(false);
+  const [addOrg, setAddOrg] = useState(false);
+  const userStatus = useUserStatusStore((state) => state);
 
-  return (
-    <>
-      {editProfile ? (
-        <EditUserPage
-          editProfile={editProfile}
-          setEditProfile={setEditProfile}
-          values={props}
-          skills={props.skills}
-          userS={props.userS}
-        />
-      ) : (
-        <Viewer values={props} setEditProfile={setEditProfile} />
-      )}
-    </>
-  );
+  function addOrganization(value: boolean) {
+    setAddOrg(value);
+  }
+  console.log(userStatus);
+  if (!addOrg) {
+    return (
+      <>
+        {!userStatus.userStatus || props.organizations!.length == 0 ? (
+          <>
+            {editProfile ? (
+              <EditUserPage
+                editProfile={editProfile}
+                setEditProfile={setEditProfile}
+                values={props}
+                skills={props.skills}
+                userS={props.userS}
+              />
+            ) : (
+              <Viewer
+                values={props}
+                setEditProfile={setEditProfile}
+                addOrganization={addOrganization}
+              />
+            )}
+          </>
+        ) : (
+          <>
+            <div>
+              <Organization
+                organizations={props.organizations}
+                listings={props.listings}
+                editProfile={editProfile}
+                setEditProfile={setEditProfile}
+              />
+            </div>
+          </>
+        )}
+      </>
+    );
+  } else {
+    return (
+      <div>
+        <AddAnOrganization addOrganization={addOrganization} />
+      </div>
+    );
+  }
 }

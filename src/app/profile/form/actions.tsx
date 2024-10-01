@@ -1,6 +1,13 @@
 "use server";
+import {
+  users,
+  skills,
+  skillsToUsers,
+  organizations,
+  listings,
+} from "@/database/schema";
 import { and, eq, inArray, notExists, notInArray } from "drizzle-orm";
-import { users, skills, skillsToUsers } from "@/database/schema";
+
 import { database } from "@/database/index";
 import { authenticatedAction } from "@/lib/safe-action";
 import { unauthenticatedAction } from "@/lib/safe-action";
@@ -8,6 +15,7 @@ import { revalidatePath } from "next/cache";
 
 import { z } from "zod";
 import { redirect } from "next/navigation";
+import { timeStamp } from "console";
 
 // Select Statements for User Profile
 // Convert to internal fumctions
@@ -147,7 +155,7 @@ export const updateUser = authenticatedAction
     }
   });
 
-export async function internalUpdateUser(
+async function internalUpdateUser(
   picture: string,
   username: string,
   bio: string,
@@ -158,6 +166,89 @@ export async function internalUpdateUser(
     .set({ name: username, image: picture, bio: bio })
     .where(eq(users.id, id));
 }
+
+//Organization database calls
+
+export const getOrganizations = authenticatedAction
+  .createServerAction()
+  .handler(async ({ ctx: { user } }) => {
+    if (user != undefined) {
+      return await database
+        .select({
+          id: organizations.id,
+          name: organizations.name,
+          image: organizations.imageUrl,
+        })
+        .from(organizations)
+        .where(eq(organizations.creator, user.id));
+    } else return null;
+  });
+
+export const getListings = authenticatedAction
+  .createServerAction()
+  .input(
+    z.object({
+      orgID: z.string(),
+    })
+  )
+  .handler(async ({ ctx: { user }, input: { orgID } }) => {
+    if (user != undefined) {
+      return await database
+        .select({
+          organizationId: listings.organizationId,
+          id: listings.id,
+
+          name: listings.name,
+          description: listings.description,
+        })
+        .from(listings)
+        .where(eq(listings.organizationId, orgID));
+    }
+  });
+
+export const updateOrganization = authenticatedAction
+  .createServerAction()
+  .input(
+    z.object({
+      picture: z.string(),
+      name: z.string(),
+      id: z.string(),
+    })
+  )
+  .handler(async ({ ctx: { user }, input: { picture, name, id } }) => {
+    if (user != undefined) {
+      return internalUpdateOrg(picture, name, id, user.id);
+    }
+  });
+
+async function internalUpdateOrg(
+  picture: string,
+  name: string,
+  id: string,
+  userID: string
+) {
+  console.log(name);
+  await database
+    .update(organizations)
+    .set({ name: name, imageUrl: picture })
+    .where(eq(organizations.id, id));
+}
+
+export const addOrganization = authenticatedAction
+  .createServerAction()
+  .input(
+    z.object({
+      picture: z.string(),
+      name: z.string(),
+    })
+  )
+  .handler(async ({ ctx: { user }, input: { picture, name } }) => {
+    if (user != undefined) {
+      return await database
+        .insert(organizations)
+        .values({ name: name, imageUrl: picture, creator: user.id });
+    }
+  });
 
 export const revalidatePathAction = () => {
   revalidatePath("/profile/form");

@@ -6,10 +6,6 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export default function Viewer(props: any) {
-  const onSubmit = async () => {
-    props.setEditProfile(true);
-  };
-
   return (
     <div className="w-1/2 m-auto mt-20">
       <header className="text-2xl text-center font-bold">Volunteer Page</header>
@@ -39,21 +35,50 @@ export default function Viewer(props: any) {
         </table>
       </div>
       <br />
-      <Label className={cn("flex h-10")} htmlFor="name">
-        Username:
-      </Label>
-      <p id="name">{props.values.name}</p>
+      <Label htmlFor="name">Username:</Label>
+      <h1 id="name">{props.values.name}</h1>
       <br />
       <Label htmlFor="bio">User Bio:</Label>
       <p className={cn("flex min-h-[80px] ")} id="bio">
         {props.values.bio}
       </p>
-      <br />
+
       <Label htmlFor="organizations">Organizations</Label>
-      <p id="organizations">placeholder for organizations</p>
+      <table>
+        <tbody>
+          {props.values.organizations.map(
+            (org: { id: string; name: string; image: string }) => (
+              <tr key={org.id}>
+                <td>
+                  <img
+                    src={org.image}
+                    alt="Organization Profile Picture"
+                    className="m-auto rounded-xl"
+                  />
+                </td>
+
+                <td>{org.name}</td>
+              </tr>
+            )
+          )}
+        </tbody>
+      </table>
+      <Button
+        onClick={() => {
+          props.addOrganization(true);
+        }}
+        type="button"
+      >
+        Add Organizaiton
+      </Button>
       <br />
-      <Button onClick={onSubmit} type="submit">
-        edit
+      <Button
+        onClick={() => {
+          props.setEditProfile(true);
+        }}
+        type="button"
+      >
+        Edit
       </Button>
     </div>
   );
