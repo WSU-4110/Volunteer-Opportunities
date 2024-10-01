@@ -74,9 +74,12 @@ const ViewerPage = async ({ params }: { params: { slug: string } }) => {
       </section>
 
       <section className="mt-10">
-        <h2 className="text-xl font-semibold mt-4">Skills this user has</h2>
+        <h2 className="text-xl font-semibold mt-4">Skills this user has:</h2>
         {user?.skills.map((skill, index) => (
-          <div className="flex justify-start flex-row items-center gap-6">
+          <div
+            className="flex justify-start flex-row items-center gap-6"
+            key={skill.skillId}
+          >
             <div>
               <h3>{skill.skills.name}</h3>
             </div>

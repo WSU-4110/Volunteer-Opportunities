@@ -49,7 +49,7 @@ const ViewerPage = async ({ params }: { params: { slug: string } }) => {
       <section className="mt-10">
         <h2 className="text-xl font-semibold mt-4">Opportunities</h2>
         {organizations?.listings.map((opportunity, index) => (
-          <Card className="p-8 shadow-lg">
+          <Card className="p-8 shadow-lg" key={opportunity.id}>
             <div className="flex justify-start flex-row items-center gap-6">
               <img
                 src={opportunity.thumbnail || ""}
