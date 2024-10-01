@@ -284,6 +284,10 @@ export const MessagesClient = ({ authStatus }: { authStatus: Session }) => {
     setUserMessageId({});
   }
 
+  const clickBackButton = () => {
+    setUserMessageId({});
+  };
+
   return (
     <>
       {!userMessageId.id ? (
@@ -295,6 +299,7 @@ export const MessagesClient = ({ authStatus }: { authStatus: Session }) => {
         />
       ) : (
         <MaxWidthWrapper>
+          <Button onClick={clickBackButton}>Go Back</Button>
           <div className="w-1/2 m-auto">
             <div className="flex flex-row items-center justify-center">
               <div className="flex flex-col items-center gap-2 justify-center w-fit m-auto">

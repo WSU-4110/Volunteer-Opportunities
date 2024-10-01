@@ -59,12 +59,10 @@ export const startNewUserToUserConversation = authenticatedAction
   )
   .handler(
     async ({ ctx: { user }, input: { senderId, receiverId, subject } }) => {
-      await database
-        .insert(user_to_user_conversations)
-        .values({
-          senderId: senderId,
-          recipientId: receiverId,
-          subject: subject,
-        });
+      await database.insert(user_to_user_conversations).values({
+        senderId: senderId,
+        recipientId: receiverId,
+        subject: subject,
+      });
     }
   );
