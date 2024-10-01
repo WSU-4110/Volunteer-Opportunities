@@ -47,17 +47,18 @@ export default function Talents(props: input) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      skillId: "0",
-      skillName: "0",
+      skillId: "",
+      skillName: "",
     },
   });
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (values.skillId == "0") {
-      const selectedSkill = props.skillsUserDoesntHave.find(
-        (skill) => skill.skillId === values.skillId
-      );
+    const selectedSkill = props.skillsUserDoesntHave.find(
+      (skill) => skill.skillId === values.skillId
+    );
+
+    if (selectedSkill) {
       props.addSkill([
         { skillId: values.skillId, skillName: selectedSkill?.skillName },
       ]);
@@ -84,13 +85,10 @@ export default function Talents(props: input) {
             name="skillId"
             render={({ field }) => (
               <FormItem>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
+                <Select onValueChange={field.onChange}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="skillId" />
+                      <SelectValue />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
