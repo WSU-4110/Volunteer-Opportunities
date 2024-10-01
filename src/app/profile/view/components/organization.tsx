@@ -61,14 +61,14 @@ const EditOrgPage = ({ ...props }: any) => {
   const form = useForm<z.infer<typeof orgSchema>>({
     resolver: zodResolver(orgSchema),
     defaultValues: {
-      name: props.organizaitons[props.org.pos].name,
+      name: props.organizations[props.org.pos].name,
     },
   });
   async function onSubmit(values: z.infer<typeof orgSchema>) {
     console.log("submit");
     console.log(
       await updateOrganization({
-        picture: props.organizaitons[props.org.pos].image,
+        picture: props.organizations[props.org.pos].image.storageId,
         name: values.name,
         id: props.org.id,
       })
@@ -81,7 +81,7 @@ const EditOrgPage = ({ ...props }: any) => {
     <div>
       <div className="w-full m-auto mt-10">
         <img
-          src={props.organizaitons[props.org.pos].thumbnail.storageId}
+          src={props.organizations[props.org.pos].image.storageId}
           alt="Organization Profile Picture"
           className="m-auto rounded-xl"
         />
@@ -93,7 +93,7 @@ const EditOrgPage = ({ ...props }: any) => {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Organization Name</FormLabel>
+                g<FormLabel>Organization Name</FormLabel>
                 <FormControl>
                   <Input placeholder="name" {...field} />
                 </FormControl>
@@ -132,7 +132,7 @@ const ViewOrgPage = (props: any) => {
     <div className="w-1/2 m-auto mt-20">
       <div className="w-full m-auto mt-10">
         <img
-          src={props.organizaitons[props.org.pos].thumbnail.storageId}
+          src={props.organizations[props.org.pos].image.storageId}
           alt="Organization Profile Picture"
           className="m-auto rounded-xl"
         />
@@ -141,7 +141,7 @@ const ViewOrgPage = (props: any) => {
       <Label className={cn("flex h-10")} htmlFor="name">
         Company Name:
       </Label>
-      <p id="name">{props.organizaitons[props.org.pos].name}</p>
+      <p id="name">{props.organizations[props.org.pos].name}</p>
       <br />
       <Label htmlFor="listings">Listings:</Label>
       <div id="listings">
@@ -239,14 +239,14 @@ export default function Organization(props: input) {
             <EditOrgPage
               setEditProfile={props.setEditProfile}
               org={org}
-              organizaitons={props.organizations}
+              organizations={props.organizations}
               listings={props.listings}
             />
           ) : (
             <ViewOrgPage
               setEditProfile={props.setEditProfile}
               org={org}
-              organizaitons={props.organizations}
+              organizations={props.organizations}
               listings={props.listings}
             />
           )}

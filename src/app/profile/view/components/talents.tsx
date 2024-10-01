@@ -54,12 +54,14 @@ export default function Talents(props: input) {
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const selectedSkill = props.skillsUserDoesntHave.find(
-      (skill) => skill.skillId === values.skillId
-    );
-    props.addSkill([
-      { skillId: values.skillId, skillName: selectedSkill?.skillName },
-    ]);
+    if (values.skillId == "0") {
+      const selectedSkill = props.skillsUserDoesntHave.find(
+        (skill) => skill.skillId === values.skillId
+      );
+      props.addSkill([
+        { skillId: values.skillId, skillName: selectedSkill?.skillName },
+      ]);
+    }
   }
   return (
     <>
