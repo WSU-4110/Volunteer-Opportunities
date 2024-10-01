@@ -84,25 +84,25 @@ const InitializeMessageComponent = ({
     setLoading(false);
   };
 
-  const getAllOrganizations = async () => {
-    setLoading(true);
-    const [otherOrganizations, error] = await getOtherOrganizationsAction();
+  // const getAllOrganizations = async () => {
+  //   setLoading(true);
+  //   const [otherOrganizations, error] = await getOtherOrganizationsAction();
 
-    if (otherOrganizations) {
-      const organizationsWithSelected = otherOrganizations.map((org) => ({
-        ...org,
-        selected: false,
-      }));
-      setMessageOthers(organizationsWithSelected);
-    }
+  //   if (otherOrganizations) {
+  //     const organizationsWithSelected = otherOrganizations.map((org) => ({
+  //       ...org,
+  //       selected: false,
+  //     }));
+  //     setMessageOthers(organizationsWithSelected);
+  //   }
 
-    setUserMessageId("");
-    setLoading(false);
-  };
+  //   setUserMessageId("");
+  // //   setLoading(false);
+  // };
 
   useEffect(() => {
     if (orgTabClicked) {
-      getAllOrganizations();
+      getAllVolunteers();
     } else {
       getAllVolunteers();
     }
@@ -138,10 +138,7 @@ const InitializeMessageComponent = ({
                 <TabsTrigger value="users" onClick={getAllVolunteers}>
                   Users
                 </TabsTrigger>
-                <TabsTrigger
-                  value="organizations"
-                  onClick={getAllOrganizations}
-                >
+                <TabsTrigger value="organizations" onClick={getAllVolunteers}>
                   Organizations
                 </TabsTrigger>
               </TabsList>
