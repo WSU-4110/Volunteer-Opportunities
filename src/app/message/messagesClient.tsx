@@ -215,9 +215,9 @@ const InitializeMessageComponent = ({
                               </div>
                             </div>
                           </div>
-                          <div className="font-bold text-underline">
+                          <div className="font-bold text-underline w-full text-center">
                             <h1 className="font-bold">Talents</h1>
-                            <ul className="flex flex-row gap-2 font-normal">
+                            <ul className="flex flex-row gap-2 font-normal justify-center items-center w-full">
                               {otherUser.skills.map((skill: any) => {
                                 return (
                                   <li key={skill.skillId}>
