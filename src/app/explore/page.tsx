@@ -1,10 +1,22 @@
-"use client";
-
 import { useEffect, useState } from "react";
-import { getListingsBySkill } from "./actions";
+import { getListings, getSkills, getListingsBySkill } from "./actions";
 
-const ExplorePage = () => {
-  return <></>;
-};
+import Listing from "./(components)/Listing";
 
-export default ExplorePage;
+export default async function Explore() {
+  const listings = await getListings();
+
+  return (
+    <>
+      {listings.map(async (item) => (
+        <Listing
+          imageURL={item.thumbnail == null ? "" : item.thumbnail}
+          title={item.name}
+          description={item.description}
+          talents={await getSkills(item.id)}
+          key={item.id}
+        />
+      ))}
+    </>
+  );
+}

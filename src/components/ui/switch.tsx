@@ -9,12 +9,12 @@ export const Switch = ({
   checked,
   setChecked,
   className,
-  key,
+  specialKey,
 }: {
   checked: boolean;
   setChecked: () => void;
   className?: string;
-  key: string;
+  specialKey: string;
 }) => {
   const [hasInteracted, setHasInteracted] = useState(false);
 
@@ -46,7 +46,7 @@ export const Switch = ({
             duration: 1,
             delay: 0.1,
           }}
-          key={key + String(checked)}
+          key={specialKey + String(checked)}
           className={"h-[20px] block rounded-full bg-white shadow-md z-10"}
         ></motion.div>
         <input

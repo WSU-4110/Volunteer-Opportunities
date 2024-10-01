@@ -33,6 +33,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+/convex/_generated
+
 #package.json and eslintrc.json files
 .eslintrc.json
 package-lock.json
+
+.env.local

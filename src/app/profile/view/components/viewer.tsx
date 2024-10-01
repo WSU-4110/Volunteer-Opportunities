@@ -2,31 +2,10 @@ import react from "react";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { useForm } from "react-hook-form";
 
 import { cn } from "@/lib/utils";
 
-type InputValues = {
-  name: string;
-  picture: string;
-  bio: string;
-  skills: {
-    skillId: string;
-    skillName: string;
-  }[];
-  userS: {
-    skillId: string;
-    skillName: string;
-    url: string;
-  }[];
-};
-
 export default function Viewer(props: any) {
-  const form = useForm();
-
-  async function onSubmit() {
-    props.setEditProfile(true);
-  }
   return (
     <div className="w-1/2 m-auto mt-20">
       <header className="text-2xl text-center font-bold">Volunteer Page</header>
@@ -56,22 +35,53 @@ export default function Viewer(props: any) {
         </table>
       </div>
       <br />
-      <Label className={cn("flex h-10")} htmlFor="name">
-        Username:
-      </Label>
-      <p id="name">{props.values.name}</p>
+      <Label htmlFor="name">Username:</Label>
+      <h1 id="name">{props.values.name}</h1>
       <br />
       <Label htmlFor="bio">User Bio:</Label>
       <p className={cn("flex min-h-[80px] ")} id="bio">
         {props.values.bio}
       </p>
-      <br />
+
       <Label htmlFor="organizations">Organizations</Label>
-      <p id="organizations">placeholder for organizations</p>
+      <table>
+        <tbody>
+          {props.values.organizations.map((org: any) => {
+            return (
+              <tr key={org.id}>
+                <td>
+                  <img
+                    src={org.image.storageId}
+                    alt="Organization Profile Picture"
+                    className="m-auto rounded-xl"
+                    width={"70px"}
+                    height={"70px"}
+                  />
+                </td>
+
+                <td>{org.name}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+      <Button
+        onClick={() => {
+          props.addOrganization(true);
+        }}
+        type="button"
+      >
+        Add Organizaiton
+      </Button>
       <br />
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <Button type="submit">edit</Button>
-      </form>
+      <Button
+        onClick={() => {
+          props.setEditProfile(true);
+        }}
+        type="button"
+      >
+        Edit
+      </Button>
     </div>
   );
 }

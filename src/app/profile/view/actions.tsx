@@ -1,11 +1,21 @@
 "use server";
-import { eq, notExists, notInArray } from "drizzle-orm";
-import { users, skills, skillsToUsers } from "@/database/schema";
+import {
+  users,
+  skills,
+  skillsToUsers,
+  organizations,
+  listings,
+} from "@/database/schema";
+import { and, eq, inArray, notExists, notInArray } from "drizzle-orm";
+
 import { database } from "@/database/index";
 import { authenticatedAction } from "@/lib/safe-action";
 import { unauthenticatedAction } from "@/lib/safe-action";
+import { revalidatePath } from "next/cache";
 
 import { z } from "zod";
+import { redirect } from "next/navigation";
+import { timeStamp } from "console";
 
 // Select Statements for User Profile
 // Convert to internal fumctions
@@ -89,20 +99,23 @@ export const deleteUserSkill = authenticatedAction
   .createServerAction()
   .input(
     z.object({
-      skill: z.string(),
+      skill: z.array(z.string()),
     })
   )
   .handler(async ({ ctx: { user }, input: { skill } }) => {
     if (user != undefined) {
-      return interalDeleteUserSkill(skill, user.id);
+      return internalDeleteUserSkill(skill, user.id);
     }
   });
 
-async function interalDeleteUserSkill(skill: string, id: string) {
+async function internalDeleteUserSkill(deleteUserSkills: string[], id: string) {
   await database
     .delete(skillsToUsers)
     .where(
-      eq(skillsToUsers.volunteerId, id) && eq(skillsToUsers.skillId, skill)
+      and(
+        eq(skillsToUsers.volunteerId, id),
+        inArray(skillsToUsers.skillId, deleteUserSkills)
+      )
     );
 }
 
@@ -110,7 +123,7 @@ export const addUserSkill = authenticatedAction
   .createServerAction()
   .input(
     z.object({
-      skill: z.string(),
+      skill: z.array(z.string()),
     })
   )
   .handler(async ({ ctx: { user }, input: { skill } }) => {
@@ -119,10 +132,12 @@ export const addUserSkill = authenticatedAction
     }
   });
 
-async function internalAddUserSkill(id: string, skill: string) {
-  await database
-    .insert(skillsToUsers)
-    .values({ skillId: skill, volunteerId: id });
+async function internalAddUserSkill(id: string, skills: string[]) {
+  await database.insert(skillsToUsers).values(
+    skills.map((skill) => {
+      return { skillId: skill, volunteerId: id };
+    })
+  );
 }
 
 export const updateUser = authenticatedAction
@@ -140,7 +155,7 @@ export const updateUser = authenticatedAction
     }
   });
 
-export async function internalUpdateUser(
+async function internalUpdateUser(
   picture: string,
   username: string,
   bio: string,
@@ -151,3 +166,94 @@ export async function internalUpdateUser(
     .set({ name: username, image: picture, bio: bio })
     .where(eq(users.id, id));
 }
+
+//Organization database calls
+
+export const getOrganizations = authenticatedAction
+  .createServerAction()
+  .handler(async ({ ctx: { user } }) => {
+    if (user != undefined) {
+      return await database
+        .select({
+          id: organizations.id,
+          name: organizations.name,
+          image: organizations.thumbnail,
+        })
+        .from(organizations)
+        .where(eq(organizations.creator, user.id));
+    } else return null;
+  });
+
+export const getListings = authenticatedAction
+  .createServerAction()
+  .input(
+    z.object({
+      orgID: z.string(),
+    })
+  )
+  .handler(async ({ ctx: { user }, input: { orgID } }) => {
+    if (user != undefined) {
+      return await database
+        .select({
+          organizationId: listings.organizationId,
+          id: listings.id,
+
+          name: listings.name,
+          description: listings.description,
+        })
+        .from(listings)
+        .where(eq(listings.organizationId, orgID));
+    }
+  });
+
+export const updateOrganization = authenticatedAction
+  .createServerAction()
+  .input(
+    z.object({
+      picture: z.string(),
+      name: z.string(),
+      id: z.string(),
+    })
+  )
+  .handler(async ({ ctx: { user }, input: { picture, name, id } }) => {
+    if (user != undefined) {
+      return internalUpdateOrg(picture, name, id, user.id);
+    }
+  });
+
+async function internalUpdateOrg(
+  picture: string,
+  name: string,
+  id: string,
+  userID: string
+) {
+  console.log(name);
+  await database
+    .update(organizations)
+    .set({ name: name, thumbnail: { storageId: picture } })
+    .where(eq(organizations.id, id));
+}
+
+export const addOrganization = authenticatedAction
+  .createServerAction()
+  .input(
+    z.object({
+      picture: z.string(),
+      name: z.string(),
+    })
+  )
+  .handler(async ({ ctx: { user }, input: { picture, name } }) => {
+    if (user != undefined) {
+      return await database
+        .insert(organizations)
+        .values({
+          name: name,
+          thumbnail: { storageId: picture },
+          creator: user.id,
+        });
+    }
+  });
+
+export const revalidatePathAction = () => {
+  revalidatePath("/profile/form");
+};

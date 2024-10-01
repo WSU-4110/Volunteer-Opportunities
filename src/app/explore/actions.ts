@@ -4,10 +4,25 @@ import { database } from "@/database/index";
 
 import { authenticatedAction } from "@/lib/safe-action";
 import { unauthenticatedAction } from "@/lib/safe-action";
-import { skills, listings } from "@/database/schema";
+import { skills, listings, skillsToListings } from "@/database/schema";
 
 import { z } from "zod";
 import { eq } from "drizzle-orm";
+import { list } from "postcss";
+
+export async function getSkills(listingID : string) {
+  const listingSkillsQuery = await database
+  .select({name: skills.name})
+  .from(skillsToListings)
+  .innerJoin(skills, eq(skillsToListings.skillId, skills.id))
+  .where(eq(skillsToListings.listingId, listingID))
+
+  return listingSkillsQuery.map((item) => item.name);
+}
+
+export async function getListings() {
+  return await database.select().from(listings);
+}
 
 export const getListingsBySkill = authenticatedAction
   .createServerAction()

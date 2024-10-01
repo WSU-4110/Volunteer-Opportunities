@@ -1,16 +1,16 @@
 "use client";
 import React from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import {
   addUserSkill,
   deleteUserSkill,
   updateUser,
   userSkills,
-} from "@/app/profile/form/actions";
+} from "@/app/profile/view/actions";
 import { useEffect, useState } from "react";
 import Talents from "./talents";
 import Viewer from "./viewer";
-
+import Organization from "./organization";
 import {
   Form,
   FormControl,
@@ -20,15 +20,20 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { revalidatePathAction } from "@/app/profile/view/actions";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 
+import { useUserStatusStore } from "@/stores/userStatusStore";
+import AddAnOrganization from "./addOrganization";
 //From https://ui.shadcn.com/docs/components/form
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Url } from "next/dist/shared/lib/router/router";
+import { listings } from "@/database/schema";
 
 const formSchema = z.object({
   username: z.string().min(1).max(50),
@@ -49,34 +54,18 @@ type InputValues = {
     skillName: string;
     url: string;
   }[];
-};
+  organizations: {
+    id: string;
+    name: string;
+    image: unknown;
+  }[];
 
-type FormValues = {
-  name: string;
-  picture: string;
-  bio: string;
+  listings: any;
 };
-
-type userInput = {
-  picture: string;
-  username: string;
-  bio: string;
-};
-
 type skills = {
   skillId: string;
   skillName: string;
 }[];
-
-type skill = {
-  skill: string;
-};
-
-type UserSkill = {
-  skillId: string;
-  skillName: string;
-};
-
 const EditUserPage = ({ ...props }: any) => {
   //From https://ui.shadcn.com/docs/components/form
   const form = useForm<z.infer<typeof formSchema>>({
@@ -88,109 +77,55 @@ const EditUserPage = ({ ...props }: any) => {
     },
   });
 
-  const [skillsList, editSkillsList] = useState<skills>();
-  const [skillDeleteList, editSkillDeleteList] = useState<skills>();
+  const [skillsList, editSkillsList] = useState<skills>([]);
+  const [skillDeleteList, editSkillDeleteList] = useState<skills>([]);
+  const [skillsUserDoesntHave, setSkillsUserDoesntHave] = useState<skills>(
+    props.skills
+  );
+  const [skillsUserHas, setSkillsUserHas] = useState<skills>(props.userS);
 
   function addSkill(props: skills) {
-    if (skillDeleteList == undefined) {
-      if (skillsList == undefined) {
-        editSkillsList(props);
-      } else {
-        editSkillsList(skillsList.concat(props));
-      }
-    } else {
-      let found: boolean = false;
-      for (let i = 0; i < skillDeleteList.length; i++) {
-        if (skillDeleteList[i].skillId == props[0].skillId) {
-          found = true;
-
-          editSkillDeleteList(skillDeleteList.toSpliced(i, 1));
-        }
-      }
-      if (!found) {
-        if (skillsList == undefined) {
-          editSkillsList(props);
-        } else {
-          editSkillsList(skillsList.concat(props));
-        }
-      }
-    }
+    console.log(props);
+    editSkillsList((prevState) => [...prevState, ...props]);
+    editSkillDeleteList((prevState) =>
+      prevState.filter((skill) => skill.skillId != props[0].skillId)
+    );
+    setSkillsUserDoesntHave((prevState) =>
+      prevState.filter((skill) => skill.skillId != props[0].skillId)
+    );
+    setSkillsUserHas((prevState) => [...prevState, ...props]);
   }
 
   function removeSkill(props: skills) {
-    if (skillsList == undefined) {
-      if (skillDeleteList == undefined) {
-        editSkillDeleteList(props);
-      } else {
-        editSkillDeleteList(skillDeleteList.concat(props));
-      }
-    } else {
-      let found: boolean = false;
-      for (let i = 0; i < skillsList.length; i++) {
-        if (skillsList[i].skillId == props[0].skillId) {
-          found = true;
-
-          editSkillsList(skillsList.toSpliced(i, 1));
-        }
-      }
-      if (!found) {
-        if (skillDeleteList == undefined) {
-          editSkillDeleteList(props);
-        } else {
-          editSkillDeleteList(skillDeleteList.concat(props));
-        }
-      }
-    }
+    editSkillDeleteList((prevState) => [...prevState, ...props]);
+    editSkillsList((prevState) =>
+      prevState.filter((skill) => skill.skillId != props[0].skillId)
+    );
+    setSkillsUserHas((prevState) => {
+      return prevState.filter((skill) => skill.skillId != props[0].skillId);
+    });
+    setSkillsUserDoesntHave((prevState) => [...prevState, ...props]);
   }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const input: userInput = {
+    const input = {
       picture: values.picture,
       username: values.username,
       bio: values.bio,
     };
-
-    if (skillsList != undefined) {
-      for (let i = 0; i < skillsList.length; i++) {
-        let skillID: skill = { skill: skillsList[i].skillId };
-        await addUserSkill(skillID);
-      }
+    if (skillsList.length > 0) {
+      await addUserSkill({
+        skill: skillsList.map((skill) => skill.skillId),
+      });
     }
-
-    if (skillDeleteList != undefined) {
-      for (let i = 0; i < skillDeleteList.length; i++) {
-        let skillID: skill = { skill: skillDeleteList[i].skillId };
-        await deleteUserSkill(skillID);
-      }
+    if (skillDeleteList.length > 0) {
+      await deleteUserSkill({
+        skill: skillDeleteList.map((skill) => skill.skillId),
+      });
     }
     await updateUser(input);
-
+    revalidatePathAction();
     props.setEditProfile(false);
-    let newValues = props.values;
-    //For user skills remove skills from the remove list and add the skills from the add list
-    if (skillDeleteList != undefined) {
-      for (let i = 0; i < skillDeleteList.length; i++) {
-        for (let j = 0; j < newValues.userS.length; j++)
-          if (skillDeleteList[i].skillId == newValues.userS[j].skillId) {
-            newValues.userS = newValues.userS.toSpliced(j, 1);
-          }
-      }
-    }
-    if (skillsList != undefined) {
-      for (let i = 0; i < skillsList.length; i++) {
-        for (let j = 0; j < newValues.skills.length; j++)
-          if (skillsList[i].skillId == newValues.skills[j].skillId) {
-            newValues.skills = newValues.skills.toSpliced(j, 1);
-          }
-      }
-    }
-    newValues.name = values.username;
-    newValues.bio = values.bio;
-    newValues.picture = values.picture;
-
-    props.setValues(newValues);
-    editSkillsList(undefined);
-    editSkillDeleteList(undefined);
   }
 
   // Form layout from https://ui.shadcn.com/docs/components/form
@@ -209,10 +144,10 @@ const EditUserPage = ({ ...props }: any) => {
 
       <div id="skills">
         <Talents
-          skill={props.values.skills}
-          userS={props.values.userS}
           addSkill={addSkill}
           removeSkill={removeSkill}
+          skillsUserHas={skillsUserHas}
+          skillsUserDoesntHave={skillsUserDoesntHave}
         />
       </div>
       <br />
@@ -266,8 +201,25 @@ const EditUserPage = ({ ...props }: any) => {
               </FormItem>
             )}
           />
-
-          <Button type="submit">Submit</Button>
+          <table>
+            <tbody>
+              <tr>
+                <td>
+                  <Button type="submit">Submit</Button>
+                </td>
+                <td>
+                  <Button
+                    onClick={() => {
+                      props.setEditProfile(false);
+                    }}
+                    type="button"
+                  >
+                    Cancel
+                  </Button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </form>
       </Form>
     </div>
@@ -275,21 +227,54 @@ const EditUserPage = ({ ...props }: any) => {
 };
 
 export default function UserPage(props: InputValues) {
-  const [editProfile, setEditProfile] = useState(true);
-  const [values, setValues] = useState<InputValues>(props);
+  const [editProfile, setEditProfile] = useState(false);
+  const [addOrg, setAddOrg] = useState(false);
+  const userStatus = useUserStatusStore((state) => state);
 
-  return (
-    <>
-      {editProfile ? (
-        <EditUserPage
-          editProfile={editProfile}
-          setEditProfile={setEditProfile}
-          values={values}
-          setValues={setValues}
-        />
-      ) : (
-        <Viewer values={values} setEditProfile={setEditProfile} />
-      )}
-    </>
-  );
+  function addOrganization(value: boolean) {
+    setAddOrg(value);
+  }
+  console.log(userStatus);
+  if (!addOrg) {
+    return (
+      <>
+        {!userStatus.userStatus || props.organizations!.length == 0 ? (
+          <>
+            {editProfile ? (
+              <EditUserPage
+                editProfile={editProfile}
+                setEditProfile={setEditProfile}
+                values={props}
+                skills={props.skills}
+                userS={props.userS}
+              />
+            ) : (
+              <Viewer
+                values={props}
+                setEditProfile={setEditProfile}
+                addOrganization={addOrganization}
+              />
+            )}
+          </>
+        ) : (
+          <>
+            <div>
+              <Organization
+                organizations={props.organizations}
+                listings={props.listings}
+                editProfile={editProfile}
+                setEditProfile={setEditProfile}
+              />
+            </div>
+          </>
+        )}
+      </>
+    );
+  } else {
+    return (
+      <div>
+        <AddAnOrganization addOrganization={addOrganization} />
+      </div>
+    );
+  }
 }

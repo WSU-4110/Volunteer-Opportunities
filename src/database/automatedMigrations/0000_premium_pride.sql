@@ -32,12 +32,6 @@ CREATE TABLE IF NOT EXISTS "authenticator" (
 	CONSTRAINT "authenticator_credentialID_unique" UNIQUE("credentialID")
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "conversations" (
-	"id" text PRIMARY KEY NOT NULL,
-	"senderId" text NOT NULL,
-	"recipientId" text NOT NULL
-);
---> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "listings" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
@@ -47,18 +41,35 @@ CREATE TABLE IF NOT EXISTS "listings" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "messages" (
-	"id" text,
+	"id" text PRIMARY KEY NOT NULL,
 	"content" json,
 	"messageType" integer NOT NULL,
-	"createdAt" timestamp DEFAULT NOW() NOT NULL
+	"createdAt" timestamp DEFAULT NOW() NOT NULL,
+	"user_to_user_id" text,
+	"user_to_org_id" text,
+	"org_to_user_id" text,
+	"org_to_org_id" text
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "org_to_org_conversations" (
+	"id" text PRIMARY KEY NOT NULL,
+	"senderId" text NOT NULL,
+	"recipientId" text NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "org_to_user_conversations" (
+	"id" text PRIMARY KEY NOT NULL,
+	"senderId" text NOT NULL,
+	"recipientId" text NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "organizations" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
-	"imageUrl" text,
+	"thumbnail" json,
 	"createdOn" timestamp DEFAULT NOW() NOT NULL,
-	"creatorId" text NOT NULL
+	"creatorId" text NOT NULL,
+	"images" json
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "session" (
@@ -85,6 +96,18 @@ CREATE TABLE IF NOT EXISTS "volunteer_skills" (
 	CONSTRAINT "volunteer_skills_userId_skill_id_pk" PRIMARY KEY("userId","skill_id")
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "user_to_org_conversations" (
+	"id" text PRIMARY KEY NOT NULL,
+	"senderId" text NOT NULL,
+	"recipientId" text NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "user_to_user_conversations" (
+	"id" text PRIMARY KEY NOT NULL,
+	"senderId" text NOT NULL,
+	"recipientId" text NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "user" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
@@ -92,7 +115,9 @@ CREATE TABLE IF NOT EXISTS "user" (
 	"emailVerified" timestamp,
 	"image" text,
 	"bio" text DEFAULT '' NOT NULL,
-	"createdAt" timestamp DEFAULT NOW() NOT NULL
+	"createdAt" timestamp DEFAULT NOW() NOT NULL,
+	"customImage" boolean DEFAULT false,
+	"customUserImage" json
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "verificationToken" (
@@ -115,25 +140,55 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "conversations" ADD CONSTRAINT "conversations_senderId_user_id_fk" FOREIGN KEY ("senderId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "conversations" ADD CONSTRAINT "conversations_recipientId_user_id_fk" FOREIGN KEY ("recipientId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
  ALTER TABLE "listings" ADD CONSTRAINT "listings_organization_organizations_id_fk" FOREIGN KEY ("organization") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "messages" ADD CONSTRAINT "messages_id_conversations_id_fk" FOREIGN KEY ("id") REFERENCES "public"."conversations"("id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "messages" ADD CONSTRAINT "messages_user_to_user_id_user_to_user_conversations_id_fk" FOREIGN KEY ("user_to_user_id") REFERENCES "public"."user_to_user_conversations"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "messages" ADD CONSTRAINT "messages_user_to_org_id_user_to_org_conversations_id_fk" FOREIGN KEY ("user_to_org_id") REFERENCES "public"."user_to_org_conversations"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "messages" ADD CONSTRAINT "messages_org_to_user_id_org_to_org_conversations_id_fk" FOREIGN KEY ("org_to_user_id") REFERENCES "public"."org_to_org_conversations"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "messages" ADD CONSTRAINT "messages_org_to_org_id_org_to_org_conversations_id_fk" FOREIGN KEY ("org_to_org_id") REFERENCES "public"."org_to_org_conversations"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "org_to_org_conversations" ADD CONSTRAINT "org_to_org_conversations_senderId_organizations_id_fk" FOREIGN KEY ("senderId") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "org_to_org_conversations" ADD CONSTRAINT "org_to_org_conversations_recipientId_organizations_id_fk" FOREIGN KEY ("recipientId") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "org_to_user_conversations" ADD CONSTRAINT "org_to_user_conversations_senderId_organizations_id_fk" FOREIGN KEY ("senderId") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "org_to_user_conversations" ADD CONSTRAINT "org_to_user_conversations_recipientId_user_id_fk" FOREIGN KEY ("recipientId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -170,6 +225,30 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "volunteer_skills" ADD CONSTRAINT "volunteer_skills_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "user_to_org_conversations" ADD CONSTRAINT "user_to_org_conversations_senderId_user_id_fk" FOREIGN KEY ("senderId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "user_to_org_conversations" ADD CONSTRAINT "user_to_org_conversations_recipientId_organizations_id_fk" FOREIGN KEY ("recipientId") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "user_to_user_conversations" ADD CONSTRAINT "user_to_user_conversations_senderId_user_id_fk" FOREIGN KEY ("senderId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "user_to_user_conversations" ADD CONSTRAINT "user_to_user_conversations_recipientId_user_id_fk" FOREIGN KEY ("recipientId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

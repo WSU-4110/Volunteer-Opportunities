@@ -1,6 +1,6 @@
 {
-  "id": "07d3750f-3464-49ed-9649-7367ff64fa0c",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "efdb1dff-6320-42d0-b257-8d0bfd031777",
+  "prevId": "07d3750f-3464-49ed-9649-7367ff64fa0c",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -242,6 +242,63 @@
         }
       },
       "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.listing_volunteers": {
+      "name": "listing_volunteers",
+      "schema": "",
+      "columns": {
+        "listing_id": {
+          "name": "listing_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "userId": {
+          "name": "userId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "listing_volunteers_listing_id_listings_id_fk": {
+          "name": "listing_volunteers_listing_id_listings_id_fk",
+          "tableFrom": "listing_volunteers",
+          "tableTo": "listings",
+          "columnsFrom": [
+            "listing_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "listing_volunteers_userId_user_id_fk": {
+          "name": "listing_volunteers_userId_user_id_fk",
+          "tableFrom": "listing_volunteers",
+          "tableTo": "user",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "listing_volunteers_userId_listing_id_pk": {
+          "name": "listing_volunteers_userId_listing_id_pk",
+          "columns": [
+            "userId",
+            "listing_id"
+          ]
+        }
+      },
       "uniqueConstraints": {}
     },
     "public.messages": {
