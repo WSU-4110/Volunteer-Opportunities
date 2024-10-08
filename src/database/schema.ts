@@ -130,6 +130,9 @@ export const listings = pgTable("listings", {
   organizationId: text("organization")
     .notNull()
     .references(() => organizations.id, { onDelete: "cascade" }),
+  createdAt: timestamp("createdAt", { mode: "date" })
+    .default(sql`NOW()`)
+    .notNull(),
 });
 
 export const user_to_user_conversations = pgTable(

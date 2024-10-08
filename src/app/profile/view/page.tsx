@@ -8,8 +8,6 @@ import {
   getListings,
 } from "./actions";
 
-import { useState, useEffect } from "react";
-
 type organizationId = {
   orgID: string;
 };
