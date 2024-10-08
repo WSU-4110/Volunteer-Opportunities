@@ -17,6 +17,8 @@ import { z } from "zod";
 import { redirect } from "next/navigation";
 import { timeStamp } from "console";
 
+import { putImage } from "@/database/sthree";
+
 // Select Statements for User Profile
 // Convert to internal fumctions
 
@@ -240,17 +242,17 @@ export const addOrganization = authenticatedAction
     z.object({
       picture: z.string(),
       name: z.string(),
+      data: z.any(),
     })
   )
-  .handler(async ({ ctx: { user }, input: { picture, name } }) => {
+  .handler(async ({ ctx: { user }, input: { picture, name, data } }) => {
     if (user != undefined) {
-      return await database
-        .insert(organizations)
-        .values({
-          name: name,
-          thumbnail: { storageId: picture },
-          creator: user.id,
-        });
+      const image = putImage(data.data);
+      return await database.insert(organizations).values({
+        name: name,
+        thumbnail: { storageId: picture },
+        creator: user.id,
+      });
     }
   });
 
