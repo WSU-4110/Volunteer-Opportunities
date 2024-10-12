@@ -34,7 +34,13 @@ export const userData = authenticatedAction
 
 async function internalUserData(id: string) {
   const data = await database
-    .select({ name: users.name, image: users.image, bio: users.bio })
+    .select({
+      name: users.name,
+      image: users.image,
+      bio: users.bio,
+      customFile: users.customFile,
+      userImage: users.userImage,
+    })
     .from(users)
     .where(eq(users.id, id));
 
@@ -202,6 +208,7 @@ export const getListings = authenticatedAction
 
           name: listings.name,
           description: listings.description,
+          thumbnail: listings.thumbnail,
         })
         .from(listings)
         .where(eq(listings.organizationId, orgID));
@@ -247,10 +254,10 @@ export const addOrganization = authenticatedAction
   )
   .handler(async ({ ctx: { user }, input: { picture, name, data } }) => {
     if (user != undefined) {
-      const image = putImage(data.data);
+      const image = await putImage(data.get("data"));
       return await database.insert(organizations).values({
         name: name,
-        thumbnail: { storageId: picture },
+        thumbnail: { storageId: image },
         creator: user.id,
       });
     }

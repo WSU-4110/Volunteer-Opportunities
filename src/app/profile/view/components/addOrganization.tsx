@@ -38,8 +38,10 @@ export default function AddAnOrganization(props: any) {
   });
   async function onSubmit(values: z.infer<typeof orgSchema>) {
     try {
-      const data: any = files[0];
+      const data: File = await files[0];
 
+      console.log("Submit");
+      console.log(data);
       const form: FormData = new FormData();
       form.append("data", data);
 

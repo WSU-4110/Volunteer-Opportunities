@@ -57,7 +57,7 @@ type InputValues = {
   organizations: {
     id: string;
     name: string;
-    image: unknown;
+    image: any;
   }[];
 
   listings: any;
@@ -234,7 +234,7 @@ export default function UserPage(props: InputValues) {
   function addOrganization(value: boolean) {
     setAddOrg(value);
   }
-  console.log(userStatus);
+  //console.log(userStatus);
   if (!addOrg) {
     return (
       <>

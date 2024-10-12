@@ -11,11 +11,12 @@ import {
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { randomBytes } from "crypto";
+import { detectContentType } from "next/dist/server/image-optimizer";
 
 // import {sharp} from "sharp";
 //
 // import library to generate file names
-
+const sharp = require("sharp");
 require("dotenv").config();
 
 const client = new S3Client({
@@ -25,28 +26,37 @@ const client = new S3Client({
     secretAccessKey: process.env.SECRET_ACCESS_KEY_ID!,
   },
 });
-
-export async function putImage(data: any) {
+// Used chat gpt to assist in debuging type file to pass to s3 bucket
+export async function putImage(data: File) {
   // Generate key
-  const key = randomBytes(32).toString();
+  const key = randomBytes(32).toString() + ".jpg";
+  const image = await data.arrayBuffer();
 
-  //const url = createPresignedUrlPut({ bucket: process.env.BUCKET, key: key });
-  //console.log(url);
+  //console.log(image);
+  const image2 = await sharp(image)
+    .jpeg({ quality: 90, mozijpeg: true })
+    .toBuffer();
+  //console.log("output");
+  //console.log(image2);
+
   await put({
     bucketName: process.env.BUCKET,
     key: key,
-    data: data,
+    data: image2,
   });
 
   return key;
 }
-
+//From aws docs, some non functional changes have been made
 const put = async ({ bucketName, key, data }: any) => {
-  const command = new PutObjectCommand({
+  //const metadata = await sharp(data).metadata();
+  // From chatgpt aws s3 PutObjectCommand() inputing params made some changes
+  const params = {
     Bucket: bucketName,
     Key: key,
     Body: data,
-  });
+  };
+  const command = new PutObjectCommand(params);
 
   try {
     const response = await client.send(command);
@@ -71,45 +81,12 @@ or the multipart upload API (5TB max).`
   }
 };
 
-//export async function getImage(key: string) {
-//  return createPresignedUrlGet({ bucket: process.env.BUCKET, key: key });
-//}
+export async function getImage(key: string) {
+  return createPresignedUrlGet({ bucket: process.env.BUCKET, key: key });
+}
 
-export async function deleteImage(key: string) {}
-
-//From aws docs https://docs.aws.amazon.com/AmazonS3/latest/API/s3_example_s3_Scenario_PresignedUrl_section.html
-const createPresignedUrlPut = ({ bucket, key }: any) => {
-  const command = new PutObjectCommand({ Bucket: bucket, Key: key });
+// From aws docs https://docs.aws.amazon.com/AmazonS3/latest/API/s3_example_s3_Scenario_PresignedUrl_section.html
+const createPresignedUrlGet = ({ bucket, key }: any) => {
+  const command = new GetObjectCommand({ Bucket: bucket, Key: key });
   return getSignedUrl(client, command, { expiresIn: 600 });
 };
-
-//From aws docs https://docs.aws.amazon.com/AmazonS3/latest/API/s3_example_s3_Scenario_PresignedUrl_section.html
-/*function put(url: any, data: any) {
-  return new Promise((resolve, reject) => {
-    const req = https.request(
-      url,
-      { method: "PUT", headers: { "Content-Length": new Blob([data]).size } },
-      (res) => {
-        let responseBody = "";
-        res.on("data", (chunk) => {
-          responseBody += chunk;
-        });
-        res.on("end", () => {
-          resolve(responseBody);
-        });
-      }
-    );
-    req.on("error", (err) => {
-      reject(err);
-    });
-    req.write(data);
-    req.end();
-  });
-}
-  */
-// From aws docs https://docs.aws.amazon.com/AmazonS3/latest/API/s3_example_s3_Scenario_PresignedUrl_section.html
-//const createPresignedUrlGet = ({ bucket, key }: any) => {
-
-//  const command = new GetObjectCommand({ Bucket: bucket, Key: key });
-//  return getSignedUrl(client, command, { expiresIn: 600 });
-//};

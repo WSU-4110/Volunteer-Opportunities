@@ -2,7 +2,7 @@ import react from "react";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-
+import { getImage } from "@/database/sthree";
 import { cn } from "@/lib/utils";
 
 export default function Viewer(props: any) {
