@@ -5,9 +5,8 @@ import {
   addUserSkill,
   deleteUserSkill,
   updateUser,
-  userSkills,
 } from "@/app/profile/view/actions";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Talents from "./talents";
 import Viewer from "./viewer";
 import Organization from "./organization";
@@ -21,7 +20,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { revalidatePathAction } from "@/app/profile/view/actions";
-
+import { FileUpload } from "./fileUpload";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -32,8 +31,6 @@ import AddAnOrganization from "./addOrganization";
 //From https://ui.shadcn.com/docs/components/form
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Url } from "next/dist/shared/lib/router/router";
-import { listings } from "@/database/schema";
 
 const formSchema = z.object({
   username: z.string().min(1).max(50),
@@ -108,11 +105,6 @@ const EditUserPage = ({ ...props }: any) => {
   }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const input = {
-      picture: values.picture,
-      username: values.username,
-      bio: values.bio,
-    };
     if (skillsList.length > 0) {
       await addUserSkill({
         skill: skillsList.map((skill) => skill.skillId),
@@ -123,10 +115,36 @@ const EditUserPage = ({ ...props }: any) => {
         skill: skillDeleteList.map((skill) => skill.skillId),
       });
     }
-    await updateUser(input);
+    try {
+      const data: File = await files[0];
+
+      console.log("Submit");
+      console.log(data);
+      const form: FormData = new FormData();
+      form.append("data", data);
+
+      const input = {
+        picture: values.picture,
+        username: values.username,
+        bio: values.bio,
+        data: form,
+      };
+
+      await updateUser(input);
+
+      revalidatePathAction();
+      props.addOrganization(false);
+    } catch (error) {}
+
     revalidatePathAction();
     props.setEditProfile(false);
   }
+
+  const [files, setFiles] = useState<File[]>([]);
+  const handleFileUpload = (files: File[]) => {
+    setFiles(files);
+    console.log(files);
+  };
 
   // Form layout from https://ui.shadcn.com/docs/components/form
 
@@ -153,22 +171,7 @@ const EditUserPage = ({ ...props }: any) => {
       <br />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <FormField
-            control={form.control}
-            name="picture"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Picture</FormLabel>
-                <FormControl>
-                  <Input placeholder="picture" {...field} />
-                </FormControl>
-                <FormDescription>
-                  Temporary will be changed later
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <FileUpload onChange={handleFileUpload} />
           <FormField
             control={form.control}
             name="username"

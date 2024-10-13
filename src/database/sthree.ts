@@ -28,29 +28,57 @@ const client = new S3Client({
 });
 // Used chat gpt to assist in debuging type file to pass to s3 bucket
 export async function putImage(data: File) {
-  // Generate key
-  const key = randomBytes(32).toString() + ".jpg";
-  const image = await data.arrayBuffer();
+  try {
+    // Generate key
+    const key = randomBytes(32).toString() + ".jpg";
+    const image = await data.arrayBuffer();
 
-  //console.log(image);
-  const image2 = await sharp(image)
-    .jpeg({ quality: 90, mozijpeg: true })
-    .toBuffer();
-  //console.log("output");
-  //console.log(image2);
+    //console.log(image);
+    const image2 = await sharp(image)
+      .jpeg({ quality: 90, mozijpeg: true })
+      .toBuffer();
+    //console.log("output");
+    //console.log(image2);
 
-  await put({
-    bucketName: process.env.BUCKET,
-    key: key,
-    data: image2,
-  });
+    await put({
+      bucketName: process.env.BUCKET,
+      key: key,
+      data: image2,
+    });
 
+    return key;
+  } catch (caught) {
+    console.log(caught);
+    // Any error should cause no file to be uploaded to the bucket
+    return "";
+  }
+}
+// Reupload picture resusing key
+export async function rePutImage(data: File, key: string) {
+  try {
+    const image = await data.arrayBuffer();
+    const image2 = await sharp(image)
+      .jpeg({ quality: 90, mozijpeg: true })
+      .toBuffer();
+
+    await put({
+      bucketName: process.env.BUCKET,
+      key: key,
+      data: image2,
+    });
+  } catch (caught) {
+    console.log(caught);
+    //Errors should still result in a valid image stored at the key
+  }
   return key;
 }
 //From aws docs, some non functional changes have been made
 const put = async ({ bucketName, key, data }: any) => {
   //const metadata = await sharp(data).metadata();
   // From chatgpt aws s3 PutObjectCommand() inputing params made some changes
+
+  // May want errors thrown to the calling function will test
+
   const params = {
     Bucket: bucketName,
     Key: key,

@@ -65,8 +65,14 @@ export default async function EditProfile() {
     for (let i = 0; i < organizations[0]!.length; i++) {
       let id: organizationId = { orgID: organizations[0]![i].id };
       listings[i] = await getListings(id);
-      for (let j = 0; i < listings[i]!.length; j++) {
-        listings[i]![j]!.thumbnail = await getImage(listings[i]![j]!.thumbnail);
+      try {
+        for (let j = 0; j < listings[i]!.length; j++) {
+          listings[i]![j]!.thumbnail = await getImage(
+            listings[i]![j]!.thumbnail
+          );
+        }
+      } catch (caught) {
+        console.log(caught);
       }
       // Replace the image key with a signed url to the image
       organizations[0]![i].image.storageId = await getImage(

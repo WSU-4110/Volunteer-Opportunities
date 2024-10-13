@@ -13,11 +13,11 @@ import { authenticatedAction } from "@/lib/safe-action";
 import { unauthenticatedAction } from "@/lib/safe-action";
 import { revalidatePath } from "next/cache";
 
-import { z } from "zod";
+import { custom, z } from "zod";
 import { redirect } from "next/navigation";
 import { timeStamp } from "console";
 
-import { putImage } from "@/database/sthree";
+import { putImage, rePutImage } from "@/database/sthree";
 
 // Select Statements for User Profile
 // Convert to internal fumctions
@@ -155,23 +155,38 @@ export const updateUser = authenticatedAction
       picture: z.string(),
       username: z.string(),
       bio: z.string(),
+      data: z.any(),
     })
   )
-  .handler(async ({ ctx: { user }, input: { picture, username, bio } }) => {
-    if (user != undefined) {
-      return internalUpdateUser(picture, username, bio, user.id);
+  .handler(
+    async ({ ctx: { user }, input: { picture, username, bio, data } }) => {
+      if (user != undefined) {
+        return internalUpdateUser(picture, username, bio, user.id, data);
+      }
     }
-  });
+  );
 
 async function internalUpdateUser(
   picture: string,
   username: string,
   bio: string,
-  id: string
+  id: string,
+  data: any
 ) {
+  let image = picture;
+  let customImage = true;
+  if (picture.length > 10) {
+    image = await rePutImage(data, image);
+  } else {
+    image = await putImage(data);
+    if (image.length > 10) {
+      //If put image fails and does not return a key
+      customImage = false;
+    }
+  }
   await database
     .update(users)
-    .set({ name: username, image: picture, bio: bio })
+    .set({ name: username, image: image, bio: bio, customFile: customImage })
     .where(eq(users.id, id));
 }
 
@@ -222,11 +237,12 @@ export const updateOrganization = authenticatedAction
       picture: z.string(),
       name: z.string(),
       id: z.string(),
+      data: z.any(),
     })
   )
-  .handler(async ({ ctx: { user }, input: { picture, name, id } }) => {
+  .handler(async ({ ctx: { user }, input: { picture, name, id, data } }) => {
     if (user != undefined) {
-      return internalUpdateOrg(picture, name, id, user.id);
+      return internalUpdateOrg(picture, name, id, user.id, data);
     }
   });
 
@@ -234,12 +250,22 @@ async function internalUpdateOrg(
   picture: string,
   name: string,
   id: string,
-  userID: string
+  userID: string,
+  data: any
 ) {
-  console.log(name);
+  //console.log(name);
+  let image = picture;
+  //Either overwrites current image or adds a new image
+
+  if (picture.length > 10) {
+    image = await rePutImage(data, image);
+  } else {
+    image = await putImage(data);
+  }
+
   await database
     .update(organizations)
-    .set({ name: name, thumbnail: { storageId: picture } })
+    .set({ name: name, thumbnail: { storageId: image } })
     .where(eq(organizations.id, id));
 }
 

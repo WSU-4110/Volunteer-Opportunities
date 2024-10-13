@@ -31,6 +31,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { updateOrganization } from "../actions";
 import { revalidatePathAction } from "@/app/profile/view/actions";
+import { FileUpload } from "./fileUpload";
 
 type input = {
   organizations: {
@@ -66,16 +67,32 @@ const EditOrgPage = ({ ...props }: any) => {
   });
   async function onSubmit(values: z.infer<typeof orgSchema>) {
     console.log("submit");
-    console.log(
+    try {
+      const data: File = await files[0];
+
+      console.log("Submit");
+      console.log(data);
+      const form: FormData = new FormData();
+      form.append("data", data);
+
       await updateOrganization({
         picture: props.organizations[props.org.pos].image.storageId,
         name: values.name,
         id: props.org.id,
-      })
-    );
-    revalidatePathAction();
-    props.setEditProfile(false);
+        data: form,
+      });
+
+      revalidatePathAction();
+      props.setEditProfile(false);
+    } catch (error) {}
   }
+
+  // Use state for image upload
+  const [files, setFiles] = useState<File[]>([]);
+  const handleFileUpload = (files: File[]) => {
+    setFiles(files);
+    console.log(files);
+  };
 
   return (
     <div>
@@ -88,6 +105,8 @@ const EditOrgPage = ({ ...props }: any) => {
       </div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <FileUpload onChange={handleFileUpload} />
+
           <FormField
             control={form.control}
             name="name"

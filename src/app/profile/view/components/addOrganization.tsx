@@ -45,7 +45,7 @@ export default function AddAnOrganization(props: any) {
       const form: FormData = new FormData();
       form.append("data", data);
 
-      addOrganization({
+      await addOrganization({
         picture: values.imageUrl,
         name: values.name,
         data: form,
