@@ -135,58 +135,25 @@ export const listings = pgTable("listings", {
     .notNull(),
 });
 
-export const user_to_user_conversations = pgTable(
-  "user_to_user_conversations",
-  {
-    id: text("id")
-      .primaryKey()
-      .$defaultFn(() => crypto.randomUUID()),
-    senderId: text("senderId")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }), // Sender of the message
-    recipientId: text("recipientId")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }), // Recipient of the message
-    subject: text("subject"),
-  }
-);
-
-export const org_to_user_conversations = pgTable("org_to_user_conversations", {
+export const conversationsToUsers = pgTable("conversations_to_users", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  senderId: text("senderId")
-    .notNull()
-    .references(() => organizations.id, { onDelete: "cascade" }), // Sender of the message
-  recipientId: text("recipientId")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }), // Recipient of the message
-  subject: text("subject"),
+  conversationId: text("conversationId").references(() => conversations.id, {
+    onDelete: "cascade",
+  }),
+  userId: text("userId").references(() => users.id, {
+    onDelete: "cascade",
+  }),
+  organizationId: text("organizationId").references(() => organizations.id, {
+    onDelete: "cascade",
+  }),
 });
 
-export const user_to_org_conversations = pgTable("user_to_org_conversations", {
+export const conversations = pgTable("conversations", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  senderId: text("senderId")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }), // Sender of the message
-  recipientId: text("recipientId")
-    .notNull()
-    .references(() => organizations.id, { onDelete: "cascade" }), // Recipient of the message
-  subject: text("subject"),
-});
-
-export const org_to_org_conversations = pgTable("org_to_org_conversations", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  senderId: text("senderId")
-    .notNull()
-    .references(() => organizations.id, { onDelete: "cascade" }), // Sender of the message
-  recipientId: text("recipientId")
-    .notNull()
-    .references(() => organizations.id, { onDelete: "cascade" }), // Recipient of the message
   subject: text("subject"),
 });
 
@@ -201,17 +168,12 @@ export const messages = pgTable("messages", {
   createdAt: timestamp("createdAt", { mode: "date" })
     .notNull()
     .default(sql`NOW()`), // Timestamp
-  user_to_user_conversationId: text("user_to_user_id").references(
-    () => user_to_user_conversations.id
-  ),
-  user_to_org_conversationId: text("user_to_org_id").references(
-    () => user_to_org_conversations.id
-  ),
-  org_to_user_conversationId: text("org_to_user_id").references(
-    () => org_to_org_conversations.id
-  ),
-  org_to_org_conversationId: text("org_to_org_id").references(
-    () => org_to_org_conversations.id
+  conversationId: text("conversation_id").references(() => conversations.id, {
+    onDelete: "cascade",
+  }),
+  senderId: text("sender_user_id").references(() => users.id),
+  senderOrganizationId: text("sender_organization_id").references(
+    () => organizations.id
   ),
 });
 
@@ -260,6 +222,32 @@ export const listingsToUsers = pgTable(
   })
 );
 
+export const conversationsRelations = relations(
+  conversations,
+  ({ one, many }) => ({
+    conversations: many(conversationsToUsers),
+    messages: many(messages),
+  })
+);
+
+export const conversationsToUsersRelations = relations(
+  conversationsToUsers,
+  ({ one, many }) => ({
+    user: one(users, {
+      fields: [conversationsToUsers.userId],
+      references: [users.id],
+    }),
+    organization: one(organizations, {
+      fields: [conversationsToUsers.organizationId],
+      references: [organizations.id],
+    }),
+    conversation: one(conversations, {
+      fields: [conversationsToUsers.conversationId],
+      references: [conversations.id],
+    }),
+  })
+);
+
 export const listingsToUsersRelations = relations(
   listingsToUsers,
   ({ one }) => ({
@@ -282,14 +270,8 @@ export const organizationsRelations = relations(
       fields: [organizations.creator],
       references: [users.id],
     }),
-    user_to_org_conversations: many(user_to_org_conversations),
-    org_to_user_conversations: many(org_to_user_conversations),
-    senderOrg: many(org_to_org_conversations, {
-      relationName: "senderOrg",
-    }),
-    receiverOrg: many(org_to_org_conversations, {
-      relationName: "receiverOrg",
-    }),
+    conversationsToUsers: many(conversationsToUsers),
+    messages: many(messages),
   })
 );
 
@@ -300,16 +282,11 @@ export const skillsRelations = relations(skills, ({ many }) => ({
 
 export const volunteerRelations = relations(users, ({ many }) => ({
   skills: many(skillsToUsers),
-  user_to_user_senderMessages: many(user_to_user_conversations, {
-    relationName: "sender",
-  }),
-  user_to_user_receiverMessages: many(user_to_user_conversations, {
-    relationName: "receiver",
-  }),
-  user_to_org_conversations: many(user_to_org_conversations),
-  org_to_user_conversations: many(org_to_user_conversations),
+  user_to_user_senderMessages: many(conversationsToUsers),
   organizations: many(organizations),
   listings: many(listingsToUsers),
+  messages: many(messages),
+  conversationsToUsers: many(conversationsToUsers),
 }));
 
 export const listingsRelations = relations(listings, ({ many, one }) => ({
@@ -321,88 +298,20 @@ export const listingsRelations = relations(listings, ({ many, one }) => ({
   volunteers: many(listingsToUsers),
 }));
 
-export const messagesRelations = relations(messages, ({ one }) => ({
-  user_to_user_conversation: one(user_to_user_conversations, {
-    fields: [messages.user_to_user_conversationId],
-    references: [user_to_user_conversations.id],
+export const messagesRelations = relations(messages, ({ one, many }) => ({
+  senderUser: one(users, {
+    fields: [messages.senderId],
+    references: [users.id],
   }),
-  user_to_org_conversation: one(user_to_org_conversations, {
-    fields: [messages.user_to_org_conversationId],
-    references: [user_to_org_conversations.id],
+  senderOrganization: one(organizations, {
+    fields: [messages.senderOrganizationId],
+    references: [organizations.id],
   }),
-  org_to_user_conversation: one(org_to_user_conversations, {
-    fields: [messages.org_to_user_conversationId],
-    references: [org_to_user_conversations.id],
-  }),
-  org_to_org_conversation: one(org_to_org_conversations, {
-    fields: [messages.org_to_org_conversationId],
-    references: [org_to_org_conversations.id],
+  conversation: one(conversations, {
+    fields: [messages.conversationId],
+    references: [conversations.id],
   }),
 }));
-
-export const user_to_user_conversationsRelations = relations(
-  user_to_user_conversations,
-  ({ one, many }) => ({
-    sender: one(users, {
-      fields: [user_to_user_conversations.senderId],
-      references: [users.id],
-      relationName: "sender",
-    }),
-    recipient: one(users, {
-      fields: [user_to_user_conversations.recipientId],
-      references: [users.id],
-      relationName: "receiver",
-    }),
-    messages: many(messages),
-  })
-);
-
-export const user_to_org_conversationsRelations = relations(
-  user_to_org_conversations,
-  ({ one, many }) => ({
-    sender: one(users, {
-      fields: [user_to_org_conversations.senderId],
-      references: [users.id],
-    }),
-    recipient: one(organizations, {
-      fields: [user_to_org_conversations.recipientId],
-      references: [organizations.id],
-    }),
-    messages: many(messages),
-  })
-);
-
-export const org_to_user_conversationsRelations = relations(
-  org_to_user_conversations,
-  ({ one, many }) => ({
-    sender: one(organizations, {
-      fields: [org_to_user_conversations.senderId],
-      references: [organizations.id],
-    }),
-    recipient: one(users, {
-      fields: [org_to_user_conversations.recipientId],
-      references: [users.id],
-    }),
-    messages: many(messages),
-  })
-);
-
-export const org_to_org_conversationsRelations = relations(
-  org_to_org_conversations,
-  ({ one, many }) => ({
-    senderOrg: one(organizations, {
-      fields: [org_to_org_conversations.senderId],
-      references: [organizations.id],
-      relationName: "senderOrg",
-    }),
-    recipientOrg: one(organizations, {
-      fields: [org_to_org_conversations.recipientId],
-      references: [organizations.id],
-      relationName: "receiverOrg",
-    }),
-    messages: many(messages),
-  })
-);
 
 export const skillsToListingsRelations = relations(
   skillsToListings,

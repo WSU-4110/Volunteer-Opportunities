@@ -1,1 +1,0 @@
-ALTER TABLE "listings" ADD COLUMN "createdAt" timestamp DEFAULT NOW() NOT NULL;

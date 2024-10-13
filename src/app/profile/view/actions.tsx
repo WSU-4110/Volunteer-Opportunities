@@ -244,16 +244,14 @@ export const addOrganization = authenticatedAction
   )
   .handler(async ({ ctx: { user }, input: { picture, name } }) => {
     if (user != undefined) {
-      return await database
-        .insert(organizations)
-        .values({
-          name: name,
-          thumbnail: { storageId: picture },
-          creator: user.id,
-        });
+      return await database.insert(organizations).values({
+        name: name,
+        thumbnail: { storageId: picture },
+        creator: user.id,
+      });
     }
   });
 
 export const revalidatePathAction = () => {
-  revalidatePath("/profile/form");
+  revalidatePath("/profile/view");
 };
