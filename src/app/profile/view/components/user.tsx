@@ -169,9 +169,9 @@ const EditUserPage = ({ ...props }: any) => {
         />
       </div>
       <br />
+      <FileUpload onChange={handleFileUpload} />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <FileUpload onChange={handleFileUpload} />
           <FormField
             control={form.control}
             name="username"

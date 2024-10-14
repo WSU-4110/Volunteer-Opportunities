@@ -96,17 +96,18 @@ const EditOrgPage = ({ ...props }: any) => {
 
   return (
     <div>
-      <div className="w-full m-auto mt-10">
-        <img
-          src={props.organizations[props.org.pos].image.storageId}
-          alt="Organization Profile Picture"
-          className="m-auto rounded-xl"
-        />
+      <div className="w-1/2 m-auto mt-20">
+        <div className="w-full m-auto mt-10">
+          <img
+            src={props.organizations[props.org.pos].image.storageId}
+            alt="Organization Profile Picture"
+            className="m-auto rounded-xl"
+          />
+        </div>
       </div>
+      <FileUpload onChange={handleFileUpload} />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <FileUpload onChange={handleFileUpload} />
-
           <FormField
             control={form.control}
             name="name"

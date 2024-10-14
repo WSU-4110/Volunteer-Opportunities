@@ -110,7 +110,11 @@ or the multipart upload API (5TB max).`
 };
 
 export async function getImage(key: string) {
-  return createPresignedUrlGet({ bucket: process.env.BUCKET, key: key });
+  // Keys should only be generated from the above put method making them very long
+  // Do not put keys in the database without putting them in the bucket it may break the page that calls this.
+  if (key.length > 10) {
+    return createPresignedUrlGet({ bucket: process.env.BUCKET, key: key });
+  }
 }
 
 // From aws docs https://docs.aws.amazon.com/AmazonS3/latest/API/s3_example_s3_Scenario_PresignedUrl_section.html
