@@ -10,15 +10,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Typewriter } from "react-simple-typewriter";
-
-const handleType = (count: number) => {
-  // access word count number
-  console.log(count);
-};
-
-const handleDone = () => {
-  console.log(`Done after 5 loops!`);
-};
+import Autoplay from "embla-carousel-autoplay";
 
 export default function Home() {
   return (
@@ -28,7 +20,7 @@ export default function Home() {
           <img src="volunteer-image.jpg" className="w-full"></img>
         </div>
         <div className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
-          <div className="text-center">
+          <div className="text-center text-[30pt]">
             <h1
               style={{
                 paddingTop: "5rem",
@@ -38,17 +30,14 @@ export default function Home() {
             >
               Volunteers are{" "}
               <span style={{ fontWeight: "bold" }}>
-                {/* Style will be inherited from the parent element */}
                 <Typewriter
-                  words={["Kind", "Thoughtful", "Selfless", "Priceless!"]}
+                  words={["Kind", "Selfless", "Thoughtful", "Priceless!"]}
                   loop={5}
                   cursor
                   cursorStyle="_"
                   typeSpeed={70}
                   deleteSpeed={50}
                   delaySpeed={1000}
-                  onLoopDone={handleDone}
-                  onType={handleType}
                 />
               </span>
             </h1>
@@ -88,7 +77,17 @@ export default function Home() {
         </div>
       </div>
 
-      <Carousel className="bg-blue-500 text-center">
+      <Carousel
+        className="bg-blue-500 text-center"
+        plugins={[
+          Autoplay({
+            delay: 5000,
+            stopOnInteraction: false,
+            stopOnLastSnap: false,
+          }),
+        ]}
+        opts={{ loop: true }}
+      >
         <CarouselContent>
           <CarouselItem>
             <div className="container mx-auto">

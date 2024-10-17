@@ -37,6 +37,7 @@
     "drizzle-cli": "^0.2.1",
     "drizzle-kit": "^0.22.8",
     "drizzle-orm": "^0.31.2",
+    "embla-carousel-autoplay": "^8.3.0",
     "embla-carousel-react": "^8.3.0",
     "framer-motion": "^11.3.8",
     "lucide-react": "^0.403.0",
