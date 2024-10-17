@@ -7,6 +7,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import Typewriter from "typewriter-effect";
 
 export default function Home() {
   return (
@@ -168,6 +169,19 @@ export default function Home() {
         <CarouselPrevious />
         <CarouselNext />
       </Carousel>
+
+      <div>
+        <Typewriter
+          onInit={(typewriter) => {
+            typewriter
+              .typeString("GeeksForGeeks")
+              .pauseFor(1000)
+              .deleteAll()
+              .typeString("Welcomes You")
+              .start();
+          }}
+        />
+      </div>
     </div>
   );
 }
