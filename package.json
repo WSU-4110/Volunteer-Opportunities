@@ -48,6 +48,7 @@
     "react-bootstrap": "^2.10.5",
     "react-dom": "^18",
     "react-hook-form": "^7.53.0",
+    "react-simple-typewriter": "^5.0.1",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
     "tsx": "^4.16.2",

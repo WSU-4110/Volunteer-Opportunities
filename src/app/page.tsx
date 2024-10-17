@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -7,7 +9,16 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import Typewriter from "typewriter-effect";
+import { Typewriter } from "react-simple-typewriter";
+
+const handleType = (count: number) => {
+  // access word count number
+  console.log(count);
+};
+
+const handleDone = () => {
+  console.log(`Done after 5 loops!`);
+};
 
 export default function Home() {
   return (
@@ -17,6 +28,31 @@ export default function Home() {
           <img src="volunteer-image.jpg" className="w-full"></img>
         </div>
         <div className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
+          <div className="text-center">
+            <h1
+              style={{
+                paddingTop: "5rem",
+                margin: "auto 0",
+                fontWeight: "normal",
+              }}
+            >
+              Volunteers are{" "}
+              <span style={{ fontWeight: "bold" }}>
+                {/* Style will be inherited from the parent element */}
+                <Typewriter
+                  words={["Kind", "Thoughtful", "Selfless", "Priceless!"]}
+                  loop={5}
+                  cursor
+                  cursorStyle="_"
+                  typeSpeed={70}
+                  deleteSpeed={50}
+                  delaySpeed={1000}
+                  onLoopDone={handleDone}
+                  onType={handleType}
+                />
+              </span>
+            </h1>
+          </div>
           <div className="font-medium font-bold text-[30pt]">
             Welcome to Volunteer Opportunites
           </div>
@@ -52,7 +88,7 @@ export default function Home() {
         </div>
       </div>
 
-      <Carousel className="bg-blue-400 text-center">
+      <Carousel className="bg-blue-500 text-center">
         <CarouselContent>
           <CarouselItem>
             <div className="container mx-auto">
@@ -169,19 +205,6 @@ export default function Home() {
         <CarouselPrevious />
         <CarouselNext />
       </Carousel>
-
-      <div>
-        <Typewriter
-          onInit={(typewriter) => {
-            typewriter
-              .typeString("GeeksForGeeks")
-              .pauseFor(1000)
-              .deleteAll()
-              .typeString("Welcomes You")
-              .start();
-          }}
-        />
-      </div>
     </div>
   );
 }
