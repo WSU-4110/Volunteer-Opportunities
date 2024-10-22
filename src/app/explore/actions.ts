@@ -7,7 +7,7 @@ import { unauthenticatedAction } from "@/lib/safe-action";
 import { skills, listings, skillsToListings } from "@/database/schema";
 
 import { z } from "zod";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { list } from "postcss";
 
 export async function getSkills(listingID : string) {
@@ -22,6 +22,12 @@ export async function getSkills(listingID : string) {
 
 export async function getListings() {
   return await database.select().from(listings);
+}
+
+export async function getListingsSearchTitle() {
+  const results = await database.select().from(listings).where(sql`${listings.name} LIKE '%${"Evil"}%'`) 
+
+  //console.log(results)
 }
 
 export const getListingsBySkill = authenticatedAction
