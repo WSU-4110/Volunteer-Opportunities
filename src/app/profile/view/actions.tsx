@@ -295,11 +295,12 @@ export const addOrganization = authenticatedAction
       return await database.insert(organizations).values({
         name: name,
         thumbnail: { storageId: image },
+
         creator: user.id,
       });
     }
   });
 
 export const revalidatePathAction = () => {
-  revalidatePath("/profile/form");
+  revalidatePath("/profile/view");
 };
