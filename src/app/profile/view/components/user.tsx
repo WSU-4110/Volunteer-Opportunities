@@ -42,6 +42,7 @@ type InputValues = {
   name: string;
   picture: string;
   bio: string;
+  customImage: any;
   skills: {
     skillId: string;
     skillName: string;
@@ -128,6 +129,7 @@ const EditUserPage = ({ ...props }: any) => {
         username: values.username,
         bio: values.bio,
         data: form,
+        image: props.values.customImage,
       };
 
       await updateUser(input);
@@ -159,7 +161,8 @@ const EditUserPage = ({ ...props }: any) => {
           className="m-auto rounded-xl"
         />
       </div>
-
+      <FileUpload onChange={handleFileUpload} />
+      <br />
       <div id="skills">
         <Talents
           addSkill={addSkill}
@@ -169,7 +172,7 @@ const EditUserPage = ({ ...props }: any) => {
         />
       </div>
       <br />
-      <FileUpload onChange={handleFileUpload} />
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField

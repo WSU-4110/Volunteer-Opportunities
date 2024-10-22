@@ -156,12 +156,16 @@ export const updateUser = authenticatedAction
       username: z.string(),
       bio: z.string(),
       data: z.any(),
+      image: z.any(),
     })
   )
   .handler(
-    async ({ ctx: { user }, input: { picture, username, bio, data } }) => {
+    async ({
+      ctx: { user },
+      input: { picture, username, bio, image, data },
+    }) => {
       if (user != undefined) {
-        return internalUpdateUser(picture, username, bio, user.id, data);
+        return internalUpdateUser(picture, username, bio, user.id, image, data);
       }
     }
   );
@@ -171,22 +175,29 @@ async function internalUpdateUser(
   username: string,
   bio: string,
   id: string,
+  userImage: any,
   data: any
 ) {
   let image = picture;
   let customImage = true;
-  if (picture.length > 10) {
-    image = await rePutImage(data, image);
+  if (userImage.id != "" && userImage.id != undefined) {
+    userImage.id = await rePutImage(data.get(data), userImage.id);
   } else {
-    image = await putImage(data);
-    if (image.length > 10) {
+    userImage.id = await putImage(data.get(data));
+    if (userImage.id == "") {
       //If put image fails and does not return a key
       customImage = false;
     }
   }
   await database
     .update(users)
-    .set({ name: username, image: image, bio: bio, customFile: customImage })
+    .set({
+      name: username,
+      image: image,
+      bio: bio,
+      customFile: customImage,
+      userImage: { id: "Stuff" },
+    })
     .where(eq(users.id, id));
 }
 
@@ -257,10 +268,10 @@ async function internalUpdateOrg(
   let image = picture;
   //Either overwrites current image or adds a new image
 
-  if (picture.length > 10) {
-    image = await rePutImage(data, image);
+  if (picture != "") {
+    image = await rePutImage(data.get("data"), image);
   } else {
-    image = await putImage(data);
+    image = await putImage(data.get("data"));
   }
 
   await database

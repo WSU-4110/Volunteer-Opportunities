@@ -56,10 +56,16 @@ export default async function EditProfile() {
     userSkill != null &&
     organizations != null
   ) {
+    let picture = "";
     if (userD.customFile) {
-      userD.userImage = await getImage(userD.userImage);
+      try {
+        let picture = await getImage(userD[0]![0].userImage.id);
+      } catch (caught) {
+        userD[0]![0].userImage.id = "";
+      }
+    } else {
+      let picture = userD[0]![0].image || "";
     }
-    const picture = userD[0]![0].image || "";
     // Added type any to allow access tp the inside of json data
     const listings: any = [];
     for (let i = 0; i < organizations[0]!.length; i++) {
@@ -72,18 +78,20 @@ export default async function EditProfile() {
           );
         }
       } catch (caught) {
-        console.log(caught);
+        //console.log(caught);
       }
       // Replace the image key with a signed url to the image
-      organizations[0]![i].image.storageId = await getImage(
+      organizations[0]![i].image.url = await getImage(
         organizations[0]![i].image.storageId
       );
     }
+    console.log(userD[0]![0].userImage.id);
     return (
       <div>
         <header></header>
         <p></p>
         <UserPage
+          customImage={userD[0]![0].userImage.id}
           name={userD[0]![0].name}
           picture={picture}
           bio={userD[0]![0].bio}

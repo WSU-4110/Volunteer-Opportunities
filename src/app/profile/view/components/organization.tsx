@@ -99,7 +99,7 @@ const EditOrgPage = ({ ...props }: any) => {
       <div className="w-1/2 m-auto mt-20">
         <div className="w-full m-auto mt-10">
           <img
-            src={props.organizations[props.org.pos].image.storageId}
+            src={props.organizations[props.org.pos].image.url}
             alt="Organization Profile Picture"
             className="m-auto rounded-xl"
           />
@@ -152,7 +152,7 @@ const ViewOrgPage = (props: any) => {
     <div className="w-1/2 m-auto mt-20">
       <div className="w-full m-auto mt-10">
         <img
-          src={props.organizations[props.org.pos].image.storageId}
+          src={props.organizations[props.org.pos].image.url}
           alt="Organization Profile Picture"
           className="m-auto rounded-xl"
         />
