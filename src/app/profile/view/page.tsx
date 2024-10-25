@@ -57,14 +57,16 @@ export default async function EditProfile() {
     organizations != null
   ) {
     let picture = "";
-    if (userD.customFile) {
+    if (userD[0]![0].customFile) {
       try {
-        let picture = await getImage(userD[0]![0].userImage.id);
+        //console.log("Image");
+        picture = await getImage(userD[0]![0].userImage.id);
       } catch (caught) {
         userD[0]![0].userImage.id = "";
       }
     } else {
-      let picture = userD[0]![0].image || "";
+      //console.log("No Image");
+      picture = userD[0]![0].image || "";
     }
     // Added type any to allow access tp the inside of json data
     const listings: any = [];
@@ -85,7 +87,8 @@ export default async function EditProfile() {
         organizations[0]![i].image.storageId
       );
     }
-    console.log(userD[0]![0].userImage.id);
+    //console.log(organizations[0]![0].image.storageId);
+    //console.log(userD[0]![0].userImage.id);
     return (
       <div>
         <header></header>

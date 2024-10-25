@@ -164,8 +164,16 @@ export const updateUser = authenticatedAction
       ctx: { user },
       input: { picture, username, bio, image, data },
     }) => {
+      //console.log(data.get("data"));
       if (user != undefined) {
-        return internalUpdateUser(picture, username, bio, user.id, image, data);
+        return internalUpdateUser(
+          picture,
+          username,
+          bio,
+          user.id,
+          image,
+          data.get("data")
+        );
       }
     }
   );
@@ -178,27 +186,48 @@ async function internalUpdateUser(
   userImage: any,
   data: any
 ) {
-  let image = picture;
   let customImage = true;
-  if (userImage.id != "" && userImage.id != undefined) {
-    userImage.id = await rePutImage(data.get(data), userImage.id);
-  } else {
-    userImage.id = await putImage(data.get(data));
-    if (userImage.id == "") {
-      //If put image fails and does not return a key
-      customImage = false;
+  //console.log("UserID");
+  //console.log(userImage);
+  try {
+    //console.log(data);
+
+    if (userImage != "" && userImage != undefined) {
+      userImage = await rePutImage(data, userImage);
+    } else {
+      //console.log("Add image");
+      userImage = await putImage(data);
+      if (userImage == "") {
+        //If put image fails and does not return a key
+        customImage = false;
+      }
     }
+    await database
+      .update(users)
+      .set({
+        name: username,
+        image: picture,
+        bio: bio,
+        customFile: customImage,
+        userImage: { id: userImage },
+      })
+      .where(eq(users.id, id));
+    //console.log("success");
+  } catch (caught) {
+    //console.log(caught);
+    //If put image fails and does not return a key
+    customImage = false;
+    await database
+      .update(users)
+      .set({
+        name: username,
+        image: picture,
+        bio: bio,
+        customFile: customImage,
+        userImage: { id: "" },
+      })
+      .where(eq(users.id, id));
   }
-  await database
-    .update(users)
-    .set({
-      name: username,
-      image: image,
-      bio: bio,
-      customFile: customImage,
-      userImage: { id: "Stuff" },
-    })
-    .where(eq(users.id, id));
 }
 
 //Organization database calls

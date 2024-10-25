@@ -10,7 +10,7 @@ import {
   waitUntilObjectNotExists,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { randomBytes } from "crypto";
+import { randomUUID } from "crypto";
 import { detectContentType } from "next/dist/server/image-optimizer";
 
 // import {sharp} from "sharp";
@@ -30,25 +30,29 @@ const client = new S3Client({
 export async function putImage(data: File) {
   try {
     // Generate key
-    const key = randomBytes(32).toString("hex") + ".jpg";
+    const key = randomUUID().toString() + ".jpg";
     const image = await data.arrayBuffer();
 
-    //console.log(image);
-    const image2 = await sharp(image)
-      .jpeg({ quality: 90, mozijpeg: true })
-      .toBuffer();
-    //console.log("output");
-    //console.log(image2);
+    //Max file size should be 1000000 bytes or 1 mb
 
-    await put({
-      bucketName: process.env.BUCKET,
-      key: key,
-      data: image2,
-    });
+    //console.log(image.byteLength);
+    if (image.byteLength <= 1000000) {
+      const image2 = await sharp(image)
+        .jpeg({ quality: 90, mozijpeg: true })
+        .toBuffer();
 
-    return key;
+      await put({
+        bucketName: process.env.BUCKET,
+        key: key,
+        data: image2,
+      });
+      //console.log(key);
+      return key;
+    } else {
+      return "";
+    }
   } catch (caught) {
-    console.log(caught);
+    //console.log(caught);
     // Any error should cause no file to be uploaded to the bucket
     return "";
   }
@@ -57,17 +61,22 @@ export async function putImage(data: File) {
 export async function rePutImage(data: File, key: string) {
   try {
     const image = await data.arrayBuffer();
-    const image2 = await sharp(image)
-      .jpeg({ quality: 90, mozijpeg: true })
-      .toBuffer();
+    // Image should be less than 1mb in size
 
-    await put({
-      bucketName: process.env.BUCKET,
-      key: key,
-      data: image2,
-    });
+    //console.log(key);
+    if (image.byteLength <= 1000000) {
+      const image2 = await sharp(image)
+        .jpeg({ quality: 90, mozijpeg: true })
+        .toBuffer();
+
+      await put({
+        bucketName: process.env.BUCKET,
+        key: key,
+        data: image2,
+      });
+    }
   } catch (caught) {
-    console.log(caught);
+    //console.log(caught);
     //Errors should still result in a valid image stored at the key
   }
   return key;
@@ -88,7 +97,7 @@ const put = async ({ bucketName, key, data }: any) => {
 
   try {
     const response = await client.send(command);
-    console.log(response);
+    //console.log(response);
   } catch (caught) {
     if (
       caught instanceof S3ServiceException &&

@@ -66,12 +66,12 @@ const EditOrgPage = ({ ...props }: any) => {
     },
   });
   async function onSubmit(values: z.infer<typeof orgSchema>) {
-    console.log("submit");
+    //console.log("submit");
     try {
       const data: File = await files[0];
 
-      console.log("Submit");
-      console.log(data);
+      //console.log("Submit");
+      //console.log(data);
       const form: FormData = new FormData();
       form.append("data", data);
 
@@ -91,7 +91,7 @@ const EditOrgPage = ({ ...props }: any) => {
   const [files, setFiles] = useState<File[]>([]);
   const handleFileUpload = (files: File[]) => {
     setFiles(files);
-    console.log(files);
+    //console.log(files);
   };
 
   return (
@@ -230,7 +230,7 @@ export default function Organization(props: input) {
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="id" />
+                          <SelectValue placeholder="" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>

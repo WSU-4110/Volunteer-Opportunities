@@ -116,11 +116,12 @@ const EditUserPage = ({ ...props }: any) => {
         skill: skillDeleteList.map((skill) => skill.skillId),
       });
     }
+    console.log("submit");
     try {
       const data: File = await files[0];
 
-      console.log("Submit");
-      console.log(data);
+      //console.log("Submit");
+      //console.log(data);
       const form: FormData = new FormData();
       form.append("data", data);
 
@@ -131,8 +132,8 @@ const EditUserPage = ({ ...props }: any) => {
         data: form,
         image: props.values.customImage,
       };
-
-      await updateUser(input);
+      //console.log(input);
+      //console.log(await updateUser(input));
 
       revalidatePathAction();
       props.addOrganization(false);
@@ -145,11 +146,11 @@ const EditUserPage = ({ ...props }: any) => {
   const [files, setFiles] = useState<File[]>([]);
   const handleFileUpload = (files: File[]) => {
     setFiles(files);
-    console.log(files);
+    //console.log(files);
   };
 
   // Form layout from https://ui.shadcn.com/docs/components/form
-
+  //console.log(props.values.picture);
   return (
     <div className="w-1/2 m-auto mt-20">
       <header className="text-2xl text-center font-bold">Volunteer Form</header>
@@ -161,7 +162,7 @@ const EditUserPage = ({ ...props }: any) => {
           className="m-auto rounded-xl"
         />
       </div>
-      <FileUpload onChange={handleFileUpload} />
+
       <br />
       <div id="skills">
         <Talents
@@ -175,6 +176,7 @@ const EditUserPage = ({ ...props }: any) => {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <FileUpload onChange={handleFileUpload} />
           <FormField
             control={form.control}
             name="username"
