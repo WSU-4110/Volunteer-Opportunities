@@ -1,3 +1,4 @@
+/*
 "use client";
 
 import { useState } from "react";
@@ -46,3 +47,4 @@ const typewriter = () => {
 };
 
 export default typewriter;
+*/
