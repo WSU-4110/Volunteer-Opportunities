@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/carousel";
 import { Typewriter } from "react-simple-typewriter";
 import Autoplay from "embla-carousel-autoplay";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function Home() {
   return (
@@ -78,11 +79,11 @@ export default function Home() {
       </div>
 
       <Carousel
-        className="bg-blue-500 text-center"
+        className="bg-blue-400 text-center w-full"
         plugins={[
           Autoplay({
             delay: 5000,
-            stopOnInteraction: false,
+            stopOnMouseEnter: true,
             stopOnLastSnap: false,
           }),
         ]}
