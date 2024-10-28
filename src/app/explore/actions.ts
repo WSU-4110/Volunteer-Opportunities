@@ -25,10 +25,6 @@ export async function getListings() {
   return await database.select().from(listings);
 }
 
-export async function getListingsByCategory(category : PgColumn) {
-  const results = await database.select().from(listings).where(sql`${category} LIKE '%${"Evil"}%'`) 
-}
-
 export const getListingsBySkill = authenticatedAction
   .createServerAction()
   .input(
