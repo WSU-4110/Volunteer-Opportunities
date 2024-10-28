@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import { SessionProvider } from "next-auth/react";
 
 const geistSans = localFont({
   src: "/fonts/GeistVF.woff",
@@ -26,13 +27,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="hidden-scrollbar">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <div className="min-h-screen w-full h-full">
-          <Navbar />
-          {children}
-        </div>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <SessionProvider> {/* Wrap children with SessionProvider */}
+          <div className="min-h-screen w-full h-full">
+            <Navbar />
+            {children}
+          </div>
+        </SessionProvider>
       </body>
     </html>
   );
