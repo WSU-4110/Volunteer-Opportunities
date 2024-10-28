@@ -59,22 +59,35 @@ const Messaging = ({
       });
 
       setConversations((prevState: any) => {
-        const oldConversations = prevState.filter(
-          (conversation: any) =>
-            conversation.conversations.id != message.conversationId
-        );
-
-        const newConversation = prevState.find(
+        const indexOfNewConversation = prevState.findIndex(
           (conversation: any) =>
             conversation.conversations.id == message.conversationId
         );
 
-        const updatedConversation = {
-          ...newConversation,
-          messages: [...newConversation.messages, newMessage],
-        };
+        // If the conversation is found, proceed to update it
+        if (indexOfNewConversation !== -1) {
+          const oldConversations = [...prevState]; // Make a shallow copy of the previous state
 
-        return [...oldConversations, updatedConversation];
+          const newConversation = oldConversations[indexOfNewConversation]; // Get the existing conversation
+
+          // Update the messages of the found conversation
+          const updatedConversation = {
+            ...newConversation,
+            messages: [...newConversation.messages, newMessage],
+          };
+
+          // Use splice to update the conversation in the array
+          oldConversations.splice(
+            indexOfNewConversation,
+            1,
+            updatedConversation
+          );
+
+          return oldConversations; // Return the modified array
+        }
+
+        // If the conversation isn't found, return the original state (or handle accordingly)
+        return prevState;
       });
     } else if (message.senderOrganizationId) {
       const organizationImage = selectedConversation.organizations.find(
@@ -85,7 +98,7 @@ const Messaging = ({
 
       const newMessage = {
         ...message,
-        content: message.content.replace("/\t/g", "    "),
+        content: message.content.replace(/\t/g, "    "),
         organizationImage: organizationImage,
       };
 
@@ -94,22 +107,31 @@ const Messaging = ({
       });
 
       setConversations((prevState: any) => {
-        const oldConversations = prevState.filter(
-          (conversation: any) =>
-            conversation.conversations.id != message.conversationId
-        );
-
-        const newConversation = prevState.find(
+        const indexOfNewConversation = prevState.findIndex(
           (conversation: any) =>
             conversation.conversations.id == message.conversationId
         );
 
-        const updatedConversation = {
-          ...newConversation,
-          messages: [...newConversation.messages, newMessage],
-        };
+        if (indexOfNewConversation !== -1) {
+          const oldConversations = [...prevState];
 
-        return [...oldConversations, updatedConversation];
+          const newConversation = oldConversations[indexOfNewConversation];
+
+          const updatedConversation = {
+            ...newConversation,
+            messages: [...newConversation.messages, newMessage],
+          };
+
+          oldConversations.splice(
+            indexOfNewConversation,
+            1,
+            updatedConversation
+          );
+
+          return oldConversations;
+        }
+
+        return prevState;
       });
     }
   };
@@ -182,7 +204,6 @@ const Messaging = ({
               {conversations.map((conversation: any, index: number) => {
                 let userData = conversation.users.map(
                   (user: any, index: number) => {
-                    console.log(conversation);
                     return {
                       id: index,
                       name: user.name,
@@ -300,7 +321,7 @@ const Messaging = ({
                       </div>
                     </div>
                   </div>
-                  <div className="w-full h-full overflow-y-scroll">
+                  <div className="w-full h-full overflow-y-auto p-10">
                     {selectedConversation.messages.map((message: any) => {
                       if (message.userImage) {
                         return (
@@ -310,7 +331,11 @@ const Messaging = ({
                               alt="Sender User"
                               className="w-[100px] h-[100px] rounded-xl"
                             />
-                            <p>{message.content}</p>
+                            <p>
+                              {message.content
+                                .replace(/^["']|["']$/g, "")
+                                .replace(/\\(['"])/g, "$1")}
+                            </p>
                           </div>
                         );
                       } else {
@@ -323,7 +348,11 @@ const Messaging = ({
                               alt="Sender Organization"
                               className="w-[100px] h-[100px]"
                             />
-                            <p>{message.content}</p>
+                            <p>
+                              {message.content
+                                .replace(/^["']|["']$/g, "")
+                                .replace(/\\(['"])/g, "$1")}
+                            </p>
                           </div>
                         );
                       }

@@ -164,8 +164,6 @@ export const startNewOrgToUserConversation = authenticatedAction
           })
           .returning();
 
-        console.log(conversation);
-
         for (let returnedConversation of conversation) {
           await database.insert(conversationsToUsers).values([
             {
@@ -458,8 +456,6 @@ export const createMessage = authenticatedAction
             messageType: 0,
           })
           .returning();
-
-        console.log(newMessage);
 
         return newMessage;
       } catch (err) {

@@ -52,10 +52,7 @@ const SendMessage = ({
   const content = form.watch("content");
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(organizationId);
-
-    console.log(typeof organizationId);
-    const newMessage = await createMessage({
+    const [newMessage, newMessageError] = await createMessage({
       ...values,
       senderOrganizationId: organizationId || null,
       senderUserId: userId || null,
@@ -63,7 +60,9 @@ const SendMessage = ({
     });
 
     if (addMessage) {
-      addMessage(newMessage[0]);
+      if (newMessage) {
+        addMessage(newMessage[0]);
+      }
     }
 
     form.reset({ content: "" });
