@@ -15,6 +15,8 @@ export default function Viewer(props: any) {
           src={props.values?.picture}
           alt="User Profile Picture"
           className="m-auto rounded-xl"
+          width="400px"
+          height="400px"
         />
       </div>
       <br />

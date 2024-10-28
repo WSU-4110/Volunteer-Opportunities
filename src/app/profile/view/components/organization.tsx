@@ -102,6 +102,8 @@ const EditOrgPage = ({ ...props }: any) => {
             src={props.organizations[props.org.pos].image.url}
             alt="Organization Profile Picture"
             className="m-auto rounded-xl"
+            width="400px"
+            height="400px"
           />
         </div>
       </div>
@@ -155,6 +157,8 @@ const ViewOrgPage = (props: any) => {
           src={props.organizations[props.org.pos].image.url}
           alt="Organization Profile Picture"
           className="m-auto rounded-xl"
+          width="400px"
+          height="400px"
         />
       </div>
       <br />
