@@ -1,10 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  getListings,
-  getSkills,
-  getListingsBySkill,
-  getListingsSearchTitle,
-} from "./actions";
+import { getListings, getSkills, getListingsSearchCategory } from "./actions";
 
 import Listing from "./(components)/Listing";
 import Userpage from "./(components)/Userpage";

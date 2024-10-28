@@ -28,7 +28,7 @@ export default function Listing({
           <button
             type="button"
             key={item}
-            className="bg-blue-300 w-fit p-[5px] m-[5px] rounded-[5px]"
+            className="bg-blue-300 text-2xl w-fit p-[5px] m-[5px] rounded-[5px]"
           >
             {item}
           </button>

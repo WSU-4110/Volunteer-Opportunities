@@ -19,7 +19,7 @@ export interface ListingsProps {
   listings: ListingInterface[];
 }
 
-export function searchByTitle(title: string, listings: ListingsProps) {
+export function searchByTitle(keyword: string, listings: ListingsProps) {
   const element = document.getElementById("listings");
 
   if (element == null) {
@@ -28,7 +28,25 @@ export function searchByTitle(title: string, listings: ListingsProps) {
 
   const filteredListings = {
     listings: listings.listings.filter((item) => {
-      return item.name.includes(title);
+      return item.name.includes(keyword);
+    }),
+  };
+
+  element.innerHTML = ReactDOMServer.renderToStaticMarkup(
+    getReactNodeFromListings(filteredListings)
+  );
+}
+
+export function searchByDescription(keyword: string, listings: ListingsProps) {
+  const element = document.getElementById("listings");
+
+  if (element == null) {
+    return;
+  }
+
+  const filteredListings = {
+    listings: listings.listings.filter((item) => {
+      return item.description.includes(keyword);
     }),
   };
 
@@ -74,7 +92,37 @@ export function getReactNodeFromListings(listings: ListingsProps) {
 export default function Userpage(listings: ListingsProps) {
   return (
     <>
-      <div className="w-[50%] mx-auto my-3 ">
+      <div className="w-[50%] mx-auto my-3">
+        <div className="my-5">
+          <span>Search by: </span>
+          <select
+            name="search-options"
+            id="search-options"
+            onChange={(event) => {
+              if (event.target.value == "title") {
+                document.getElementById("title-search-input")!.hidden = false;
+                document.getElementById("description-search-input")!.hidden =
+                  true;
+                document.getElementById("talent-search-input")!.hidden = true;
+              } else if (event.target.value == "description") {
+                document.getElementById("title-search-input")!.hidden = true;
+                document.getElementById("description-search-input")!.hidden =
+                  false;
+                document.getElementById("talent-search-input")!.hidden = true;
+              } else if (event.target.value == "talents") {
+                document.getElementById("title-search-input")!.hidden = true;
+                document.getElementById("description-search-input")!.hidden =
+                  true;
+                document.getElementById("talent-search-input")!.hidden = false;
+              }
+            }}
+          >
+            <option value="title">Title</option>
+            <option value="description">Description</option>
+            <option value="talents">Talents</option>
+          </select>
+        </div>
+
         <input
           onKeyDown={(event) => {
             if (event.key == "Enter") {
@@ -84,7 +132,21 @@ export default function Userpage(listings: ListingsProps) {
           type="text"
           id="title-search-input"
           placeholder="Search for Title"
-          className="w-full border-2 rounded"
+          className="w-full text-xl border-2 rounded p-1.5"
+          hidden={false}
+        />
+
+        <input
+          onKeyDown={(event) => {
+            if (event.key == "Enter") {
+              return searchByDescription(event.currentTarget.value, listings);
+            }
+          }}
+          type="text"
+          id="description-search-input"
+          placeholder="Search for Description"
+          className="w-full text-xl border-2 rounded p-1.5"
+          hidden={true}
         />
 
         <input
@@ -95,8 +157,9 @@ export default function Userpage(listings: ListingsProps) {
           }}
           type="text"
           id="talent-search-input"
-          placeholder="Search for Talent"
-          className="w-full border-2 rounded"
+          placeholder="Search for Talents"
+          className="w-full text-xl border-2 rounded p-1.5"
+          hidden={true}
         />
       </div>
 

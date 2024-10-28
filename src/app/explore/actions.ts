@@ -9,6 +9,7 @@ import { skills, listings, skillsToListings } from "@/database/schema";
 import { z } from "zod";
 import { eq, sql } from "drizzle-orm";
 import { list } from "postcss";
+import { PgColumn } from "drizzle-orm/pg-core";
 
 export async function getSkills(listingID : string) {
   const listingSkillsQuery = await database
@@ -24,10 +25,8 @@ export async function getListings() {
   return await database.select().from(listings);
 }
 
-export async function getListingsSearchTitle() {
-  const results = await database.select().from(listings).where(sql`${listings.name} LIKE '%${"Evil"}%'`) 
-
-  //console.log(results)
+export async function getListingsByCategory(category : PgColumn) {
+  const results = await database.select().from(listings).where(sql`${category} LIKE '%${"Evil"}%'`) 
 }
 
 export const getListingsBySkill = authenticatedAction
