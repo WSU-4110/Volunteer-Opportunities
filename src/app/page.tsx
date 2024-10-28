@@ -84,6 +84,7 @@ export default function Home() {
           Autoplay({
             delay: 5000,
             stopOnMouseEnter: true,
+            stopOnInteraction: false,
             stopOnLastSnap: false,
           }),
         ]}
