@@ -8,6 +8,13 @@
       "when": 1728859127049,
       "tag": "0000_chief_leopardon",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1730090609253,
+      "tag": "0001_remarkable_newton_destine",
+      "breakpoints": true
     }
   ]
 }

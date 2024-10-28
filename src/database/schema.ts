@@ -7,6 +7,7 @@ import {
   integer,
   pgEnum,
   json,
+  unique,
 } from "drizzle-orm/pg-core";
 
 import { AdapterAccount } from "next-auth/adapters";
@@ -135,20 +136,27 @@ export const listings = pgTable("listings", {
     .notNull(),
 });
 
-export const conversationsToUsers = pgTable("conversations_to_users", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  conversationId: text("conversationId").references(() => conversations.id, {
-    onDelete: "cascade",
-  }),
-  userId: text("userId").references(() => users.id, {
-    onDelete: "cascade",
-  }),
-  organizationId: text("organizationId").references(() => organizations.id, {
-    onDelete: "cascade",
-  }),
-});
+export const conversationsToUsers = pgTable(
+  "conversations_to_users",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    conversationId: text("conversationId").references(() => conversations.id, {
+      onDelete: "cascade",
+    }),
+    userId: text("userId").references(() => users.id, {
+      onDelete: "cascade",
+    }),
+    organizationId: text("organizationId").references(() => organizations.id, {
+      onDelete: "cascade",
+    }),
+  },
+  (t) => ({
+    unq: unique().on(t.conversationId, t.userId),
+    unq2: unique().on(t.conversationId, t.organizationId),
+  })
+);
 
 export const conversations = pgTable("conversations", {
   id: text("id")

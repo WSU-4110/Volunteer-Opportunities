@@ -40,6 +40,7 @@ import {
   CustomCarouselPrevious,
   CustomCarouselNext,
 } from "@/components/ui/carousel";
+import Messaging from "./messaging";
 
 const InitializeMessageComponent = ({
   authStatus,
@@ -51,6 +52,9 @@ const InitializeMessageComponent = ({
   currentOrganizationSelected,
   increaseOrgSelected,
   decreaseOrgSelected,
+  messagesLoading,
+  setMessagesLoadingTrue,
+  setMessagesLoadingFalse,
 }: {
   userMessageId: any;
   setUserMessageId: (id: string) => void;
@@ -58,13 +62,15 @@ const InitializeMessageComponent = ({
   userStatus: boolean;
   otherOrganizations: Organizations[];
   userOrganizations: Organizations[];
-  currentOrganizationSelected: Number;
+  currentOrganizationSelected: number;
   increaseOrgSelected: () => void;
   decreaseOrgSelected: () => void;
+  messagesLoading: boolean;
+  setMessagesLoadingTrue: () => void;
+  setMessagesLoadingFalse: () => void;
 }) => {
   const [messagesOthers, setMessageOthers] = useState<any>([]);
   const [organizationMessages, setOrganizationMessages] = useState<any>([]);
-  const [loading, setLoading] = useState(false);
 
   const changePersonSelection = (id: any) => {
     setMessageOthers((prevState: any) => {
@@ -95,7 +101,6 @@ const InitializeMessageComponent = ({
 
   const getAllVolunteers = async () => {
     setUserMessageId("");
-    setLoading(true);
     const [otherUsers, error] = await getOtherVolunteersAction();
 
     if (otherUsers) {
@@ -106,11 +111,9 @@ const InitializeMessageComponent = ({
 
       setMessageOthers(usersWithSelected);
     }
-    setLoading(false);
   };
 
   const getAllOrganizations = async () => {
-    setLoading(true);
     const [otherOrganizations, error] = await getOtherOrganizationsAction();
 
     if (otherOrganizations) {
@@ -122,7 +125,6 @@ const InitializeMessageComponent = ({
       setOrganizationMessages(organizationsWithSelected);
     }
     setUserMessageId("");
-    setLoading(false);
   };
 
   const handleMessageClicked = (type: string) => {
@@ -145,7 +147,7 @@ const InitializeMessageComponent = ({
     <MaxWidthWrapper>
       <div className="w-full m-auto mt-20">
         {userStatus ? (
-          <Carousel className="w-fit m-auto select-none">
+          <Carousel className="w-1/2 xl:w-fit m-auto select-none">
             <CarouselContent>
               {userOrganizations.map((org, index) => (
                 <CarouselItem key={org.id}>
@@ -179,23 +181,33 @@ const InitializeMessageComponent = ({
         )}
 
         <div className="flex flex-row justify-start items-center w-full">
-          <div className="flex flex-col justify-start items-center mt-10 w-full">
-            <Tabs className="w-full">
+          <div className="flex flex-col justify-start items-center mt-10 w-full gap-10">
+            <Messaging
+              userStatus={userStatus}
+              organizationId={userOrganizations[currentOrganizationSelected].id}
+              userId={authStatus.user.id}
+              loading={messagesLoading}
+              setLoadingTrue={setMessagesLoadingTrue}
+              setLoadingFalse={setMessagesLoadingFalse}
+            />
+            <h1 className="text-2xl w-full text-center font-bold">
+              Start New Conversations With Other Users
+            </h1>
+            <Tabs
+              className="w-full"
+              onValueChange={(value) => {
+                value == "users" ? getAllVolunteers() : getAllOrganizations();
+              }}
+            >
               <TabsList className="grid w-1/2 m-auto grid-cols-2">
-                <TabsTrigger value="users" onClick={getAllVolunteers}>
-                  Volunteers
-                </TabsTrigger>
-                <TabsTrigger
-                  value="organizations"
-                  onClick={getAllOrganizations}
-                >
-                  Organizations
-                </TabsTrigger>
+                <TabsTrigger value="users">Volunteers</TabsTrigger>
+                <TabsTrigger value="organizations">Organizations</TabsTrigger>
               </TabsList>
               <TabsContent value="users">
                 <div className="grid grid-cols-3 gap-4 mt-20">
                   <>
                     {messagesOthers.map((otherUser: any) => {
+                      console.log(otherUser);
                       return (
                         <Card
                           className={`p-4 shadow-lg cursor-pointer ${otherUser.selected ? "bg-slate-400" : ""}`}
@@ -215,7 +227,7 @@ const InitializeMessageComponent = ({
                                 <h1>
                                   Activities this user has participated in:
                                 </h1>
-                                <div className="flex flex-row m-4 overflow-y-scroll shadow-lg max-h-[200px]">
+                                <div className="flex flex-row m-4 overflow-y-scroll hidden-scrollbar shadow-lg max-h-[200px]">
                                   {otherUser.listings.map((listings: any) => {
                                     return (
                                       <div
@@ -330,9 +342,6 @@ const InitializeMessageComponent = ({
                 ) : null}
               </TabsContent>
             </Tabs>
-            <div className="w-full flex flex-row items-center justify-center mt-20">
-              {loading ? <ClipLoader /> : null}
-            </div>
           </div>
         </div>
       </div>
@@ -356,6 +365,21 @@ export const MessagesClient = ({
   const [currentOrganizationSelected, setCurrentOrganizationSelected] =
     useState<number>(0);
 
+  const [loading, setLoadingFunc] = useState(true);
+
+  const setLoadingTrue = () => {
+    setLoadingFunc(true);
+  };
+
+  const setLoadingFalse = () => {
+    setLoadingFunc(false);
+  };
+
+  useEffect(() => {
+    setLoadingTrue();
+    setCurrentOrganizationSelected(0);
+  }, [userStatus]);
+
   const increaseOrganizationSelection = () => {
     setCurrentOrganizationSelected((prevState) => prevState + 1);
   };
@@ -363,7 +387,6 @@ export const MessagesClient = ({
   const decreaseOrganizationSelection = () => {
     setCurrentOrganizationSelected((prevState) => prevState - 1);
   };
-
   const formSchema = z.object({
     subject: z.string(),
   });
@@ -406,6 +429,7 @@ export const MessagesClient = ({
       }
     }
     setUserMessageId({});
+    setCurrentOrganizationSelected(0);
   }
 
   const clickBackButton = () => {
@@ -416,24 +440,29 @@ export const MessagesClient = ({
   return (
     <>
       {!userMessageId.id ? (
-        <InitializeMessageComponent
-          userStatus={userStatus}
-          userMessageId={userMessageId}
-          authStatus={authStatus}
-          setUserMessageId={setUserMessageId}
-          otherOrganizations={otherOrganizations}
-          userOrganizations={userOrganizations}
-          currentOrganizationSelected={currentOrganizationSelected}
-          increaseOrgSelected={increaseOrganizationSelection}
-          decreaseOrgSelected={decreaseOrganizationSelection}
-        />
+        <MaxWidthWrapper>
+          <InitializeMessageComponent
+            userStatus={userStatus}
+            userMessageId={userMessageId}
+            authStatus={authStatus}
+            setUserMessageId={setUserMessageId}
+            otherOrganizations={otherOrganizations}
+            userOrganizations={userOrganizations}
+            currentOrganizationSelected={currentOrganizationSelected}
+            increaseOrgSelected={increaseOrganizationSelection}
+            decreaseOrgSelected={decreaseOrganizationSelection}
+            messagesLoading={loading}
+            setMessagesLoadingTrue={setLoadingTrue}
+            setMessagesLoadingFalse={setLoadingFalse}
+          />
+        </MaxWidthWrapper>
       ) : (
         <MaxWidthWrapper>
           <Button onClick={clickBackButton}>Go Back</Button>
           <div className="w-1/2 m-auto">
             <div className="flex flex-row items-center justify-center">
               {userStatus ? (
-                <div className="flex flex-col items-center gap-2 justify-center w-fit m-auto">
+                <div className="flex flex-col items-center gap-2 justify-center w-1/2">
                   <img
                     src={
                       (
@@ -449,7 +478,7 @@ export const MessagesClient = ({
                   </h1>
                 </div>
               ) : (
-                <div className="flex flex-col items-center gap-2 justify-center w-fit m-auto">
+                <div className="flex flex-col items-center gap-2 justify-center w-1/2">
                   <img
                     src={authStatus.user.image || ""}
                     alt={`${authStatus.user.name}'s image`}
@@ -463,7 +492,7 @@ export const MessagesClient = ({
 
               <FaArrowRightLong />
               {userMessageId.type == "organization" ? (
-                <div className="flex flex-col items-center gap-2 justify-center w-fit m-auto">
+                <div className="flex flex-col items-center gap-2 justify-center w-1/2">
                   <img
                     src={userMessageId.thumbnail.storageId || ""}
                     alt={`${userMessageId.name}'s image`}
@@ -474,7 +503,7 @@ export const MessagesClient = ({
                   </h1>
                 </div>
               ) : (
-                <div className="flex flex-col items-center gap-2 justify-center w-fit m-auto">
+                <div className="flex flex-col items-center gap-2 justify-center w-1/2">
                   <img
                     src={userMessageId.image || ""}
                     alt={`${userMessageId.name}'s image`}

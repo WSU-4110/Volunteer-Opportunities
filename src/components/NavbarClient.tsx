@@ -64,7 +64,7 @@ const Navbar = ({
 
         {authStatus?.user ? (
           <>
-            <div className="flex xl:hidden relative z-[50] ">
+            <div className="flex xl:hidden relative z-[50]">
               <Sheet onOpenChange={handleBurgerToggle}>
                 <SheetTrigger>
                   <div className="flex flex-col justify-between w-6 h-4 cursor-pointer">
@@ -89,18 +89,23 @@ const Navbar = ({
                     ></div>
                   </div>
                 </SheetTrigger>
-                <SheetContent side="left" className="w-1/2">
+                <SheetContent
+                  side="left"
+                  className="w-[90%] md:w-1/2 overflow-y-scroll hidden-scrollbar"
+                >
                   <SheetHeader className="h-full">
                     <SheetTitle>
-                      <div className="flex flex-col justify-center items-center">
-                        <img
-                          src="/Favicon.png"
-                          alt="Volunteer Opportunities Logo"
-                          width={"100px"}
-                          height={"100px"}
-                        />
-                        <h1>Volunteer Opportunities</h1>
-                      </div>
+                      <Link href={"/"}>
+                        <div className="flex flex-col justify-center items-center">
+                          <img
+                            src="/Favicon.png"
+                            alt="Volunteer Opportunities Logo"
+                            width={"100px"}
+                            height={"100px"}
+                          />
+                          <h1>Volunteer Opportunities</h1>
+                        </div>
+                      </Link>
                     </SheetTitle>
                     <SheetDescription className="h-full">
                       <div className="flex flex-col justify-between h-full">
@@ -287,17 +292,22 @@ const Navbar = ({
                     ></div>
                   </div>
                 </SheetTrigger>
-                <SheetContent side="left">
+                <SheetContent
+                  side="left"
+                  className="w-[90%] md:w-1/2 overflow-y-scroll hidden-scrollbar"
+                >
                   <SheetHeader>
                     <SheetTitle>
                       <div className="flex flex-col justify-center items-center">
-                        <img
-                          src="/Favicon.png"
-                          alt="Volunteer Opportunities Logo"
-                          width={"100px"}
-                          height={"100px"}
-                        />
-                        <h1>Volunteer Opportunities</h1>
+                        <Link href={"/"}>
+                          <img
+                            src="/Favicon.png"
+                            alt="Volunteer Opportunities Logo"
+                            width={"100px"}
+                            height={"100px"}
+                          />
+                          <h1>Volunteer Opportunities</h1>
+                        </Link>
                       </div>
                     </SheetTitle>
                     <SheetDescription>
