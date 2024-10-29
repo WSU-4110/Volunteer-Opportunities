@@ -358,7 +358,7 @@ const Navbar = ({
                   item="Login/Register"
                 >
                   <div className="flex flex-col space-y-4 text-sm">
-                    <HoveredLink href="/api/auth/signin">Sign In</HoveredLink>
+                    <HoveredLink href="/login">Sign In</HoveredLink>
                   </div>
                 </MenuItem>
               </Menu>

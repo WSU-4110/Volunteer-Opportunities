@@ -2,97 +2,101 @@ import Link from "next/link";
 import { getUserById } from "./actions";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const ViewerPage = async ({ params }: { params: { slug: string } }) => {
   const { slug } = params;
   const [user, error] = await getUserById(slug);
 
   return (
-    <MaxWidthWrapper>
-      <section className="w-fit m-auto">
-        <div className="mb-4">
-          <img
-            src={user?.image || ""} // Replace with actual profile image
-            alt={user?.name}
-            width={"300px"}
-            height={"300px"}
-            className="m-auto"
-          />
-        </div>
-        <div>
-          <h1 className="text-2xl font-bold text-center">{user?.name}</h1>
-        </div>
-        <h1 className="mt-10 text-center">
-          Organizations This user has created:{" "}
-        </h1>
-        <div className="flex flex-row justify-center items-center">
-          {user?.organizations.map((organization) => {
-            return (
-              <Link
-                href={`/view/organization/${organization.id}`}
-                key={organization.id}
-              >
-                <div className="flex flex-col justify-center items-center ">
-                  <img
-                    src={
-                      (organization!.thumbnail! as { storageId: string })
-                        .storageId || ""
-                    }
-                    alt={organization.name}
-                    width="100px"
-                    height="100px"
-                  />
-                  <h1>{organization?.name}</h1>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* Dynamic Main Section */}
-      <section className="mt-10">
-        <h2 className="text-xl font-semibold mt-4">
-          Volunteer Opportunities this user has participated in:
-        </h2>
-        {user?.listings.map((opportunity, index) => (
-          <Card className="p-8 shadow-lg" key={opportunity.listingId}>
-            <div className="flex justify-start flex-row items-center gap-6">
-              <img
-                src={opportunity.listings.thumbnail || ""}
-                alt={opportunity.listings.name}
-                width={"70px"}
-                height={"70px"}
-              />
-              <div>
-                <h3 className="font-bold">{opportunity.listings.name}</h3>
-                <p>{opportunity.listings.description}</p>
-              </div>
-            </div>
-          </Card>
-        ))}
-      </section>
-
-      <section className="mt-10">
-        <h2 className="text-xl font-semibold mt-4">Skills this user has:</h2>
-        {user?.skills.map((skill, index) => (
-          <div
-            className="flex justify-start flex-row items-center gap-6"
-            key={skill.skillId}
-          >
-            <div>
-              <h3>{skill.skills.name}</h3>
-            </div>
+    <MaxWidthWrapper className="py-12">
+      <div className="max-w-4xl mx-auto flex flex-col md:flex-row gap-16">
+        <div className="w-full md:w-1/3 flex flex-col items-center md:items-start gap-8">
+          {/* Profile Picture */}
+          <div className="w-48 h-48 rounded-full overflow-hidden shadow-lg">
+            <img
+              src={user?.image || "/default-profile.png"}
+              alt={user?.name}
+              className="w-full h-full object-cover"
+            />
           </div>
-        ))}
-      </section>
 
-      {/* Action Button */}
-      <section className="mt-10 text-center">
-        <Link href={"/message"} className="p-4 bg-black rounded-lg text-white">
-          Message
-        </Link>
-      </section>
+          {/* User Bio */}
+          <div className="text-center md:text-left">
+            <h2 className="text-2xl font-semibold mb-2">About Me</h2>
+            <p className="text-gray-600">{user?.bio || ""}</p>
+          </div>
+
+          {/* Send Message Button */}
+          <Link href={"/message"} className="mt-4 py-2 px-6 bg-blue-600 rounded-md text-white shadow-lg hover:bg-blue-700 transition-all">
+            Send Message
+          </Link>
+        </div>
+
+        <div className="w-full md:w-2/3 flex flex-col gap-12">
+          {/* Skills Section */}
+          <section>
+            <h2 className="text-xl font-semibold mb-4 text-left">Skills</h2>
+            <div className="flex flex-wrap gap-3">
+              {user?.skills.map((skill, index) => (
+                <Badge key={skill.skillId} className="px-4 py-2 bg-blue-100 text-blue-800 rounded-md shadow-sm">
+                  {skill.skills.name}
+                </Badge>
+              ))}
+            </div>
+          </section>
+
+          {/* Organizations Created */}
+          <section>
+            <h2 className="text-xl font-semibold mb-4 text-left">Organizations Created</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {user?.organizations.map((organization) => (
+                <Link
+                  href={`/view/organization/${organization.id}`}
+                  key={organization.id}
+                >
+                  <Card className="flex flex-col items-center p-4 rounded-lg border shadow-md hover:shadow-lg transition-shadow w-full">
+                    <img
+                      src={
+                        (organization.thumbnail as { storageId: string })
+                          .storageId || "/default-organization.png"
+                      }
+                      alt={organization.name}
+                      className="rounded-lg mb-2 w-24 h-24 object-cover"
+                    />
+                    <h3 className="font-semibold text-center text-gray-700">{organization.name}</h3>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          </section>
+
+          {/* Volunteer Opportunities Section */}
+          <section>
+            <h2 className="text-xl font-semibold mb-4 text-left">Volunteer Opportunities Participated In</h2>
+            <div className="grid grid-cols-1 gap-6">
+              {user?.listings.map((opportunity, index) => (
+                <Card
+                  className="p-6 rounded-lg border shadow-md hover:shadow-lg transition-shadow w-full flex gap-4 items-center"
+                  key={opportunity.listingId}
+                >
+                  <img
+                    src={opportunity.listings.thumbnail || ""}
+                    alt={opportunity.listings.name}
+                    className="w-16 h-16 rounded-lg object-cover"
+                  />
+                  <div>
+                    <h3 className="font-bold text-gray-800">{opportunity.listings.name}</h3>
+                    <p className="text-gray-600 text-sm">
+                      {opportunity.listings.description}
+                    </p>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </section>
+        </div>
+      </div>
     </MaxWidthWrapper>
   );
 };
