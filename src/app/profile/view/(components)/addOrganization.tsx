@@ -21,6 +21,8 @@ import {
   addOrganization,
 } from "@/app/profile/view/actions";
 
+import { FileUpload } from "./fileUpload";
+
 export default function AddAnOrganization(props: any) {
   const orgSchema = z.object({
     name: z.string(),
@@ -35,10 +37,29 @@ export default function AddAnOrganization(props: any) {
     },
   });
   async function onSubmit(values: z.infer<typeof orgSchema>) {
-    addOrganization({ picture: values.imageUrl, name: values.name });
-    revalidatePathAction();
-    props.addOrganization(false);
+    try {
+      const data: File = await files[0];
+
+      console.log("Submit");
+      console.log(data);
+      const form: FormData = new FormData();
+      form.append("data", data);
+
+      await addOrganization({
+        picture: values.imageUrl,
+        name: values.name,
+        data: form,
+      });
+
+      revalidatePathAction();
+      props.addOrganization(false);
+    } catch (error) {}
   }
+  const [files, setFiles] = useState<File[]>([]);
+  const handleFileUpload = (files: File[]) => {
+    setFiles(files);
+    console.log(files);
+  };
   return (
     <div className="w-1/2 m-auto mt-20">
       <header className="text-2xl text-center font-bold">
@@ -46,21 +67,7 @@ export default function AddAnOrganization(props: any) {
       </header>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <FormField
-            control={form.control}
-            name="imageUrl"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Placeholder for image upload</FormLabel>
-                <FormControl>
-                  <Input placeholder="imageUrl" {...field} />
-                </FormControl>
-                <FormDescription>add an image</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
+          <FileUpload onChange={handleFileUpload} />
           <FormField
             control={form.control}
             name="name"

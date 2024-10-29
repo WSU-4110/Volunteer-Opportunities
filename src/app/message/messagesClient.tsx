@@ -39,6 +39,7 @@ import {
   CarouselNext,
   CustomCarouselPrevious,
   CustomCarouselNext,
+  CustomCarousel,
 } from "@/components/ui/carousel";
 import Messaging from "./messaging";
 
@@ -147,7 +148,7 @@ const InitializeMessageComponent = ({
     <MaxWidthWrapper>
       <div className="w-full m-auto mt-20">
         {userStatus ? (
-          <Carousel className="w-1/2 xl:w-fit m-auto select-none">
+          <CustomCarousel className="w-1/2 xl:w-fit m-auto select-none">
             <CarouselContent>
               {userOrganizations.map((org, index) => (
                 <CarouselItem key={org.id}>
@@ -166,7 +167,7 @@ const InitializeMessageComponent = ({
             </CarouselContent>
             <CustomCarouselPrevious extraClick={decreaseOrgSelected} />
             <CustomCarouselNext extraClick={increaseOrgSelected} />
-          </Carousel>
+          </CustomCarousel>
         ) : (
           <div className="flex flex-col items-center gap-2 justify-center w-fit m-auto select-none">
             <img

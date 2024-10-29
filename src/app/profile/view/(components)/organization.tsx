@@ -31,6 +31,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { updateOrganization } from "../actions";
 import { revalidatePathAction } from "@/app/profile/view/actions";
+import { FileUpload } from "./fileUpload";
 
 type input = {
   organizations: {
@@ -65,27 +66,48 @@ const EditOrgPage = ({ ...props }: any) => {
     },
   });
   async function onSubmit(values: z.infer<typeof orgSchema>) {
-    console.log("submit");
-    console.log(
+    //console.log("submit");
+    try {
+      const data: File = await files[0];
+
+      //console.log("Submit");
+      //console.log(data);
+      const form: FormData = new FormData();
+      form.append("data", data);
+
       await updateOrganization({
         picture: props.organizations[props.org.pos].image.storageId,
         name: values.name,
         id: props.org.id,
-      })
-    );
-    revalidatePathAction();
-    props.setEditProfile(false);
+        data: form,
+      });
+
+      revalidatePathAction();
+      props.setEditProfile(false);
+    } catch (error) {}
   }
+
+  // Use state for image upload
+  const [files, setFiles] = useState<File[]>([]);
+  const handleFileUpload = (files: File[]) => {
+    setFiles(files);
+    //console.log(files);
+  };
 
   return (
     <div>
-      <div className="w-full m-auto mt-10">
-        <img
-          src={props.organizations[props.org.pos].image.storageId}
-          alt="Organization Profile Picture"
-          className="m-auto rounded-xl"
-        />
+      <div className="w-1/2 m-auto mt-20">
+        <div className="w-full m-auto mt-10">
+          <img
+            src={props.organizations[props.org.pos].image.url}
+            alt="Organization Profile Picture"
+            className="m-auto rounded-xl"
+            width="400px"
+            height="400px"
+          />
+        </div>
       </div>
+      <FileUpload onChange={handleFileUpload} />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
@@ -132,9 +154,11 @@ const ViewOrgPage = (props: any) => {
     <div className="w-1/2 m-auto mt-20">
       <div className="w-full m-auto mt-10">
         <img
-          src={props.organizations[props.org.pos].image.storageId}
+          src={props.organizations[props.org.pos].image.url}
           alt="Organization Profile Picture"
           className="m-auto rounded-xl"
+          width="400px"
+          height="400px"
         />
       </div>
       <br />
@@ -210,7 +234,7 @@ export default function Organization(props: input) {
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="id" />
+                          <SelectValue placeholder="" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
