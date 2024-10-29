@@ -2,7 +2,7 @@ import react from "react";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-
+import { getImage } from "@/database/sthree";
 import { cn } from "@/lib/utils";
 
 export default function Viewer(props: any) {
@@ -15,6 +15,8 @@ export default function Viewer(props: any) {
           src={props.values?.picture}
           alt="User Profile Picture"
           className="m-auto rounded-xl"
+          width="400px"
+          height="400px"
         />
       </div>
       <br />
@@ -51,7 +53,7 @@ export default function Viewer(props: any) {
               <tr key={org.id}>
                 <td>
                   <img
-                    src={org.image.storageId}
+                    src={org.image.url}
                     alt="Organization Profile Picture"
                     className="m-auto rounded-xl"
                     width={"70px"}
@@ -65,6 +67,7 @@ export default function Viewer(props: any) {
           })}
         </tbody>
       </table>
+      <br />
       <Button
         onClick={() => {
           props.addOrganization(true);
@@ -73,6 +76,8 @@ export default function Viewer(props: any) {
       >
         Add Organizaiton
       </Button>
+      <br />
+      <br />
       <br />
       <Button
         onClick={() => {

@@ -7,8 +7,9 @@ import { unauthenticatedAction } from "@/lib/safe-action";
 import { skills, listings, skillsToListings } from "@/database/schema";
 
 import { z } from "zod";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { list } from "postcss";
+import { PgColumn } from "drizzle-orm/pg-core";
 
 export async function getSkills(listingID : string) {
   const listingSkillsQuery = await database

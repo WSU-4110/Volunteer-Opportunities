@@ -24,15 +24,18 @@ import { Switch } from "@/components/ui/switch";
 import { v4 } from "uuid";
 
 import { useUserStatusStore } from "@/stores/userStatusStore";
+import SwitchToolTipWrapper from "./ui/switchWrapper";
 
 const Navbar = ({
   className,
   authStatus,
   signOut,
+  userHasOrganization,
 }: {
   className?: string;
   authStatus?: Session | undefined;
   signOut: () => void;
+  userHasOrganization: boolean;
 }) => {
   const [active, setActive] = useState<string | null>(null);
 
@@ -46,7 +49,7 @@ const Navbar = ({
 
   return (
     <>
-      <div className="flex w-[100%] flex-row justify-between items-center m-auto py-1 px-10 2xl:px-20 sticky z-[40] shadow-lg">
+      <div className="flex w-[100%] flex-row justify-between items-center m-auto py-1 px-14 2xl:px-20 sticky z-[40] shadow-lg">
         <Link className="text-2xl cursor-pointer min-w-[240px]" href="/">
           <div className="flex flex-col justify-center items-center">
             <img
@@ -61,7 +64,7 @@ const Navbar = ({
 
         {authStatus?.user ? (
           <>
-            <div className="flex xl:hidden relative z-[50] ">
+            <div className="flex xl:hidden relative z-[50]">
               <Sheet onOpenChange={handleBurgerToggle}>
                 <SheetTrigger>
                   <div className="flex flex-col justify-between w-6 h-4 cursor-pointer">
@@ -86,18 +89,23 @@ const Navbar = ({
                     ></div>
                   </div>
                 </SheetTrigger>
-                <SheetContent side="left" className="w-1/2">
+                <SheetContent
+                  side="left"
+                  className="w-[90%] md:w-1/2 overflow-y-scroll hidden-scrollbar"
+                >
                   <SheetHeader className="h-full">
                     <SheetTitle>
-                      <div className="flex flex-col justify-center items-center">
-                        <img
-                          src="/Favicon.png"
-                          alt="Volunteer Opportunities Logo"
-                          width={"100px"}
-                          height={"100px"}
-                        />
-                        <h1>Volunteer Opportunities</h1>
-                      </div>
+                      <Link href={"/"}>
+                        <div className="flex flex-col justify-center items-center">
+                          <img
+                            src="/Favicon.png"
+                            alt="Volunteer Opportunities Logo"
+                            width={"100px"}
+                            height={"100px"}
+                          />
+                          <h1>Volunteer Opportunities</h1>
+                        </div>
+                      </Link>
                     </SheetTitle>
                     <SheetDescription className="h-full">
                       <div className="flex flex-col justify-between h-full">
@@ -163,10 +171,11 @@ const Navbar = ({
                             ) : (
                               <p>Volunteer</p>
                             )}
-                            <Switch
+                            <SwitchToolTipWrapper
                               checked={userStatus}
                               setChecked={changeUserStatus}
                               specialKey={"switch1"}
+                              userHasOrganization={userHasOrganization}
                             />
                           </div>
                         </div>
@@ -223,6 +232,10 @@ const Navbar = ({
                     </HoveredLink>
                   </div>
                 </MenuItem>
+              </Menu>
+            </div>
+            <div className="hidden xl:flex flex-row items-center justify-start ">
+              <Menu setActive={setActive} className="p-0">
                 <MenuItem setActive={setActive} active={active} item="Profile">
                   <div className="flex flex-col space-y-4 text-sm">
                     <ProductItem
@@ -237,23 +250,24 @@ const Navbar = ({
                   </div>
                 </MenuItem>
               </Menu>
-            </div>
-            <div className="flex flex-col items-center justify-center pl-5 hidden min-w-[200px] xl:block">
-              {userStatus ? (
-                <p className="text-center">Organization</p>
-              ) : (
-                <p className="text-center">Volunteer</p>
-              )}
-              <Switch
-                checked={userStatus}
-                setChecked={changeUserStatus}
-                specialKey={"switch2"}
-              />
+              <div className="flex flex-col items-center justify-center min-w-[100px]">
+                {userStatus ? (
+                  <p className="text-center">Organization</p>
+                ) : (
+                  <p className="text-center">Volunteer</p>
+                )}
+                <SwitchToolTipWrapper
+                  checked={userStatus}
+                  setChecked={changeUserStatus}
+                  specialKey={"switch2"}
+                  userHasOrganization={userHasOrganization}
+                />
+              </div>
             </div>
           </>
         ) : (
           <>
-            <div className="flex xl:hidden ">
+            <div className="flex xl:hidden">
               <Sheet onOpenChange={handleBurgerToggle}>
                 <SheetTrigger>
                   <div className="flex flex-col justify-between w-6 h-4 cursor-pointer">
@@ -278,17 +292,22 @@ const Navbar = ({
                     ></div>
                   </div>
                 </SheetTrigger>
-                <SheetContent side="left">
+                <SheetContent
+                  side="left"
+                  className="w-[90%] md:w-1/2 overflow-y-scroll hidden-scrollbar"
+                >
                   <SheetHeader>
                     <SheetTitle>
                       <div className="flex flex-col justify-center items-center">
-                        <img
-                          src="/Favicon.png"
-                          alt="Volunteer Opportunities Logo"
-                          width={"100px"}
-                          height={"100px"}
-                        />
-                        <h1>Volunteer Opportunities</h1>
+                        <Link href={"/"}>
+                          <img
+                            src="/Favicon.png"
+                            alt="Volunteer Opportunities Logo"
+                            width={"100px"}
+                            height={"100px"}
+                          />
+                          <h1>Volunteer Opportunities</h1>
+                        </Link>
                       </div>
                     </SheetTitle>
                     <SheetDescription>
@@ -339,7 +358,7 @@ const Navbar = ({
                   item="Login/Register"
                 >
                   <div className="flex flex-col space-y-4 text-sm">
-                    <HoveredLink href="/api/auth/signin">Sign In</HoveredLink>
+                    <HoveredLink href="/login">Sign In</HoveredLink>
                   </div>
                 </MenuItem>
               </Menu>

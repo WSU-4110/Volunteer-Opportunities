@@ -13,9 +13,11 @@ import { authenticatedAction } from "@/lib/safe-action";
 import { unauthenticatedAction } from "@/lib/safe-action";
 import { revalidatePath } from "next/cache";
 
-import { z } from "zod";
+import { custom, z } from "zod";
 import { redirect } from "next/navigation";
 import { timeStamp } from "console";
+
+import { putImage, rePutImage } from "@/database/sthree";
 
 // Select Statements for User Profile
 // Convert to internal fumctions
@@ -32,7 +34,13 @@ export const userData = authenticatedAction
 
 async function internalUserData(id: string) {
   const data = await database
-    .select({ name: users.name, image: users.image, bio: users.bio })
+    .select({
+      name: users.name,
+      image: users.image,
+      bio: users.bio,
+      customFile: users.customFile,
+      userImage: users.userImage,
+    })
     .from(users)
     .where(eq(users.id, id));
 
@@ -147,24 +155,79 @@ export const updateUser = authenticatedAction
       picture: z.string(),
       username: z.string(),
       bio: z.string(),
+      data: z.any(),
+      image: z.any(),
     })
   )
-  .handler(async ({ ctx: { user }, input: { picture, username, bio } }) => {
-    if (user != undefined) {
-      return internalUpdateUser(picture, username, bio, user.id);
+  .handler(
+    async ({
+      ctx: { user },
+      input: { picture, username, bio, image, data },
+    }) => {
+      //console.log(data.get("data"));
+      if (user != undefined) {
+        return internalUpdateUser(
+          picture,
+          username,
+          bio,
+          user.id,
+          image,
+          data.get("data")
+        );
+      }
     }
-  });
+  );
 
 async function internalUpdateUser(
   picture: string,
   username: string,
   bio: string,
-  id: string
+  id: string,
+  userImage: any,
+  data: any
 ) {
-  await database
-    .update(users)
-    .set({ name: username, image: picture, bio: bio })
-    .where(eq(users.id, id));
+  let customImage = true;
+  //console.log("UserID");
+  //console.log(userImage);
+  try {
+    //console.log(data);
+
+    if (userImage != "" && userImage != undefined) {
+      userImage = await rePutImage(data, userImage);
+    } else {
+      //console.log("Add image");
+      userImage = await putImage(data);
+      if (userImage == "") {
+        //If put image fails and does not return a key
+        customImage = false;
+      }
+    }
+    await database
+      .update(users)
+      .set({
+        name: username,
+        image: picture,
+        bio: bio,
+        customFile: customImage,
+        userImage: { id: userImage },
+      })
+      .where(eq(users.id, id));
+    //console.log("success");
+  } catch (caught) {
+    //console.log(caught);
+    //If put image fails and does not return a key
+    customImage = false;
+    await database
+      .update(users)
+      .set({
+        name: username,
+        image: picture,
+        bio: bio,
+        customFile: customImage,
+        userImage: { id: "" },
+      })
+      .where(eq(users.id, id));
+  }
 }
 
 //Organization database calls
@@ -200,6 +263,7 @@ export const getListings = authenticatedAction
 
           name: listings.name,
           description: listings.description,
+          thumbnail: listings.thumbnail,
         })
         .from(listings)
         .where(eq(listings.organizationId, orgID));
@@ -213,11 +277,12 @@ export const updateOrganization = authenticatedAction
       picture: z.string(),
       name: z.string(),
       id: z.string(),
+      data: z.any(),
     })
   )
-  .handler(async ({ ctx: { user }, input: { picture, name, id } }) => {
+  .handler(async ({ ctx: { user }, input: { picture, name, id, data } }) => {
     if (user != undefined) {
-      return internalUpdateOrg(picture, name, id, user.id);
+      return internalUpdateOrg(picture, name, id, user.id, data);
     }
   });
 
@@ -225,12 +290,22 @@ async function internalUpdateOrg(
   picture: string,
   name: string,
   id: string,
-  userID: string
+  userID: string,
+  data: any
 ) {
-  console.log(name);
+  //console.log(name);
+  let image = picture;
+  //Either overwrites current image or adds a new image
+
+  if (picture != "") {
+    image = await rePutImage(data.get("data"), image);
+  } else {
+    image = await putImage(data.get("data"));
+  }
+
   await database
     .update(organizations)
-    .set({ name: name, thumbnail: { storageId: picture } })
+    .set({ name: name, thumbnail: { storageId: image } })
     .where(eq(organizations.id, id));
 }
 
@@ -240,20 +315,21 @@ export const addOrganization = authenticatedAction
     z.object({
       picture: z.string(),
       name: z.string(),
+      data: z.any(),
     })
   )
-  .handler(async ({ ctx: { user }, input: { picture, name } }) => {
+  .handler(async ({ ctx: { user }, input: { picture, name, data } }) => {
     if (user != undefined) {
-      return await database
-        .insert(organizations)
-        .values({
-          name: name,
-          thumbnail: { storageId: picture },
-          creator: user.id,
-        });
+      const image = await putImage(data.get("data"));
+      return await database.insert(organizations).values({
+        name: name,
+        thumbnail: { storageId: image },
+
+        creator: user.id,
+      });
     }
   });
 
 export const revalidatePathAction = () => {
-  revalidatePath("/profile/form");
+  revalidatePath("/profile/view");
 };

@@ -4,17 +4,19 @@
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { v4 } from "uuid";
+
 export const Switch = ({
   checked,
   setChecked,
   className,
   specialKey,
+  userHasOrganization,
 }: {
   checked: boolean;
   setChecked: () => void;
   className?: string;
   specialKey: string;
+  userHasOrganization: boolean;
 }) => {
   const [hasInteracted, setHasInteracted] = useState(false);
 
@@ -24,8 +26,12 @@ export const Switch = ({
     >
       <label
         htmlFor="checkbox"
-        className={`h-7  px-1  flex items-center border border-transparent shadow-[inset_0px_0px_12px_rgba(0,0,0,0.25)] rounded-full w-[60px] relative cursor-pointer transition duration-200 ${
-          checked ? "bg-organization" : "bg-volunteer"
+        className={`h-7  px-1  flex items-center border border-transparent shadow-[inset_0px_0px_12px_rgba(0,0,0,0.25)] rounded-full w-[60px] relative transition duration-200 ${
+          userHasOrganization
+            ? checked
+              ? "bg-organization cursor-pointer"
+              : "bg-volunteer cursor-pointer"
+            : "bg-slate-500 cursor-not-allowed"
         }`}
       >
         <motion.div
@@ -56,8 +62,9 @@ export const Switch = ({
             setChecked();
             setHasInteracted(true);
           }}
-          className="hidden"
+          className={`hidden`}
           id="checkbox"
+          disabled={!userHasOrganization}
         />
       </label>
     </form>

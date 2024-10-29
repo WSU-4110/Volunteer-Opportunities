@@ -1,17 +1,21 @@
 import NavbarClient from "@/components/NavbarClient";
 import { auth } from "@/auth";
 import { Session } from "next-auth";
-import { signOutAction, getOneUserOrganization } from "./actions";
+import {
+  signInAction,
+  signOutAction,
+  getOneUserOrganization,
+} from "@/components/actions";
+import Login from "./login";
 
 const Navbar = async () => {
   const authStatus = await auth();
-  const [userHasOrganization, error] = await getOneUserOrganization();
 
   return (
-    <NavbarClient
+    <Login
       authStatus={authStatus as Session | undefined}
       signOut={signOutAction}
-      userHasOrganization={userHasOrganization || false}
+      signIn={signInAction}
     />
   );
 };

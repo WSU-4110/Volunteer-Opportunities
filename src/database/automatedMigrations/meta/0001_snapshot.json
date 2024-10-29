@@ -1,6 +1,6 @@
 {
-  "id": "efdb1dff-6320-42d0-b257-8d0bfd031777",
-  "prevId": "07d3750f-3464-49ed-9649-7367ff64fa0c",
+  "id": "87029aa1-ee66-4401-b465-c63f2679df93",
+  "prevId": "83751694-86fc-4bd0-8226-170a16ecd8d4",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -190,6 +190,119 @@
         }
       }
     },
+    "public.conversations": {
+      "name": "conversations",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "subject": {
+          "name": "subject",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.conversations_to_users": {
+      "name": "conversations_to_users",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "conversationId": {
+          "name": "conversationId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "userId": {
+          "name": "userId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "organizationId": {
+          "name": "organizationId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "conversations_to_users_conversationId_conversations_id_fk": {
+          "name": "conversations_to_users_conversationId_conversations_id_fk",
+          "tableFrom": "conversations_to_users",
+          "tableTo": "conversations",
+          "columnsFrom": [
+            "conversationId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "conversations_to_users_userId_user_id_fk": {
+          "name": "conversations_to_users_userId_user_id_fk",
+          "tableFrom": "conversations_to_users",
+          "tableTo": "user",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "conversations_to_users_organizationId_organizations_id_fk": {
+          "name": "conversations_to_users_organizationId_organizations_id_fk",
+          "tableFrom": "conversations_to_users",
+          "tableTo": "organizations",
+          "columnsFrom": [
+            "organizationId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "conversations_to_users_conversationId_userId_unique": {
+          "name": "conversations_to_users_conversationId_userId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "conversationId",
+            "userId"
+          ]
+        },
+        "conversations_to_users_conversationId_organizationId_unique": {
+          "name": "conversations_to_users_conversationId_organizationId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "conversationId",
+            "organizationId"
+          ]
+        }
+      }
+    },
     "public.listings": {
       "name": "listings",
       "schema": "",
@@ -223,6 +336,13 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "NOW()"
         }
       },
       "indexes": {},
@@ -330,26 +450,20 @@
           "notNull": true,
           "default": "NOW()"
         },
-        "user_to_user_id": {
-          "name": "user_to_user_id",
+        "conversation_id": {
+          "name": "conversation_id",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "user_to_org_id": {
-          "name": "user_to_org_id",
+        "sender_user_id": {
+          "name": "sender_user_id",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "org_to_user_id": {
-          "name": "org_to_user_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "org_to_org_id": {
-          "name": "org_to_org_id",
+        "sender_organization_id": {
+          "name": "sender_organization_id",
           "type": "text",
           "primaryKey": false,
           "notNull": false
@@ -357,93 +471,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "messages_user_to_user_id_user_to_user_conversations_id_fk": {
-          "name": "messages_user_to_user_id_user_to_user_conversations_id_fk",
+        "messages_conversation_id_conversations_id_fk": {
+          "name": "messages_conversation_id_conversations_id_fk",
           "tableFrom": "messages",
-          "tableTo": "user_to_user_conversations",
+          "tableTo": "conversations",
           "columnsFrom": [
-            "user_to_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "messages_user_to_org_id_user_to_org_conversations_id_fk": {
-          "name": "messages_user_to_org_id_user_to_org_conversations_id_fk",
-          "tableFrom": "messages",
-          "tableTo": "user_to_org_conversations",
-          "columnsFrom": [
-            "user_to_org_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "messages_org_to_user_id_org_to_org_conversations_id_fk": {
-          "name": "messages_org_to_user_id_org_to_org_conversations_id_fk",
-          "tableFrom": "messages",
-          "tableTo": "org_to_org_conversations",
-          "columnsFrom": [
-            "org_to_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "messages_org_to_org_id_org_to_org_conversations_id_fk": {
-          "name": "messages_org_to_org_id_org_to_org_conversations_id_fk",
-          "tableFrom": "messages",
-          "tableTo": "org_to_org_conversations",
-          "columnsFrom": [
-            "org_to_org_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "public.org_to_org_conversations": {
-      "name": "org_to_org_conversations",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "senderId": {
-          "name": "senderId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "recipientId": {
-          "name": "recipientId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "org_to_org_conversations_senderId_organizations_id_fk": {
-          "name": "org_to_org_conversations_senderId_organizations_id_fk",
-          "tableFrom": "org_to_org_conversations",
-          "tableTo": "organizations",
-          "columnsFrom": [
-            "senderId"
+            "conversation_id"
           ],
           "columnsTo": [
             "id"
@@ -451,72 +484,30 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "org_to_org_conversations_recipientId_organizations_id_fk": {
-          "name": "org_to_org_conversations_recipientId_organizations_id_fk",
-          "tableFrom": "org_to_org_conversations",
-          "tableTo": "organizations",
-          "columnsFrom": [
-            "recipientId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "public.org_to_user_conversations": {
-      "name": "org_to_user_conversations",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "senderId": {
-          "name": "senderId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "recipientId": {
-          "name": "recipientId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "org_to_user_conversations_senderId_organizations_id_fk": {
-          "name": "org_to_user_conversations_senderId_organizations_id_fk",
-          "tableFrom": "org_to_user_conversations",
-          "tableTo": "organizations",
-          "columnsFrom": [
-            "senderId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "org_to_user_conversations_recipientId_user_id_fk": {
-          "name": "org_to_user_conversations_recipientId_user_id_fk",
-          "tableFrom": "org_to_user_conversations",
+        "messages_sender_user_id_user_id_fk": {
+          "name": "messages_sender_user_id_user_id_fk",
+          "tableFrom": "messages",
           "tableTo": "user",
           "columnsFrom": [
-            "recipientId"
+            "sender_user_id"
           ],
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "messages_sender_organization_id_organizations_id_fk": {
+          "name": "messages_sender_organization_id_organizations_id_fk",
+          "tableFrom": "messages",
+          "tableTo": "organizations",
+          "columnsFrom": [
+            "sender_organization_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
@@ -766,116 +757,6 @@
           ]
         }
       },
-      "uniqueConstraints": {}
-    },
-    "public.user_to_org_conversations": {
-      "name": "user_to_org_conversations",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "senderId": {
-          "name": "senderId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "recipientId": {
-          "name": "recipientId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "user_to_org_conversations_senderId_user_id_fk": {
-          "name": "user_to_org_conversations_senderId_user_id_fk",
-          "tableFrom": "user_to_org_conversations",
-          "tableTo": "user",
-          "columnsFrom": [
-            "senderId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "user_to_org_conversations_recipientId_organizations_id_fk": {
-          "name": "user_to_org_conversations_recipientId_organizations_id_fk",
-          "tableFrom": "user_to_org_conversations",
-          "tableTo": "organizations",
-          "columnsFrom": [
-            "recipientId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "public.user_to_user_conversations": {
-      "name": "user_to_user_conversations",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "senderId": {
-          "name": "senderId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "recipientId": {
-          "name": "recipientId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "user_to_user_conversations_senderId_user_id_fk": {
-          "name": "user_to_user_conversations_senderId_user_id_fk",
-          "tableFrom": "user_to_user_conversations",
-          "tableTo": "user",
-          "columnsFrom": [
-            "senderId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "user_to_user_conversations_recipientId_user_id_fk": {
-          "name": "user_to_user_conversations_recipientId_user_id_fk",
-          "tableFrom": "user_to_user_conversations",
-          "tableTo": "user",
-          "columnsFrom": [
-            "recipientId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
     "public.user": {
