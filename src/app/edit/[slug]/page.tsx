@@ -4,7 +4,7 @@ import EditListing from "./EditListing";
 
 import { getReactNodeFromListings } from "@/app/explore/(components)/Userpage";
 
-export const Edit = async ({ params }: { params: { slug: string } }) => {
+const Edit = async ({ params }: { params: { slug: string } }) => {
   const listingID = params.slug;
 
   const listing = (await getListingFromID(listingID))[0];
