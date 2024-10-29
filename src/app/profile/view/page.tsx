@@ -90,19 +90,32 @@ export default async function EditProfile() {
     //console.log(organizations[0]![0].image.storageId);
     //console.log(userD[0]![0].userImage.id);
     return (
-      <div>
+      <div className="mb-20">
         <header></header>
         <p></p>
-        <UserPage
-          customImage={userD[0]![0].userImage.id}
-          name={userD[0]![0].name}
-          picture={picture}
-          bio={userD[0]![0].bio}
-          skills={skills[0]!}
-          userS={userSkill[0]!}
-          organizations={organizations[0]!}
-          listings={listings}
-        ></UserPage>
+        {userD[0]![0].userImage ? (
+          <UserPage
+            customImage={userD[0]![0].userImage.id}
+            name={userD[0]![0].name}
+            picture={picture}
+            bio={userD[0]![0].bio}
+            skills={skills[0]!}
+            userS={userSkill[0]!}
+            organizations={organizations[0]!}
+            listings={listings}
+          ></UserPage>
+        ) : (
+          <UserPage
+            customImage={null}
+            name={userD[0]![0].name}
+            picture={picture}
+            bio={userD[0]![0].bio}
+            skills={skills[0]!}
+            userS={userSkill[0]!}
+            organizations={organizations[0]!}
+            listings={listings}
+          ></UserPage>
+        )}
       </div>
     );
   } else {

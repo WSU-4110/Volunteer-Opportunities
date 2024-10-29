@@ -9,8 +9,8 @@ const ViewerPage = async ({ params }: { params: { slug: string } }) => {
   const [user, error] = await getUserById(slug);
 
   return (
-    <MaxWidthWrapper className="py-12">
-      <div className="max-w-4xl mx-auto flex flex-col md:flex-row gap-16">
+    <MaxWidthWrapper>
+      <div className="max-w-4xl mx-auto flex flex-col md:flex-row gap-16 py-12">
         <div className="w-full md:w-1/3 flex flex-col items-center md:items-start gap-8">
           {/* Profile Picture */}
           <div className="w-48 h-48 rounded-full overflow-hidden shadow-lg">
@@ -28,7 +28,10 @@ const ViewerPage = async ({ params }: { params: { slug: string } }) => {
           </div>
 
           {/* Send Message Button */}
-          <Link href={"/message"} className="mt-4 py-2 px-6 bg-blue-600 rounded-md text-white shadow-lg hover:bg-blue-700 transition-all">
+          <Link
+            href={"/message"}
+            className="mt-4 py-2 px-6 bg-blue-600 rounded-md text-white shadow-lg hover:bg-blue-700 transition-all"
+          >
             Send Message
           </Link>
         </div>
@@ -39,7 +42,10 @@ const ViewerPage = async ({ params }: { params: { slug: string } }) => {
             <h2 className="text-xl font-semibold mb-4 text-left">Skills</h2>
             <div className="flex flex-wrap gap-3">
               {user?.skills.map((skill, index) => (
-                <Badge key={skill.skillId} className="px-4 py-2 bg-blue-100 text-blue-800 rounded-md shadow-sm">
+                <Badge
+                  key={skill.skillId}
+                  className="px-4 py-2 bg-blue-100 text-blue-800 rounded-md shadow-sm"
+                >
                   {skill.skills.name}
                 </Badge>
               ))}
@@ -48,7 +54,9 @@ const ViewerPage = async ({ params }: { params: { slug: string } }) => {
 
           {/* Organizations Created */}
           <section>
-            <h2 className="text-xl font-semibold mb-4 text-left">Organizations Created</h2>
+            <h2 className="text-xl font-semibold mb-4 text-left">
+              Organizations Created
+            </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {user?.organizations.map((organization) => (
                 <Link
@@ -64,7 +72,9 @@ const ViewerPage = async ({ params }: { params: { slug: string } }) => {
                       alt={organization.name}
                       className="rounded-lg mb-2 w-24 h-24 object-cover"
                     />
-                    <h3 className="font-semibold text-center text-gray-700">{organization.name}</h3>
+                    <h3 className="font-semibold text-center text-gray-700">
+                      {organization.name}
+                    </h3>
                   </Card>
                 </Link>
               ))}
@@ -73,7 +83,9 @@ const ViewerPage = async ({ params }: { params: { slug: string } }) => {
 
           {/* Volunteer Opportunities Section */}
           <section>
-            <h2 className="text-xl font-semibold mb-4 text-left">Volunteer Opportunities Participated In</h2>
+            <h2 className="text-xl font-semibold mb-4 text-left">
+              Volunteer Opportunities Participated In
+            </h2>
             <div className="grid grid-cols-1 gap-6">
               {user?.listings.map((opportunity, index) => (
                 <Card
@@ -86,7 +98,9 @@ const ViewerPage = async ({ params }: { params: { slug: string } }) => {
                     className="w-16 h-16 rounded-lg object-cover"
                   />
                   <div>
-                    <h3 className="font-bold text-gray-800">{opportunity.listings.name}</h3>
+                    <h3 className="font-bold text-gray-800">
+                      {opportunity.listings.name}
+                    </h3>
                     <p className="text-gray-600 text-sm">
                       {opportunity.listings.description}
                     </p>

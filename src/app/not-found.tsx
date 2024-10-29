@@ -1,6 +1,6 @@
 export default function NotFoundPage() {
   return (
-    <div className="w-[90%] flex flex-col gap-10 items-center justify-center absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] font-bold text-2xl">
+    <div className="w-[90%] flex flex-col gap-10 items-center justify-center font-bold text-2xl m-auto mt-20 mb-20">
       <h1>
         {
           "We couldn't find what you were looking for. Please try navigating to a different page."

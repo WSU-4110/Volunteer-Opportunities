@@ -117,136 +117,139 @@ export default function Home() {
         <div className="font-medium text-center text-5xl text-white pb-10">
           <h1>Who are we?</h1>
         </div>
-      </div>
 
-      <Carousel
-        className="bg-sky-500 text-center w-full select-none cursor-grab"
-        plugins={[
-          Autoplay({
-            delay: 5000,
-            stopOnMouseEnter: true,
-            stopOnInteraction: false,
-            stopOnLastSnap: false,
-          }),
-        ]}
-        opts={{ loop: true }}
-      >
-        <CarouselContent>
-          <CarouselItem>
-            <div className="container mx-auto">
-              <div className="flex flex-row items-center jusify-center gap-5">
-                <div className="flex flex-col justify-center items-center flex-1">
-                  <img
-                    width={"150px"}
-                    height={"150px"}
-                    src="profile-photo.png"
-                    alt={"Sebastian Newberry"}
-                  />
-                  <h1 className="font-bold">Sebastian Newberry</h1>
-                </div>
-                <div className="text-lg flex-1">
-                  <p>
-                    Computer Science Major at Wayne State University. Passionate
-                    in web development and cybersecurity. Excited to explore the
-                    industry to see what Computer Science has to offer.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </CarouselItem>
-          <CarouselItem>
-            <div className="container mx-auto">
-              <div className="flex flex-row items-center jusify-center gap-5">
-                <div className="flex flex-col justify-center items-center flex-1">
-                  <img
-                    width={"150px"}
-                    height={"150px"}
-                    src="profile-photo.png"
-                    alt={"Ian Crowe-Sittig"}
-                  />
-                  <h1 className="font-bold">Ian Crowe-Sittig</h1>
-                </div>
-                <div className="text-lg flex-1">
-                  <p>
-                    Computer Science Major at Wayne State University. Passionate
-                    in web development and cybersecurity. Excited to explore the
-                    industry to see what Computer Science has to offer.
-                  </p>
+        <Carousel
+          className="bg-sky-500 text-center w-full select-none cursor-grab"
+          plugins={[
+            Autoplay({
+              delay: 5000,
+              stopOnMouseEnter: true,
+              stopOnInteraction: false,
+              stopOnLastSnap: false,
+            }),
+          ]}
+          opts={{ loop: true }}
+        >
+          <CarouselContent>
+            <CarouselItem>
+              <div className="container mx-auto">
+                <div className="flex flex-row items-center jusify-center gap-5">
+                  <div className="flex flex-col justify-center items-center flex-1">
+                    <img
+                      width={"150px"}
+                      height={"150px"}
+                      src="profile-photo.png"
+                      alt={"Sebastian Newberry"}
+                    />
+                    <h1 className="font-bold">Sebastian Newberry</h1>
+                  </div>
+                  <div className="text-lg flex-1">
+                    <p>
+                      Computer Science Major at Wayne State University.
+                      Passionate in web development and cybersecurity. Excited
+                      to explore the industry to see what Computer Science has
+                      to offer.
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          </CarouselItem>
-          <CarouselItem>
-            <div className="container mx-auto">
-              <div className="flex flex-row items-center jusify-center gap-5">
-                <div className="flex flex-col justify-center items-center flex-1">
-                  <img
-                    width={"150px"}
-                    height={"150px"}
-                    src="profile-photo.png"
-                    alt={"Jacob Ulbrich"}
-                  />
-                  <h1 className="font-bold">Jacob Ulbrich</h1>
-                </div>
-                <div className="text-lg flex-1">
-                  <p>
-                    Third-year student at Wayne State University working towards
-                    earning his bachelor’s degree in honors computer science
-                    with a mathematics minor.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </CarouselItem>
-          <CarouselItem>
-            <div className="container mx-auto">
-              <div className="flex flex-row items-center jusify-center gap-5">
-                <div className="flex flex-col justify-center items-center flex-1">
-                  <img
-                    width={"150px"}
-                    height={"150px"}
-                    src="profile-photo.png"
-                    alt={"Loc Phan"}
-                  />
-                  <h1 className="font-bold">Loc Phan</h1>
-                </div>
-                <div className="text-lg flex-1">
-                  <p>
-                    Computer Science Major at Wayne State University. Passionate
-                    in web development and cybersecurity. Excited to explore the
-                    industry to see what Computer Science has to offer.
-                  </p>
+            </CarouselItem>
+            <CarouselItem>
+              <div className="container mx-auto">
+                <div className="flex flex-row items-center jusify-center gap-5">
+                  <div className="flex flex-col justify-center items-center flex-1">
+                    <img
+                      width={"150px"}
+                      height={"150px"}
+                      src="profile-photo.png"
+                      alt={"Ian Crowe-Sittig"}
+                    />
+                    <h1 className="font-bold">Ian Crowe-Sittig</h1>
+                  </div>
+                  <div className="text-lg flex-1">
+                    <p>
+                      Computer Science Major at Wayne State University.
+                      Passionate in web development and cybersecurity. Excited
+                      to explore the industry to see what Computer Science has
+                      to offer.
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          </CarouselItem>
-          <CarouselItem>
-            <div className="container mx-auto">
-              <div className="flex flex-row items-center jusify-center gap-5">
-                <div className="flex flex-col justify-center items-center flex-1">
-                  <img
-                    width={"150px"}
-                    height={"150px"}
-                    src="profile-photo.png"
-                    alt={"Parsa Nematollahe"}
-                  />
-                  <h1 className="font-bold">Parsa Nematollahe</h1>
-                </div>
-                <div className="text-lg flex-1">
-                  <p>
-                    A quirky and goofy goober. Also a 3rd year Wayne State
-                    Student studying Computer Science, Mathematics, and
-                    Statistics. I enjoy long walks to the fridge and love to
-                    sleep.
-                  </p>
+            </CarouselItem>
+            <CarouselItem>
+              <div className="container mx-auto">
+                <div className="flex flex-row items-center jusify-center gap-5">
+                  <div className="flex flex-col justify-center items-center flex-1">
+                    <img
+                      width={"150px"}
+                      height={"150px"}
+                      src="profile-photo.png"
+                      alt={"Jacob Ulbrich"}
+                    />
+                    <h1 className="font-bold">Jacob Ulbrich</h1>
+                  </div>
+                  <div className="text-lg flex-1">
+                    <p>
+                      Third-year student at Wayne State University working
+                      towards earning his bachelor’s degree in honors computer
+                      science with a mathematics minor.
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          </CarouselItem>
-        </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
-      </Carousel>
+            </CarouselItem>
+            <CarouselItem>
+              <div className="container mx-auto">
+                <div className="flex flex-row items-center jusify-center gap-5">
+                  <div className="flex flex-col justify-center items-center flex-1">
+                    <img
+                      width={"150px"}
+                      height={"150px"}
+                      src="profile-photo.png"
+                      alt={"Loc Phan"}
+                    />
+                    <h1 className="font-bold">Loc Phan</h1>
+                  </div>
+                  <div className="text-lg flex-1">
+                    <p>
+                      Computer Science Major at Wayne State University.
+                      Passionate in web development and cybersecurity. Excited
+                      to explore the industry to see what Computer Science has
+                      to offer.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </CarouselItem>
+            <CarouselItem>
+              <div className="container mx-auto">
+                <div className="flex flex-row items-center jusify-center gap-5">
+                  <div className="flex flex-col justify-center items-center flex-1">
+                    <img
+                      width={"150px"}
+                      height={"150px"}
+                      src="profile-photo.png"
+                      alt={"Parsa Nematollahe"}
+                    />
+                    <h1 className="font-bold">Parsa Nematollahe</h1>
+                  </div>
+                  <div className="text-lg flex-1">
+                    <p>
+                      A quirky and goofy goober. Also a 3rd year Wayne State
+                      Student studying Computer Science, Mathematics, and
+                      Statistics. I enjoy long walks to the fridge and love to
+                      sleep.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </CarouselItem>
+          </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
+        </Carousel>
+      </div>
     </div>
   );
 }

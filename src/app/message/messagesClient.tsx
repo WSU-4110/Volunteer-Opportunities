@@ -146,7 +146,7 @@ const InitializeMessageComponent = ({
   };
   return (
     <MaxWidthWrapper>
-      <div className="w-full m-auto mt-20">
+      <div className="w-full m-auto my-20">
         {userStatus ? (
           <CustomCarousel className="w-1/2 xl:w-fit m-auto select-none">
             <CarouselContent>
