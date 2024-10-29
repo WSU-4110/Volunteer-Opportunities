@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getOrganizationMessages, getVolunteerMessages } from "./actions";
 import { AnimatedTooltip } from "@/components/ui/animated-tooltip";
 import ClipLoader from "react-spinners/ClipLoader";
@@ -22,6 +22,17 @@ const Messaging = ({
 }) => {
   const [conversations, setConversations] = useState<any>([]);
   const [selectedConversation, setSelectedConversation] = useState<any>();
+
+  const chatContainerRef = useRef(null);
+  const textboxRef = useRef(null);
+
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      (chatContainerRef.current as any).scrollTop = (
+        chatContainerRef.current as any
+      ).scrollHeight;
+    }
+  }, [selectedConversation]);
 
   const changeSelectedConversation = (selectedConversationId: string) => {
     setConversations((prevState: any) => {
@@ -321,17 +332,20 @@ const Messaging = ({
                       </div>
                     </div>
                   </div>
-                  <div className="w-full h-full overflow-y-auto p-10">
+                  <div
+                    className="w-full h-full overflow-y-auto p-10 flex flex-col gap-4"
+                    ref={chatContainerRef}
+                  >
                     {selectedConversation.messages.map((message: any) => {
                       if (message.userImage) {
                         return (
-                          <div className="flex flex-col" key={message.id}>
+                          <div className="flex flex-row gap-3" key={message.id}>
                             <img
                               src={message.userImage}
                               alt="Sender User"
-                              className="w-[100px] h-[100px] rounded-xl"
+                              className="w-[100px] h-[100px] rounded-full"
                             />
-                            <p>
+                            <p className="rounded-xl bg-blue-400 h-fit p-5">
                               {message.content
                                 .replace(/^["']|["']$/g, "")
                                 .replace(/\\(['"])/g, "$1")}
@@ -340,15 +354,15 @@ const Messaging = ({
                         );
                       } else {
                         return (
-                          <div className="flex flex-col" key={message.id}>
+                          <div className="flex flex-row gap-3" key={message.id}>
                             <img
                               src={
                                 JSON.parse(message.organizationImage).storageId
                               }
                               alt="Sender Organization"
-                              className="w-[100px] h-[100px]"
+                              className="w-[100px] h-[100px] rounded-full"
                             />
-                            <p>
+                            <p className="rounded-xl bg-blue-400 h-fit p-5">
                               {message.content
                                 .replace(/^["']|["']$/g, "")
                                 .replace(/\\(['"])/g, "$1")}

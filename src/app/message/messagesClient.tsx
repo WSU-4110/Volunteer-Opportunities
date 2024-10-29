@@ -208,7 +208,6 @@ const InitializeMessageComponent = ({
                 <div className="grid grid-cols-3 gap-4 mt-20">
                   <>
                     {messagesOthers.map((otherUser: any) => {
-                      console.log(otherUser);
                       return (
                         <Card
                           className={`p-4 shadow-lg cursor-pointer ${otherUser.selected ? "bg-slate-400" : ""}`}
