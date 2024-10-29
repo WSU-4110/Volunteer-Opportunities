@@ -46,7 +46,5 @@ export async function getListings() {
   }
 
   export async function updateListing(listingID: string, name: string, description: string, thumbnail: string, organizationID: string, talent: string) {
-    console.log(listingID)
-    console.log(talent)
     await insertTalent(listingID, talent)
   }
