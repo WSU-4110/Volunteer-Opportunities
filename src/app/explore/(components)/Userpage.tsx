@@ -99,20 +99,25 @@ export default function Userpage(listings: ListingsProps) {
             name="search-options"
             id="search-options"
             onChange={(event) => {
-              if (event.target.value == "title") {
-                document.getElementById("title-search-input")!.hidden = false;
+              const makeAllHidden = () => {
+                document.getElementById("title-search-input")!.hidden = true;
                 document.getElementById("description-search-input")!.hidden =
                   true;
                 document.getElementById("talent-search-input")!.hidden = true;
+              };
+
+              if (event.target.value == "title") {
+                makeAllHidden();
+
+                document.getElementById("title-search-input")!.hidden = false;
               } else if (event.target.value == "description") {
-                document.getElementById("title-search-input")!.hidden = true;
+                makeAllHidden();
+
                 document.getElementById("description-search-input")!.hidden =
                   false;
-                document.getElementById("talent-search-input")!.hidden = true;
               } else if (event.target.value == "talents") {
-                document.getElementById("title-search-input")!.hidden = true;
-                document.getElementById("description-search-input")!.hidden =
-                  true;
+                makeAllHidden();
+
                 document.getElementById("talent-search-input")!.hidden = false;
               }
             }}
@@ -157,7 +162,7 @@ export default function Userpage(listings: ListingsProps) {
           }}
           type="text"
           id="talent-search-input"
-          placeholder="Search for Talents"
+          placeholder="Search for Talent"
           className="w-full text-xl border-2 rounded p-1.5"
           hidden={true}
         />

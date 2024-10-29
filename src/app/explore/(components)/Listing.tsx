@@ -18,7 +18,9 @@ export default function Listing({
       <div className="bg-black">
         <img className="max-w-full max-h-96 mx-auto block" src={imageURL} />
       </div>
+      <br />
       <h1 className="text-2xl font-black leading-10 text-center">{title}</h1>
+      <br />
       <p className="font-bold leading-10">Description:</p>
       <p>{description}</p>
       <br />
