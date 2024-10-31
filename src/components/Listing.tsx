@@ -1,25 +1,33 @@
 import { ReactNode } from "react";
 
-interface ListingProps {
-  imageURL: string;
-  title: string;
+export interface ListingWithTalentsInterface {
+  id: string;
+  name: string;
   description: string;
+  thumbnail: string;
+  organizationID: string;
   talents: string[];
 }
 
+export interface ListingsWithTalentsInterface {
+  listings: ListingWithTalentsInterface[];
+}
+
 export default function Listing({
-  imageURL,
-  title,
+  id,
+  name,
   description,
+  thumbnail,
+  organizationID,
   talents,
-}: ListingProps) {
+}: ListingWithTalentsInterface) {
   return (
     <div className="p-[20px] my-[20px] w-[50%] mx-auto rounded-[20px] bg-slate-200">
       <div className="bg-black">
-        <img className="max-w-full max-h-96 mx-auto block" src={imageURL} />
+        <img className="max-w-full max-h-96 mx-auto block" src={thumbnail} />
       </div>
       <br />
-      <h1 className="text-2xl font-black leading-10 text-center">{title}</h1>
+      <h1 className="text-2xl font-black leading-10 text-center">{name}</h1>
       <br />
       <p className="font-bold leading-10">Description:</p>
       <p>{description}</p>

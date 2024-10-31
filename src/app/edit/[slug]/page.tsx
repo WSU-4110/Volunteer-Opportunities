@@ -2,7 +2,7 @@ import { getSkills } from "@/app/explore/actions";
 import { getListingFromID } from "./actions";
 import EditListing from "./EditListing";
 
-import { getReactNodeFromListings } from "@/app/explore/(components)/Userpage";
+import Listing from "@/components/Listing";
 
 export const Edit = async ({ params }: { params: { slug: string } }) => {
   const listingID = params.slug;
@@ -17,6 +17,15 @@ export const Edit = async ({ params }: { params: { slug: string } }) => {
 
   return (
     <>
+      <Listing
+        id={listing.id}
+        name={listing.name}
+        description={listing.description}
+        thumbnail={listing.thumbnail == null ? "" : listing.thumbnail}
+        organizationID={listing.organizationId}
+        talents={talents}
+      />
+
       <EditListing listing={listing} talents={talents} />
     </>
   );

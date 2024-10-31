@@ -2,94 +2,44 @@
 
 import { ReactNode } from "react";
 
-import Listing from "./Listing";
+import Listing, { ListingsWithTalentsInterface } from "@/components/Listing";
 
 import ReactDOMServer from "react-dom/server";
+import {
+  searchByDescription,
+  searchByTalent,
+  searchByTitle,
+} from "../client-actions";
 
-export interface ListingInterface {
-  id: string;
-  name: string;
-  description: string;
-  thumbnail: string;
-  organizationID: string;
-  talents: string[];
-}
-
-export interface ListingsProps {
-  listings: ListingInterface[];
-}
-
-export function searchByTitle(keyword: string, listings: ListingsProps) {
-  const element = document.getElementById("listings");
-
-  if (element == null) {
-    return;
-  }
-
-  const filteredListings = {
-    listings: listings.listings.filter((item) => {
-      return item.name.includes(keyword);
-    }),
-  };
-
-  element.innerHTML = ReactDOMServer.renderToStaticMarkup(
-    getReactNodeFromListings(filteredListings)
-  );
-}
-
-export function searchByDescription(keyword: string, listings: ListingsProps) {
-  const element = document.getElementById("listings");
-
-  if (element == null) {
-    return;
-  }
-
-  const filteredListings = {
-    listings: listings.listings.filter((item) => {
-      return item.description.includes(keyword);
-    }),
-  };
-
-  element.innerHTML = ReactDOMServer.renderToStaticMarkup(
-    getReactNodeFromListings(filteredListings)
-  );
-}
-
-export function searchByTalent(talent: string, listings: ListingsProps) {
-  const element = document.getElementById("listings");
-
-  if (element == null) {
-    return;
-  }
-
-  const filteredListings = {
-    listings: listings.listings.filter((item) => {
-      return (
-        item.talents.filter((subitem) => {
-          return subitem.includes(talent);
-        }).length > 0
-      );
-    }),
-  };
-
-  element.innerHTML = ReactDOMServer.renderToStaticMarkup(
-    getReactNodeFromListings(filteredListings)
-  );
-}
-
-export function getReactNodeFromListings(listings: ListingsProps) {
+export function getReactNodeFromListings(
+  listings: ListingsWithTalentsInterface
+) {
   return listings.listings.map((item) => (
     <Listing
-      imageURL={item.thumbnail}
-      title={item.name}
+      id={item.id}
+      name={item.name}
       description={item.description}
+      thumbnail={item.thumbnail}
+      organizationID={item.organizationID}
       talents={item.talents}
       key={item.id}
     />
   ));
 }
 
-export default function Userpage(listings: ListingsProps) {
+export function displayListings(listings: ListingsWithTalentsInterface) {
+  const element = document.getElementById("listings");
+
+  if (element == null) {
+    return;
+  }
+
+  element.innerHTML = ReactDOMServer.renderToStaticMarkup(
+    getReactNodeFromListings(listings)
+  );
+}
+
+export default function Userpage(listings: ListingsWithTalentsInterface) {
   return (
     <>
       <div className="w-[50%] mx-auto my-3">
@@ -131,7 +81,9 @@ export default function Userpage(listings: ListingsProps) {
         <input
           onKeyDown={(event) => {
             if (event.key == "Enter") {
-              return searchByTitle(event.currentTarget.value, listings);
+              displayListings(
+                searchByTitle(event.currentTarget.value, listings)
+              );
             }
           }}
           type="text"
@@ -144,7 +96,9 @@ export default function Userpage(listings: ListingsProps) {
         <input
           onKeyDown={(event) => {
             if (event.key == "Enter") {
-              return searchByDescription(event.currentTarget.value, listings);
+              displayListings(
+                searchByDescription(event.currentTarget.value, listings)
+              );
             }
           }}
           type="text"
@@ -157,7 +111,9 @@ export default function Userpage(listings: ListingsProps) {
         <input
           onKeyDown={(event) => {
             if (event.key == "Enter") {
-              return searchByTalent(event.currentTarget.value, listings);
+              displayListings(
+                searchByTalent(event.currentTarget.value, listings)
+              );
             }
           }}
           type="text"

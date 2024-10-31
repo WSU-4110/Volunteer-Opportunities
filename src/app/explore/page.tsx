@@ -1,10 +1,6 @@
-import { useEffect, useState } from "react";
 import { getListings, getSkills } from "./actions";
 
-import Listing from "./(components)/Listing";
 import Userpage from "./(components)/Userpage";
-
-import ListingInterface from "./(components)/Userpage";
 
 export default async function Explore() {
   const listings = await getListings();

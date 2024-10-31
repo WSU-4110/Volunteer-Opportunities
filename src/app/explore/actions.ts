@@ -2,6 +2,8 @@
 
 import { database } from "@/database/index";
 
+import Listing from "@/components/Listing"
+
 import { authenticatedAction } from "@/lib/safe-action";
 import { unauthenticatedAction } from "@/lib/safe-action";
 import { skills, listings, skillsToListings } from "@/database/schema";
@@ -10,6 +12,8 @@ import { z } from "zod";
 import { eq, sql } from "drizzle-orm";
 import { list } from "postcss";
 import { PgColumn } from "drizzle-orm/pg-core";
+import { ListingsWithTalentsInterface } from "@/components/Listing";
+import ReactDOMServer from "react-dom/server";
 
 export async function getSkills(listingID : string) {
   const listingSkillsQuery = await database
@@ -24,6 +28,8 @@ export async function getSkills(listingID : string) {
 export async function getListings() {
   return await database.select().from(listings);
 }
+
+// AUTHENTICATED ACTION
 
 export const getListingsBySkill = authenticatedAction
   .createServerAction()

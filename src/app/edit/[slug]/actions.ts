@@ -3,14 +3,8 @@
 import { database } from "@/database/index";
 
 import { skills, listings, skillsToListings } from "@/database/schema";
-import Listing from "@/app/explore/(components)/Listing";
-import { ListingInterface, ListingsProps } from "@/app/explore/(components)/Userpage";
 
-import { z } from "zod";
-import { eq, sql } from "drizzle-orm";
-import { list } from "postcss";
-import { PgColumn } from "drizzle-orm/pg-core";
-import { getSkills } from "@/app/explore/actions";
+import { eq } from "drizzle-orm";
 
 
 export async function getListings() {

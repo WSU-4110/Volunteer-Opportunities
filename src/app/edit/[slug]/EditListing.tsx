@@ -2,10 +2,6 @@
 
 import { Textarea } from "@/components/ui/textarea";
 
-import Listing from "@/app/explore/(components)/Listing";
-import { addTalentToListing, getListings, updateListing } from "./actions";
-import { useState } from "react";
-
 export default function EditListing({
   listing,
   talents,
@@ -21,16 +17,6 @@ export default function EditListing({
 }) {
   return (
     <>
-      <Listing
-        imageURL={listing.thumbnail == null ? "" : listing.thumbnail}
-        title={listing.name}
-        description={listing.description}
-        talents={talents}
-        key={"listing"}
-      />
-
-      <br />
-
       <div className="w-[50%] mx-auto my-3">
         <span className="ml-2.5">New Title: </span>
         <input
