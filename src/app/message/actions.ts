@@ -38,8 +38,8 @@ export const getOtherVolunteersAction = authenticatedAction
         },
       },
     });
-    console.log("otherVolunteers");
-    console.log(otherVolunteers);
+    //console.log("otherVolunteers");
+    //console.log(otherVolunteers);
     return otherVolunteers;
   });
 
@@ -49,8 +49,8 @@ export const getOtherOrganizationsAction = authenticatedAction
     const otherOrganizations = await database.query.organizations.findMany({
       where: not(eq(organizations.creator, user.id)),
     });
-    console.log("otherOrganizations");
-    console.log(otherOrganizations);
+    //console.log("otherOrganizations");
+    //console.log(otherOrganizations);
 
     return otherOrganizations;
   });
@@ -341,7 +341,7 @@ export const getOrganizationMessages = authenticatedAction
         .groupBy(conversations.id)
         .execute();
 
-      console.log(organizationConversations);
+      //console.log(organizationConversations);
 
       return organizationConversations;
     } catch (err) {
@@ -429,8 +429,8 @@ export const getVolunteerMessages = authenticatedAction
         )
         .groupBy(conversations.id)
         .execute();
-      console.log("userConversations");
-      console.log(userConversations);
+      //console.log("userConversations");
+      //console.log(userConversations);
       return userConversations;
     } catch (err) {
       console.log(err);

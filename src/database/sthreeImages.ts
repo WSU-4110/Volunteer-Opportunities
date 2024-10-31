@@ -43,13 +43,14 @@ export class sthreeImages {
   // Using type:any because I am mainly accessing JSON data.
 
   async process(data: any) {
+    console.log("dump");
+    console.log(data);
     // Finds images for the organization array and swaps images in the organization array
     for (let i = 0; i < data.length; i++) {
       for (let j = 0; j < data[i].organizations.length; j++) {
         // If string does not contain "http" it is assumed to be a url and is skipped
         // Need to debug this code
-        //data[i].organizations[j].thumbnail.storageId.match(this.httpRegex)
-        //.length == 0
+        //data[i].organizations[j].thumbnail.storageId.match(this.httpRegex).length == 0
         if (false) {
           let address: string = await getImage(
             data[i].organizations[j].thumbnail.storageId
@@ -67,21 +68,19 @@ export class sthreeImages {
       // Finds images for the user array and swaps images in the user array
       for (let j = 0; j < data[i].users.length; j++) {
         if (data[i].users[j].customImage) {
-          // If string does not contain "http" it is assumed to be a url and is skipped
-          //data[i].users[j].customeUserImage.match(this.httpRegex).length == 0
-          if (false) {
-            let address: string = await getImage(
-              data[i].users[j].customeUserImage
-            );
-            let newUrl: url = {
-              key: data[i].users[j].customeUserImage,
-              url: address,
-              id: data[i].users[j].id,
-              date: new Date(),
-            };
-            this.urlList.push(newUrl);
-            data[i].users[j].image = address;
-          }
+          console.log(data[i].users[j].customUserImage);
+          let jsonKey = JSON.parse(data[i].users[j].customUserImage);
+          console.log(jsonKey.id);
+
+          let address: string = await getImage(jsonKey.id);
+          let newUrl: url = {
+            key: jsonKey.id,
+            url: address,
+            id: data[i].users[j].id,
+            date: new Date(),
+          };
+          this.urlList.push(newUrl);
+          data[i].users[j].image = address;
         }
       }
       console.log("Next");
