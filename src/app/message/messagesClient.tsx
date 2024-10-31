@@ -109,7 +109,8 @@ const InitializeMessageComponent = ({
         ...user,
         selected: false,
       }));
-
+      console.log("Voluteer Message");
+      console.log(usersWithSelected);
       setMessageOthers(usersWithSelected);
     }
   };

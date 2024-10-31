@@ -4,7 +4,7 @@ import { getOrganizationMessages, getVolunteerMessages } from "./actions";
 import { AnimatedTooltip } from "@/components/ui/animated-tooltip";
 import ClipLoader from "react-spinners/ClipLoader";
 import MessageInput from "./messageInput";
-
+import { sthreeImages } from "@/database/sthreeImages";
 const Messaging = ({
   userStatus,
   organizationId,
@@ -22,6 +22,8 @@ const Messaging = ({
 }) => {
   const [conversations, setConversations] = useState<any>([]);
   const [selectedConversation, setSelectedConversation] = useState<any>();
+
+  const fixURLS = new sthreeImages();
 
   const changeSelectedConversation = (selectedConversationId: string) => {
     setConversations((prevState: any) => {
@@ -43,11 +45,16 @@ const Messaging = ({
   };
 
   const addMessage = (message: any) => {
+    console.log(message);
+    console.log(selectedConversation);
     if (message.senderId) {
-      const userImage = selectedConversation.users.find((user: any) => {
+      const userImage = fixURLS.swap(message);
+
+      /*
+      selectedConversation.users.find((user: any) => {
         return user.id == message.senderId;
       }).image;
-
+      */
       const newMessage = {
         ...message,
         content: message.content.replace("/\t/g", "    "),
@@ -142,10 +149,14 @@ const Messaging = ({
       await getOrganizationMessages({
         organizationId: organizationId,
       });
+    console.log("Organization data");
+    console.log(organizationMessages);
 
     if (organizationMessages) {
+      const newOrganizationMessages =
+        await fixURLS.process(organizationMessages);
       setConversations([
-        ...organizationMessages.map((org) => {
+        ...newOrganizationMessages.map((org: any) => {
           return {
             ...org,
             selected: false,
@@ -167,8 +178,12 @@ const Messaging = ({
       await getVolunteerMessages();
 
     if (volunteerMessages) {
+      console.log("volunteerMessages");
+      console.log(volunteerMessages);
+
+      const newVolunteerMessages = await fixURLS.process(volunteerMessages);
       setConversations([
-        ...volunteerMessages.map((volunteer) => {
+        ...newVolunteerMessages.map((volunteer: any) => {
           return {
             ...volunteer,
             selected: false,

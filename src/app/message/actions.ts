@@ -38,7 +38,8 @@ export const getOtherVolunteersAction = authenticatedAction
         },
       },
     });
-
+    console.log("otherVolunteers");
+    console.log(otherVolunteers);
     return otherVolunteers;
   });
 
@@ -48,6 +49,8 @@ export const getOtherOrganizationsAction = authenticatedAction
     const otherOrganizations = await database.query.organizations.findMany({
       where: not(eq(organizations.creator, user.id)),
     });
+    console.log("otherOrganizations");
+    console.log(otherOrganizations);
 
     return otherOrganizations;
   });
@@ -279,7 +282,7 @@ export const getOrganizationMessages = authenticatedAction
             (SELECT json_agg(u) 
              FROM (
                SELECT DISTINCT ON (u.id) 
-               u.id, u.name, u.email, u.image, u.bio 
+               u.id, u.name, u.email, u.image, u."customUserImage", u."customImage"
                FROM "user" AS u
                JOIN conversations_to_users AS ctu ON ctu."userId" = u.id
                WHERE ctu."conversationId" = conversations.id
@@ -338,6 +341,8 @@ export const getOrganizationMessages = authenticatedAction
         .groupBy(conversations.id)
         .execute();
 
+      console.log(organizationConversations);
+
       return organizationConversations;
     } catch (err) {
       console.log(err);
@@ -366,7 +371,7 @@ export const getVolunteerMessages = authenticatedAction
             (SELECT json_agg(u) 
              FROM (
                SELECT DISTINCT ON (u.id) 
-               u.id, u.name, u.email, u.image, u.bio 
+               u.id, u.name, u.email, u.image, u.bio, u."customUserImage", u."customImage"
                FROM "user" AS u
                JOIN conversations_to_users AS ctu ON ctu."userId" = u.id
                WHERE ctu."conversationId" = conversations.id
@@ -424,7 +429,8 @@ export const getVolunteerMessages = authenticatedAction
         )
         .groupBy(conversations.id)
         .execute();
-
+      console.log("userConversations");
+      console.log(userConversations);
       return userConversations;
     } catch (err) {
       console.log(err);
