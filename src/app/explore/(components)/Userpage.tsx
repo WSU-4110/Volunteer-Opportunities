@@ -1,15 +1,76 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 
 import Listing, { ListingsWithTalentsInterface } from "@/components/Listing";
 
 import ReactDOMServer from "react-dom/server";
-import {
-  searchByDescription,
-  searchByTalent,
-  searchByTitle,
-} from "../client-actions";
+
+import TitleSearchBar from "./TitleSearchBar";
+import DescriptionSearchBar from "./DescriptionSearchBar";
+import TalentSearchBar from "./TalentSearchBar";
+
+class SearchBarNodeFactory {
+  listings: ListingsWithTalentsInterface;
+
+  constructor(listings: ListingsWithTalentsInterface) {
+    this.listings = listings;
+  }
+
+  getSearchBar(searchBarType: string): SearchBarNode | undefined {
+    switch (searchBarType) {
+      case "title":
+        return new TitleSearchBarNode(this.listings);
+        break;
+      case "description":
+        return new DescriptionSearchBarNode(this.listings);
+        break;
+      case "talents":
+        return new TalentSearchBarNode(this.listings);
+        break;
+    }
+  }
+}
+
+abstract class SearchBarNode {
+  listings: ListingsWithTalentsInterface;
+
+  constructor(listings: ListingsWithTalentsInterface) {
+    this.listings = listings;
+  }
+
+  abstract getReactNode(): ReactNode;
+}
+
+class TitleSearchBarNode extends SearchBarNode {
+  constructor(listings: ListingsWithTalentsInterface) {
+    super(listings);
+  }
+
+  getReactNode() {
+    return <TitleSearchBar listings={this.listings} />;
+  }
+}
+
+class DescriptionSearchBarNode extends SearchBarNode {
+  constructor(listings: ListingsWithTalentsInterface) {
+    super(listings);
+  }
+
+  getReactNode() {
+    return <DescriptionSearchBar listings={this.listings} />;
+  }
+}
+
+class TalentSearchBarNode extends SearchBarNode {
+  constructor(listings: ListingsWithTalentsInterface) {
+    super(listings);
+  }
+
+  getReactNode() {
+    return <TalentSearchBar listings={this.listings} />;
+  }
+}
 
 export function getReactNodeFromListings(
   listings: ListingsWithTalentsInterface
@@ -40,6 +101,10 @@ export function displayListings(listings: ListingsWithTalentsInterface) {
 }
 
 export default function Userpage(listings: ListingsWithTalentsInterface) {
+  const searchBarFactory = new SearchBarNodeFactory(listings);
+
+  const [searchBarType, setSearchBarType] = useState("title");
+
   return (
     <>
       <div className="w-[50%] mx-auto my-3">
@@ -49,27 +114,7 @@ export default function Userpage(listings: ListingsWithTalentsInterface) {
             name="search-options"
             id="search-options"
             onChange={(event) => {
-              const makeAllHidden = () => {
-                document.getElementById("title-search-input")!.hidden = true;
-                document.getElementById("description-search-input")!.hidden =
-                  true;
-                document.getElementById("talent-search-input")!.hidden = true;
-              };
-
-              if (event.target.value == "title") {
-                makeAllHidden();
-
-                document.getElementById("title-search-input")!.hidden = false;
-              } else if (event.target.value == "description") {
-                makeAllHidden();
-
-                document.getElementById("description-search-input")!.hidden =
-                  false;
-              } else if (event.target.value == "talents") {
-                makeAllHidden();
-
-                document.getElementById("talent-search-input")!.hidden = false;
-              }
+              setSearchBarType(event.target.value);
             }}
           >
             <option value="title">Title</option>
@@ -78,50 +123,9 @@ export default function Userpage(listings: ListingsWithTalentsInterface) {
           </select>
         </div>
 
-        <input
-          onKeyDown={(event) => {
-            if (event.key == "Enter") {
-              displayListings(
-                searchByTitle(event.currentTarget.value, listings)
-              );
-            }
-          }}
-          type="text"
-          id="title-search-input"
-          placeholder="Search for Title"
-          className="w-full text-xl border-2 rounded p-1.5"
-          hidden={false}
-        />
-
-        <input
-          onKeyDown={(event) => {
-            if (event.key == "Enter") {
-              displayListings(
-                searchByDescription(event.currentTarget.value, listings)
-              );
-            }
-          }}
-          type="text"
-          id="description-search-input"
-          placeholder="Search for Description"
-          className="w-full text-xl border-2 rounded p-1.5"
-          hidden={true}
-        />
-
-        <input
-          onKeyDown={(event) => {
-            if (event.key == "Enter") {
-              displayListings(
-                searchByTalent(event.currentTarget.value, listings)
-              );
-            }
-          }}
-          type="text"
-          id="talent-search-input"
-          placeholder="Search for Talent"
-          className="w-full text-xl border-2 rounded p-1.5"
-          hidden={true}
-        />
+        <div id="search-bar">
+          {searchBarFactory.getSearchBar(searchBarType)?.getReactNode()}
+        </div>
       </div>
 
       <div id="listings">{getReactNodeFromListings(listings)}</div>
