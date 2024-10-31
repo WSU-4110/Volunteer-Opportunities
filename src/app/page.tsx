@@ -13,6 +13,92 @@ import { Typewriter } from "react-simple-typewriter";
 import Autoplay from "embla-carousel-autoplay";
 import { Card, CardContent } from "@/components/ui/card";
 
+//page interface
+export interface Page {
+  getImageUrl(): string;
+  printIntro(): any;
+}
+
+//basic page with only an image url to display and an intro message
+class basicPage implements Page {
+  imageUrl: string;
+
+  public getImageUrl(): string {
+    return this.imageUrl;
+  }
+
+  public printIntro(): any {
+    return "Welcome to Volunteer Opportunites!";
+  }
+}
+
+//decorator class
+abstract class pageDecorator implements Page {
+  pageToBeDecorated: Page;
+
+  public pageDecorator(pageToBeDecorated: Page) {
+    this.pageToBeDecorated = pageToBeDecorated;
+  }
+
+  public getImageUrl(): string {
+    return this.pageToBeDecorated.getImageUrl();
+  }
+  public printIntro(): any {
+    this.pageToBeDecorated.printIntro();
+  }
+}
+
+//implement the typewriter feature
+class typewriter extends pageDecorator {
+  public typewriter(pageToBeDecorated: Page) {
+    super(pageToBeDecorated);
+  }
+
+  public printIntro(): any {
+    super.printIntro();
+    printTypewriter();
+  }
+
+  public printTypeWriter(): any{
+    <h1
+              style={{
+                paddingTop: "5rem",
+                margin: "auto 0",
+                fontWeight: "normal",
+              }}
+            >
+              Volunteers are{" "}
+              <span style={{ fontWeight: "bold" }}>
+                <Typewriter
+                  words={["Kind", "Selfless", "Thoughtful", "Priceless!"]}
+                  loop={5}
+                  cursor
+                  cursorStyle="_"
+                  typeSpeed={70}
+                  deleteSpeed={50}
+                  delaySpeed={1000}
+                />
+  }
+}
+
+//implement longer page description
+class description extends pageDecorator {
+  public description(pageToBeDecorated: Page) {
+    super(pageToBeDecorated);
+  }
+
+  public printIntro(): any {
+    super.printIntro();
+    this.printPageDescription();
+  }
+
+  public printPageDescription(): string {
+    return "At Volunteer Opportunites, we believe that every individual has the power to make a difference. Our platform serves as a comprehensive resource for those eager to contribute their time, skills, and passion to causes that matter. Whether you’re a seasoned volunteer or looking to embark on your first service experience, we have opportunities that cater to your interests and availability.";
+  }
+}
+
+//Original code//
+/*
 export default function Home() {
   return (
     <div>
@@ -253,3 +339,4 @@ export default function Home() {
     </div>
   );
 }
+*/
