@@ -7,7 +7,7 @@ import postgres from "postgres";
 // Instead of creating one connection variable that is shown in the lecture slides, I creat two connection variables which are postgresConnection and drizzleConnection.
 // drizzleConnection is used for connecting with the postgres table through drizzle, and postgresConnection is used for connecting to the postgres table through pg.
 
-class DatabaseSingleton {
+export class DatabaseSingleton {
   private static instance: DatabaseSingleton | null = null;
   private postgresConnection: PostgresJsDatabase<typeof schema> | null = null;
   private drizzleConnection: ReturnType<typeof postgres> | null = null;
@@ -24,7 +24,12 @@ class DatabaseSingleton {
     }
     return DatabaseSingleton.instance;
   }
-}
 
-const connection = DatabaseSingleton.getInstance();
-export default connection;
+  public getPostgresConnection() {
+    return this.postgresConnection;
+  }
+
+  public getDrizzleConnection() {
+    return this.drizzleConnection;
+  }
+}
