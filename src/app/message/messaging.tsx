@@ -4,6 +4,7 @@ import { getOrganizationMessages, getVolunteerMessages } from "./actions";
 import { AnimatedTooltip } from "@/components/ui/animated-tooltip";
 import ClipLoader from "react-spinners/ClipLoader";
 import MessageInput from "./messageInput";
+import BackIcon from "@/components/icons/backIcon";
 
 const Messaging = ({
   userStatus,
@@ -22,6 +23,8 @@ const Messaging = ({
 }) => {
   const [conversations, setConversations] = useState<any>([]);
   const [selectedConversation, setSelectedConversation] = useState<any>();
+
+  const [mobileViewConvSelected, setMobileViewConvSelected] = useState(false);
 
   const chatContainerRef = useRef(null);
   const textboxRef = useRef(null);
@@ -51,6 +54,18 @@ const Messaging = ({
     });
 
     setSelectedConversation(currentConversation);
+
+    setMobileViewConvSelected(true);
+  };
+
+  const handleMobileViewChangeClick = () => {
+    setMobileViewConvSelected(false);
+    setSelectedConversation(null);
+    setConversations((prevState: any) => [
+      ...prevState.map((item: any) => {
+        return { ...item, selected: false };
+      }),
+    ]);
   };
 
   const addMessage = (message: any) => {
@@ -75,29 +90,25 @@ const Messaging = ({
             conversation.conversations.id == message.conversationId
         );
 
-        // If the conversation is found, proceed to update it
         if (indexOfNewConversation !== -1) {
-          const oldConversations = [...prevState]; // Make a shallow copy of the previous state
+          const oldConversations = [...prevState];
 
-          const newConversation = oldConversations[indexOfNewConversation]; // Get the existing conversation
+          const newConversation = oldConversations[indexOfNewConversation];
 
-          // Update the messages of the found conversation
           const updatedConversation = {
             ...newConversation,
             messages: [...newConversation.messages, newMessage],
           };
 
-          // Use splice to update the conversation in the array
           oldConversations.splice(
             indexOfNewConversation,
             1,
             updatedConversation
           );
 
-          return oldConversations; // Return the modified array
+          return oldConversations;
         }
 
-        // If the conversation isn't found, return the original state (or handle accordingly)
         return prevState;
       });
     } else if (message.senderOrganizationId) {
@@ -207,7 +218,9 @@ const Messaging = ({
         <ClipLoader />
       ) : conversations.length > 0 ? (
         <div className="flex flex-row w-full m-auto border border-2 rounded-xl border-black h-[800px]">
-          <div className="flex flex-col w-2/5 border-r-4 ">
+          <div
+            className={`flex flex-col w-full xl:w-2/5 border-r-4 ${mobileViewConvSelected ? "hidden" : "block"} xl:block`}
+          >
             <div className="flex flex-col w-full w-full bg-slate-300 rounded-tl-xl py-10 text-center font-bold text-2xl">
               Inbox
             </div>
@@ -272,14 +285,27 @@ const Messaging = ({
               })}
             </div>
           </div>
-          <div className="flex flex-col w-4/5 h-full">
+          <div
+            className={`flex flex-col w-full xl:w-4/5 h-full ${mobileViewConvSelected ? "block" : "hidden"} xl:block`}
+          >
             <div className="w-full flex flex-col h-full">
               {selectedConversation ? (
                 <div className="flex flex-col justify-between items-center h-full">
-                  <div className="flex flex-col justify-between items-center text-center w-full py-8 border-b-4 border-black">
-                    <h1 className="font-bold text-xl mb-2">
-                      {selectedConversation.conversations.subject}
-                    </h1>
+                  <div className="flex flex-col justify-between items-center w-full py-8 px-4 border-b-4 border-black gap-5 xl:gap-0">
+                    <div className="flex flex-row justify-start w-full items-start">
+                      <div
+                        className="flex flex-col justify-center cursor-pointer"
+                        onClick={handleMobileViewChangeClick}
+                      >
+                        {mobileViewConvSelected ? (
+                          <BackIcon className="text-left w-[30px] h-[30px] w-fit xl:hidden"></BackIcon>
+                        ) : null}
+                        <p className="xl:hidden">Back</p>
+                      </div>
+                      <h1 className="font-bold text-xl mb-2 w-full text-center">
+                        {selectedConversation.conversations.subject}
+                      </h1>
+                    </div>
                     <div className="flex flex-row w-full justify-between gap-2 px-5 items-center">
                       <div className="flex flex-col items-center justify-center font-bold">
                         <h1 className="text-sm">Users</h1>
