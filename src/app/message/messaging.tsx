@@ -217,14 +217,14 @@ const Messaging = ({
       {loading ? (
         <ClipLoader />
       ) : conversations.length > 0 ? (
-        <div className="flex flex-row w-full m-auto border border-2 rounded-xl border-black h-[800px]">
+        <div className="flex flex-row w-full m-auto border border-2 border-black h-[800px]">
           <div
-            className={`flex flex-col w-full xl:w-2/5 border-r-4 ${mobileViewConvSelected ? "hidden" : "block"} xl:block`}
+            className={`flex overflow-y-auto flex-col w-full h-full xl:w-2/5 border-r-4 ${mobileViewConvSelected ? "hidden" : "block"} xl:block`}
           >
-            <div className="flex flex-col w-full w-full bg-slate-300 rounded-tl-xl py-10 text-center font-bold text-2xl">
+            <div className="flex flex-col w-full w-full bg-slate-300 py-10 text-center font-bold text-2xl">
               Inbox
             </div>
-            <div className="overflow-y-auto divide-y overflow-x-hidden">
+            <div className="divide-y">
               {conversations.map((conversation: any, index: number) => {
                 let userData = conversation.users.map(
                   (user: any, index: number) => {
@@ -249,7 +249,7 @@ const Messaging = ({
                 );
                 return (
                   <div
-                    className={`flex flex-col justify-center cursor-pointer items-start p-5 ${index == conversations.length - 1 ? "rounded-bl-xl" : ""} ${conversation.selected ? "border-l-4 border-l-indigo-500" : null}`}
+                    className={`flex flex-col justify-center cursor-pointer items-start p-5 ${conversation.selected ? "border-l-4 border-l-indigo-500" : null}`}
                     key={conversation.conversations.id}
                     onClick={() =>
                       changeSelectedConversation(conversation.conversations.id)
