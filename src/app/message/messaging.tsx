@@ -27,7 +27,6 @@ const Messaging = ({
   const [mobileViewConvSelected, setMobileViewConvSelected] = useState(false);
 
   const chatContainerRef = useRef(null);
-  const textboxRef = useRef(null);
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -369,9 +368,9 @@ const Messaging = ({
                             <img
                               src={message.userImage}
                               alt="Sender User"
-                              className="w-[100px] h-[100px] rounded-full"
+                              className="w-[40px] h-[40px] rounded-full"
                             />
-                            <p className="rounded-xl bg-blue-400 h-fit p-5">
+                            <p className="rounded-xl bg-blue-400 h-fit p-3 text-sm">
                               {message.content
                                 .replace(/^["']|["']$/g, "")
                                 .replace(/\\(['"])/g, "$1")}
@@ -386,9 +385,9 @@ const Messaging = ({
                                 JSON.parse(message.organizationImage).storageId
                               }
                               alt="Sender Organization"
-                              className="w-[100px] h-[100px] rounded-full"
+                              className="w-[40px] h-[40px] rounded-full"
                             />
-                            <p className="rounded-xl bg-blue-400 h-fit p-5">
+                            <p className="rounded-xl bg-blue-400 h-fit p-3 text-sm">
                               {message.content
                                 .replace(/^["']|["']$/g, "")
                                 .replace(/\\(['"])/g, "$1")}
@@ -410,7 +409,7 @@ const Messaging = ({
                 </div>
               ) : (
                 <div className="flex flex-col justify-between items-start h-full">
-                  <h1 className="font-bold text-xl text-center w-full py-8 border-b-4 border-black">
+                  <h1 className="font-bold text-xl text-center w-full py-10 border-b-4 border-black">
                     Please Select a Conversation
                   </h1>
                   <div className="w-full h-full"></div>

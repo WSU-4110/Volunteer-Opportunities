@@ -326,15 +326,6 @@ export const getOrganizationMessages = authenticatedAction
             organizationConversationIDs.map((c) => c.conversationId)
           )
         )
-        .leftJoin(
-          conversationsToUsers,
-          eq(conversationsToUsers.conversationId, conversations.id)
-        )
-        .leftJoin(users, eq(conversationsToUsers.userId, users.id))
-        .leftJoin(
-          organizations,
-          eq(conversationsToUsers.organizationId, organizations.id)
-        )
         .groupBy(conversations.id)
         .execute();
 
@@ -412,15 +403,6 @@ export const getVolunteerMessages = authenticatedAction
             conversations.id,
             userConversationIDs.map((c) => c.conversationId)
           )
-        )
-        .leftJoin(
-          conversationsToUsers,
-          eq(conversationsToUsers.conversationId, conversations.id)
-        )
-        .leftJoin(users, eq(conversationsToUsers.userId, users.id))
-        .leftJoin(
-          organizations,
-          eq(conversationsToUsers.organizationId, organizations.id)
         )
         .groupBy(conversations.id)
         .execute();
