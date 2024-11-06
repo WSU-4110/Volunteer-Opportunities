@@ -279,7 +279,7 @@ export const getOrganizationMessages = authenticatedAction
             (SELECT json_agg(u) 
              FROM (
                SELECT DISTINCT ON (u.id) 
-               u.id, u.name, u.email, u.image, u.bio 
+               u.id, u.name, u.email, u.image, u.bio, u."customUserImage", u."customImage" 
                FROM "user" AS u
                JOIN conversations_to_users AS ctu ON ctu."userId" = u.id
                WHERE ctu."conversationId" = conversations.id
@@ -366,7 +366,7 @@ export const getVolunteerMessages = authenticatedAction
             (SELECT json_agg(u) 
              FROM (
                SELECT DISTINCT ON (u.id) 
-               u.id, u.name, u.email, u.image, u.bio 
+               u.id, u.name, u.email, u.image, u.bio, u."customUserImage", u."customImage" 
                FROM "user" AS u
                JOIN conversations_to_users AS ctu ON ctu."userId" = u.id
                WHERE ctu."conversationId" = conversations.id

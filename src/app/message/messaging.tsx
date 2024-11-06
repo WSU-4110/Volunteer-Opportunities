@@ -4,6 +4,7 @@ import { getOrganizationMessages, getVolunteerMessages } from "./actions";
 import { AnimatedTooltip } from "@/components/ui/animated-tooltip";
 import ClipLoader from "react-spinners/ClipLoader";
 import MessageInput from "./messageInput";
+import { sthreeImages } from "@/database/sthreeActions";
 
 const Messaging = ({
   userStatus,
@@ -22,10 +23,11 @@ const Messaging = ({
 }) => {
   const [conversations, setConversations] = useState<any>([]);
   const [selectedConversation, setSelectedConversation] = useState<any>();
+  const [sthree, setsthree] = useState<any>();
 
   const chatContainerRef = useRef(null);
   const textboxRef = useRef(null);
-
+  const sthreeload = new sthreeImages();
   useEffect(() => {
     if (chatContainerRef.current) {
       (chatContainerRef.current as any).scrollTop = (
@@ -53,11 +55,14 @@ const Messaging = ({
     setSelectedConversation(currentConversation);
   };
 
-  const addMessage = (message: any) => {
+  const addMessage = async (message: any) => {
     if (message.senderId) {
-      const userImage = selectedConversation.users.find((user: any) => {
+      console.log(message);
+      const userImage = await sthree.swap(message);
+      console.log(userImage);
+      /*selectedConversation.users.find((user: any) => {
         return user.id == message.senderId;
-      }).image;
+      }).image; */
 
       const newMessage = {
         ...message,
@@ -155,8 +160,11 @@ const Messaging = ({
       });
 
     if (organizationMessages) {
+      const editedOrganizationMessages =
+        await sthreeload.process(organizationMessages);
+      setsthree(sthreeload);
       setConversations([
-        ...organizationMessages.map((org) => {
+        ...editedOrganizationMessages.map((org: any) => {
           return {
             ...org,
             selected: false,
@@ -178,8 +186,11 @@ const Messaging = ({
       await getVolunteerMessages();
 
     if (volunteerMessages) {
+      const editedVolunteerMessages =
+        await sthreeload.process(volunteerMessages);
+      setsthree(sthreeload);
       setConversations([
-        ...volunteerMessages.map((volunteer) => {
+        ...editedVolunteerMessages.map((volunteer: any) => {
           return {
             ...volunteer,
             selected: false,
