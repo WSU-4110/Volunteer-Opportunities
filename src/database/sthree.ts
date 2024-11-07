@@ -89,6 +89,7 @@ const put = async ({ bucketName, key, data }: any) => {
   // May want errors thrown to the calling function will test
 
   const params = {
+    ACL: <any>"public-read",
     Bucket: bucketName,
     Key: key,
     Body: data,
@@ -121,11 +122,20 @@ or the multipart upload API (5TB max).`
 export async function getImage(key: string) {
   // Keys should only be generated from the above put method making them very long
   // Do not put keys in the database without putting them in the bucket it may break the page that calls this.
-  try {
-    return createPresignedUrlGet({ bucket: process.env.BUCKET, key: key });
-  } catch (caught) {
-    return "";
-  }
+
+  return (
+    "https://" +
+    process.env.BUCKET +
+    ".s3." +
+    process.env.REGION +
+    ".amazonaws.com/" +
+    key
+  );
+  //try {
+  //  return createPresignedUrlGet({ bucket: process.env.BUCKET, key: key });
+  //} catch (caught) {
+  //  return "";
+  //}
 }
 
 // From aws docs https://docs.aws.amazon.com/AmazonS3/latest/API/s3_example_s3_Scenario_PresignedUrl_section.html
