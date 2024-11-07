@@ -56,7 +56,7 @@ export class sthreeImages {
             date: new Date(),
           };
           this.urlList.push(newUrl);
-          //data[i].organizations[j].thumbnail.storageId =JSON.stringify({storageId: address,});
+          //data[i].organizations[j].thumbnail =JSON.stringify({storageId: address,});
           data[i].organizations[j].thumbnail = JSON.stringify({
             storageId: key.storageId,
           });

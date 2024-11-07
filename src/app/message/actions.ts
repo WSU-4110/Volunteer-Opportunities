@@ -15,6 +15,21 @@ import {
 } from "@/database/schema";
 import { z } from "zod";
 import { CustomError } from "@/util";
+import { getImage } from "@/database/sthree";
+
+export const getCurrentUser = authenticatedAction
+  .createServerAction()
+  .handler(async ({ ctx: { user } }) => {
+    const currentUser = await database
+      .select({
+        customFile: users.customFile,
+        userImage: users.userImage,
+      })
+      .from(users)
+      .where(eq(users.id, user.id));
+
+    return currentUser;
+  });
 
 export const getOtherVolunteersAction = authenticatedAction
   .createServerAction()
@@ -39,6 +54,16 @@ export const getOtherVolunteersAction = authenticatedAction
       },
     });
 
+    console.log(otherVolunteers);
+
+    // Added code to swap images here
+    for (let i = 0; i < otherVolunteers.length; i++) {
+      if (otherVolunteers[i].customFile) {
+        // using type any to bridge unknown and type string
+        let userImage: any = otherVolunteers[i].userImage;
+        //otherVolunteers[i].image = await getImage(userImage.id);
+      }
+    }
     return otherVolunteers;
   });
 
@@ -48,7 +73,17 @@ export const getOtherOrganizationsAction = authenticatedAction
     const otherOrganizations = await database.query.organizations.findMany({
       where: not(eq(organizations.creator, user.id)),
     });
+    console.log(otherOrganizations);
 
+    for (let i = 0; i < otherOrganizations.length; i++) {
+      let orgJSON: any = otherOrganizations[i].thumbnail;
+      let orgImage: any = orgJSON.storageId;
+      //orgJSON.storageId = await getImage(orgImage);
+      // above lines are removed to simplify testing
+      orgJSON.storageId = orgImage;
+      otherOrganizations[i].thumbnail = orgJSON;
+    }
+    console.log(otherOrganizations);
     return otherOrganizations;
   });
 

@@ -16,8 +16,8 @@ import { revalidatePath } from "next/cache";
 import { custom, z } from "zod";
 import { redirect } from "next/navigation";
 import { timeStamp } from "console";
-
-import { putImage, rePutImage } from "@/database/sthree";
+import { organizationImage, userImage } from "@/database/actions";
+import { getImage, putImage, rePutImage } from "@/database/sthree";
 
 // Select Statements for User Profile
 // Convert to internal fumctions
@@ -200,8 +200,14 @@ async function internalUpdateUser(
       if (userImage == "") {
         //If put image fails and does not return a key
         customImage = false;
+      } else {
+        // update URL to be S3 bucket
+        picture = await getImage(userImage);
       }
     }
+    // Time stamp for the url in the bucket
+    const now = new Date().toISOString();
+
     await database
       .update(users)
       .set({
@@ -209,7 +215,7 @@ async function internalUpdateUser(
         image: picture,
         bio: bio,
         customFile: customImage,
-        userImage: { id: userImage },
+        userImage: { id: userImage, date: now },
       })
       .where(eq(users.id, id));
     //console.log("success");
@@ -224,7 +230,7 @@ async function internalUpdateUser(
         image: picture,
         bio: bio,
         customFile: customImage,
-        userImage: { id: "" },
+        userImage: { id: "", date: "" },
       })
       .where(eq(users.id, id));
   }
@@ -236,7 +242,7 @@ export const getOrganizations = authenticatedAction
   .createServerAction()
   .handler(async ({ ctx: { user } }) => {
     if (user != undefined) {
-      return await database
+      const orgs = await database
         .select({
           id: organizations.id,
           name: organizations.name,
@@ -244,6 +250,20 @@ export const getOrganizations = authenticatedAction
         })
         .from(organizations)
         .where(eq(organizations.creator, user.id));
+      const now = new Date();
+      const check = new Date().setHours(now.getHours() - 1);
+      // Check image times
+      for (let i = 0; i < orgs.length; i++) {
+        let json: any = orgs[i].image;
+        let image = JSON.parse(json);
+        if (image.date < check) {
+          let url = await getImage(image.key);
+          let date = new Date().toISOString();
+
+          await organizationImage({ picture: url, id: orgs[i].id, date: date });
+        }
+      }
+      return orgs;
     } else return null;
   });
 
@@ -302,10 +322,13 @@ async function internalUpdateOrg(
   } else {
     image = await putImage(data.get("data"));
   }
+  // Get new URL and timestamp
+  const url = getImage(image);
+  const now = new Date().toISOString();
 
   await database
     .update(organizations)
-    .set({ name: name, thumbnail: { storageId: image } })
+    .set({ name: name, thumbnail: { storageId: url, key: image, date: now } })
     .where(eq(organizations.id, id));
 }
 
@@ -321,9 +344,12 @@ export const addOrganization = authenticatedAction
   .handler(async ({ ctx: { user }, input: { picture, name, data } }) => {
     if (user != undefined) {
       const image = await putImage(data.get("data"));
+      const url = await getImage(image);
+      const now = new Date().toISOString();
+
       return await database.insert(organizations).values({
         name: name,
-        thumbnail: { storageId: image },
+        thumbnail: { storageId: url, key: image, date: now },
 
         creator: user.id,
       });
