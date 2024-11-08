@@ -1,76 +1,12 @@
 "use client";
 
-import { ReactNode, useState } from "react";
+import { useState } from "react";
 
 import Listing, { ListingsWithTalentsInterface } from "@/components/Listing";
 
 import ReactDOMServer from "react-dom/server";
 
-import TitleSearchBar from "./TitleSearchBar";
-import DescriptionSearchBar from "./DescriptionSearchBar";
-import TalentSearchBar from "./TalentSearchBar";
-
-class SearchBarNodeFactory {
-  listings: ListingsWithTalentsInterface;
-
-  constructor(listings: ListingsWithTalentsInterface) {
-    this.listings = listings;
-  }
-
-  getSearchBar(searchBarType: string): SearchBarNode | undefined {
-    switch (searchBarType) {
-      case "title":
-        return new TitleSearchBarNode(this.listings);
-        break;
-      case "description":
-        return new DescriptionSearchBarNode(this.listings);
-        break;
-      case "talents":
-        return new TalentSearchBarNode(this.listings);
-        break;
-    }
-  }
-}
-
-abstract class SearchBarNode {
-  listings: ListingsWithTalentsInterface;
-
-  constructor(listings: ListingsWithTalentsInterface) {
-    this.listings = listings;
-  }
-
-  abstract getReactNode(): ReactNode;
-}
-
-class TitleSearchBarNode extends SearchBarNode {
-  constructor(listings: ListingsWithTalentsInterface) {
-    super(listings);
-  }
-
-  getReactNode() {
-    return <TitleSearchBar listings={this.listings} />;
-  }
-}
-
-class DescriptionSearchBarNode extends SearchBarNode {
-  constructor(listings: ListingsWithTalentsInterface) {
-    super(listings);
-  }
-
-  getReactNode() {
-    return <DescriptionSearchBar listings={this.listings} />;
-  }
-}
-
-class TalentSearchBarNode extends SearchBarNode {
-  constructor(listings: ListingsWithTalentsInterface) {
-    super(listings);
-  }
-
-  getReactNode() {
-    return <TalentSearchBar listings={this.listings} />;
-  }
-}
+import { SearchBarNodeFactory } from "./SearchBarNode";
 
 export function getReactNodeFromListings(
   listings: ListingsWithTalentsInterface
