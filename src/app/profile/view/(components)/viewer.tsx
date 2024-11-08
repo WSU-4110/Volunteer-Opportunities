@@ -53,7 +53,7 @@ export default function Viewer(props: any) {
               <tr key={org.id}>
                 <td>
                   <img
-                    src={org.image.url}
+                    src={org.image.storageId}
                     alt="Organization Profile Picture"
                     className="m-auto rounded-xl"
                     width={"70px"}

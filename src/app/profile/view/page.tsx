@@ -57,23 +57,14 @@ export default async function EditProfile() {
     organizations != null
   ) {
     let picture = "";
-    if (userD[0]![0].customFile) {
-      try {
-        //console.log("Image");
-        picture = await getImage(userD[0]![0].userImage.id);
-      } catch (caught) {
-        userD[0]![0].userImage.id = "";
-      }
-    } else {
-      //console.log("No Image");
-      picture = userD[0]![0].image || "";
-    }
+    picture = userD[0]![0].image || "";
+
     // Added type any to allow access tp the inside of json data
     const listings: any = [];
     for (let i = 0; i < organizations[0]!.length; i++) {
       let id: organizationId = { orgID: organizations[0]![i].id };
       listings[i] = await getListings(id);
-      try {
+      /* try {
         for (let j = 0; j < listings[i]!.length; j++) {
           listings[i]![j]!.thumbnail = await getImage(
             listings[i]![j]!.thumbnail
@@ -81,13 +72,11 @@ export default async function EditProfile() {
         }
       } catch (caught) {
         //console.log(caught);
-      }
-      // Replace the image key with a signed url to the image
-      organizations[0]![i].image.url = await getImage(
-        organizations[0]![i].image.storageId
-      );
+      }*/
+
+      organizations[0]![i].image.url = organizations[0]![i].image.storageId;
     }
-    //console.log(organizations[0]![0].image.storageId);
+    console.log(organizations[0]![0].image.storageId);
     //console.log(userD[0]![0].userImage.id);
     return (
       <div className="mb-20">

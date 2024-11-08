@@ -98,7 +98,7 @@ const put = async ({ bucketName, key, data }: any) => {
 
   try {
     const response = await client.send(command);
-    //console.log(response);
+    console.log(response);
   } catch (caught) {
     if (
       caught instanceof S3ServiceException &&

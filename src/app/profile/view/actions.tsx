@@ -17,7 +17,7 @@ import { custom, z } from "zod";
 import { redirect } from "next/navigation";
 import { timeStamp } from "console";
 
-import { putImage, rePutImage } from "@/database/sthree";
+import { getImage, putImage, rePutImage } from "@/database/sthree";
 
 // Select Statements for User Profile
 // Convert to internal fumctions
@@ -187,21 +187,25 @@ async function internalUpdateUser(
   data: any
 ) {
   let customImage = true;
-  //console.log("UserID");
-  //console.log(userImage);
+  console.log("UserID");
+  console.log(userImage);
   try {
-    //console.log(data);
+    console.log(data);
 
     if (userImage != "" && userImage != undefined) {
       userImage = await rePutImage(data, userImage);
+      picture = await getImage(userImage);
     } else {
       //console.log("Add image");
       userImage = await putImage(data);
       if (userImage == "") {
         //If put image fails and does not return a key
         customImage = false;
+      } else {
+        picture = await getImage(userImage);
       }
     }
+    console.log(picture);
     await database
       .update(users)
       .set({
@@ -302,10 +306,11 @@ async function internalUpdateOrg(
   } else {
     image = await putImage(data.get("data"));
   }
+  const url = await getImage(image);
 
   await database
     .update(organizations)
-    .set({ name: name, thumbnail: { storageId: image } })
+    .set({ name: name, thumbnail: { storageId: url, key: image } })
     .where(eq(organizations.id, id));
 }
 
@@ -321,9 +326,10 @@ export const addOrganization = authenticatedAction
   .handler(async ({ ctx: { user }, input: { picture, name, data } }) => {
     if (user != undefined) {
       const image = await putImage(data.get("data"));
+      const url = await getImage(image);
       return await database.insert(organizations).values({
         name: name,
-        thumbnail: { storageId: image },
+        thumbnail: { storageId: url, key: image },
 
         creator: user.id,
       });

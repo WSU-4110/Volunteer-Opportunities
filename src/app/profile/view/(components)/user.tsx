@@ -132,8 +132,8 @@ const EditUserPage = ({ ...props }: any) => {
         data: form,
         image: props.values.customImage,
       };
-      //console.log(input);
-      //console.log(await updateUser(input));
+      console.log(input);
+      console.log(await updateUser(input));
 
       revalidatePathAction();
       props.addOrganization(false);
