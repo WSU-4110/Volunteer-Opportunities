@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import {
   addUserSkill,
   deleteUserSkill,
+  revalidateUserViewerPage,
   updateUser,
 } from "@/app/profile/view/actions";
 import { useState } from "react";
@@ -133,7 +134,11 @@ const EditUserPage = ({ ...props }: any) => {
         image: props.values.customImage,
       };
       //console.log(input);
-      //console.log(await updateUser(input));
+      const [updatedUser, updatedUserError] = await updateUser(input);
+
+      if (updatedUser && updatedUser[0]) {
+        revalidateUserViewerPage(updatedUser[0].id);
+      }
 
       revalidatePathAction();
       props.addOrganization(false);
@@ -159,9 +164,7 @@ const EditUserPage = ({ ...props }: any) => {
         <img
           src={props.values.picture}
           alt="User Profile Picture"
-          className="m-auto rounded-xl"
-          width="400px"
-          height="400px"
+          className="m-auto rounded-xl w-[400px] h-[400px]"
         />
       </div>
 

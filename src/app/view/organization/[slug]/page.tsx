@@ -11,7 +11,7 @@ const ViewerPage = async ({ params }: { params: { slug: string } }) => {
   return (
     <div>
       {organizations ? (
-        <div className="bg-gray-100 min-h-screen py-12">
+        <div className="bg-slate-200 min-h-screen py-12">
           <MaxWidthWrapper>
             {/* Profile Section with Organization Name */}
             <section className="w-full max-w-4xl mx-auto flex items-center mb-8">
@@ -22,9 +22,7 @@ const ViewerPage = async ({ params }: { params: { slug: string } }) => {
                       .storageId || ""
                   }
                   alt={organizations?.name}
-                  width={"200px"}
-                  height={"200px"}
-                  className="rounded-md object-cover shadow-lg"
+                  className="rounded-md object-cover shadow-lg w-[200px] h-[200px]"
                 />
                 <p className="text-sm text-gray-600 mt-2 ml-2">
                   Created By: {organizations?.users.name}

@@ -44,7 +44,7 @@ const ViewerPage = async ({ params }: { params: { slug: string } }) => {
               {user?.skills.map((skill, index) => (
                 <Badge
                   key={skill.skillId}
-                  className="px-4 py-2 bg-blue-100 text-blue-800 rounded-md shadow-sm"
+                  className="px-4 py-2 bg-blue-100 text-blue-800 hover:bg-blue-500 hover:text-white rounded-md shadow-sm"
                 >
                   {skill.skills.name}
                 </Badge>

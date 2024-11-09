@@ -55,9 +55,7 @@ export default function Viewer(props: any) {
                   <img
                     src={org.image.url}
                     alt="Organization Profile Picture"
-                    className="m-auto rounded-xl"
-                    width={"70px"}
-                    height={"70px"}
+                    className="m-auto rounded-xl w-[70px] h-auto"
                   />
                 </td>
 

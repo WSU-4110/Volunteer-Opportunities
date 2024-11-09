@@ -111,6 +111,9 @@ export const organizations = pgTable("organizations", {
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   images: json("images"),
+  email: text("email"),
+  address: text("address"),
+  phoneNumber: text("phoneNumber"),
 });
 
 export const skills = pgTable("skills", {

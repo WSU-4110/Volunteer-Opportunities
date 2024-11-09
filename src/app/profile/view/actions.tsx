@@ -190,8 +190,6 @@ async function internalUpdateUser(
   //console.log("UserID");
   //console.log(userImage);
   try {
-    //console.log(data);
-
     if (userImage != "" && userImage != undefined) {
       userImage = await rePutImage(data, userImage);
     } else {
@@ -202,7 +200,7 @@ async function internalUpdateUser(
         customImage = false;
       }
     }
-    await database
+    return await database
       .update(users)
       .set({
         name: username,
@@ -211,13 +209,14 @@ async function internalUpdateUser(
         customFile: customImage,
         userImage: { id: userImage },
       })
-      .where(eq(users.id, id));
+      .where(eq(users.id, id))
+      .returning();
     //console.log("success");
   } catch (caught) {
     //console.log(caught);
     //If put image fails and does not return a key
     customImage = false;
-    await database
+    return await database
       .update(users)
       .set({
         name: username,
@@ -226,7 +225,8 @@ async function internalUpdateUser(
         customFile: customImage,
         userImage: { id: "" },
       })
-      .where(eq(users.id, id));
+      .where(eq(users.id, id))
+      .returning();
   }
 }
 
@@ -321,15 +321,28 @@ export const addOrganization = authenticatedAction
   .handler(async ({ ctx: { user }, input: { picture, name, data } }) => {
     if (user != undefined) {
       const image = await putImage(data.get("data"));
-      return await database.insert(organizations).values({
-        name: name,
-        thumbnail: { storageId: image },
+      return await database
+        .insert(organizations)
+        .values({
+          name: name,
+          thumbnail: { storageId: image },
 
-        creator: user.id,
-      });
+          creator: user.id,
+        })
+        .returning();
     }
   });
 
 export const revalidatePathAction = () => {
   revalidatePath("/profile/view");
+  revalidatePath("/explore");
+  revalidatePath("/message");
+};
+
+export const revalidateUserViewerPage = (userId: string) => {
+  revalidatePath(`/view/volunteer/${userId}`);
+};
+
+export const revalidateOrganizationViewerPage = (orgId: string) => {
+  revalidatePath(`/view/organization/${orgId}`);
 };

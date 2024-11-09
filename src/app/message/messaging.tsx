@@ -1,10 +1,14 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { getOrganizationMessages, getVolunteerMessages } from "./actions";
-import { AnimatedTooltip } from "@/components/ui/animated-tooltip";
+import {
+  AnimatedLinkTooltip,
+  AnimatedTooltip,
+} from "@/components/ui/animated-tooltip";
 import ClipLoader from "react-spinners/ClipLoader";
 import MessageInput from "./messageInput";
 import BackIcon from "@/components/icons/backIcon";
+import Link from "next/link";
 
 const Messaging = ({
   userStatus,
@@ -228,7 +232,7 @@ const Messaging = ({
                 let userData = conversation.users.map(
                   (user: any, index: number) => {
                     return {
-                      id: index,
+                      id: user.id,
                       name: user.name,
                       image: user.image,
                       designation: "USER",
@@ -239,7 +243,7 @@ const Messaging = ({
                 let organizationData = conversation.organizations.map(
                   (org: any, index: number) => {
                     return {
-                      id: index + conversation.users.length,
+                      id: org.id,
                       name: org.name,
                       image: JSON.parse(org.thumbnail).storageId,
                       designation: "ORGANIZATION",
@@ -310,20 +314,22 @@ const Messaging = ({
                         <h1 className="text-sm">Users</h1>
                         <div className="flex flex-row items-center justify-start">
                           {selectedConversation.users.length > 0 ? (
-                            <AnimatedTooltip
+                            <AnimatedLinkTooltip
                               key={
                                 selectedConversation.conversations.id + "user"
                               }
                               items={selectedConversation.users.map(
                                 (user: any, index: number) => {
                                   return {
-                                    id: index,
+                                    id: user.id,
                                     name: user.name,
                                     image: user.image,
                                     designation: user.bio,
                                   };
                                 }
                               )}
+                              type="volunteer"
+                              className="cursor-pointer"
                             />
                           ) : (
                             <h1 className="text-center w-full">NONE</h1>
@@ -334,21 +340,22 @@ const Messaging = ({
                         <h1 className="text-sm">Organizations</h1>
                         <div className="flex flex-row items-center justify-center">
                           {selectedConversation.organizations.length > 0 ? (
-                            <AnimatedTooltip
+                            <AnimatedLinkTooltip
                               key={
                                 selectedConversation.conversations.id + "org"
                               }
                               items={selectedConversation.organizations.map(
                                 (org: any, index: number) => {
                                   return {
-                                    id:
-                                      index + selectedConversation.users.length,
+                                    id: org.id,
                                     name: org.name,
                                     image: JSON.parse(org.thumbnail).storageId,
                                     designation: "ORGANIZATION",
                                   };
                                 }
                               )}
+                              className="cursor-pointer"
+                              type="organization"
                             />
                           ) : (
                             <h1 className="text-center w-full">NONE</h1>
