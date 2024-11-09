@@ -7,8 +7,6 @@ const Navbar = async () => {
   const authStatus = await auth();
   const [userHasOrganization, error] = await getOneUserOrganization();
 
-  console.log(userHasOrganization);
-
   return (
     <NavbarClient
       authStatus={authStatus as Session | undefined}

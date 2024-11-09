@@ -114,6 +114,7 @@ export const organizations = pgTable("organizations", {
   email: text("email"),
   address: text("address"),
   phoneNumber: text("phoneNumber"),
+  bio: text("bio"),
 });
 
 export const skills = pgTable("skills", {

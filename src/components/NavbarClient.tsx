@@ -48,8 +48,6 @@ const Navbar = ({
 
   const { userStatus, changeUserStatus } = useUserStatusStore((state) => state);
 
-  console.log(userHasOrganization);
-
   return (
     <>
       <div className="flex w-[100%] flex-row justify-between items-center m-auto py-1 px-14 2xl:px-20 sticky z-[40] shadow-lg">

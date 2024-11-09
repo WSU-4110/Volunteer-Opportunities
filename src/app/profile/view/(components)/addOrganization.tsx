@@ -39,6 +39,7 @@ export default function AddAnOrganization(props: any) {
     email: z.string(),
     address: z.string(),
     phoneNumber: z.string(),
+    bio: z.string(),
   });
 
   const form = useForm<z.infer<typeof orgSchema>>({
@@ -49,6 +50,7 @@ export default function AddAnOrganization(props: any) {
       email: "",
       address: "",
       phoneNumber: "",
+      bio: "",
     },
   });
 
@@ -171,6 +173,22 @@ export default function AddAnOrganization(props: any) {
                 </FormControl>
                 <FormDescription>
                   Link an email address to your organization
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="bio"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Biography</FormLabel>
+                <FormControl>
+                  <Input placeholder="Email" {...field} />
+                </FormControl>
+                <FormDescription>
+                  Describe Your Organization in this biography section.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
