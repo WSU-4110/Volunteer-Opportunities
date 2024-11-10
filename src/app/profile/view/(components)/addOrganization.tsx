@@ -30,23 +30,24 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function AddAnOrganization(props: any) {
   const [addressSuggestions, setAddressSuggestions] = useState([]);
+  const [coordinates, setCoordinates] = useState({ longitude: 0, latitude: 0 });
+  const [validAddressSelected, setValidAddressSelected] = useState(false);
   const orgSchema = z.object({
-    name: z.string(),
-    imageUrl: z.string(),
-    email: z.string(),
-    address: z.string(),
-    phoneNumber: z.string(),
-    bio: z.string(),
+    name: z.string().min(1, "Name is required"),
+    email: z.string().email(),
+    address: z.string().min(1, "Address is required"),
+    phoneNumber: z.string().min(1, "Phone Number is required"),
+    bio: z.string().min(1, "Bio is required"),
   });
 
   const form = useForm<z.infer<typeof orgSchema>>({
     resolver: zodResolver(orgSchema),
     defaultValues: {
       name: "",
-      imageUrl: "",
       email: "",
       address: "",
       phoneNumber: "",
@@ -112,22 +113,41 @@ export default function AddAnOrganization(props: any) {
     };
   }, []);
 
-  const handleSelectAddress = (address: string) => {
-    form.setValue("address", address);
+  const handleSelectAddress = (suggestion: any) => {
+    form.setValue("address", suggestion.place_name);
+    console.log(suggestion.geometry.coordinates[0]);
+    console.log(suggestion.geometry.coordinates[1]);
+    setValidAddressSelected(true);
+    setCoordinates({
+      longitude: suggestion.geometry.coordinates[0],
+      latitude: suggestion.geometry.coordinates[1],
+    });
     setAddressSuggestions([]);
     setOpen(false);
   };
 
   async function onSubmit(values: z.infer<typeof orgSchema>) {
+    if (!validAddressSelected) {
+      form.setError("address", {
+        type: "manual",
+        message:
+          "Please select an address from the dropdown of options, so that we know its a valid address.",
+      });
+      return;
+    }
     try {
       const data: File = files[0];
       const formData = new FormData();
       formData.append("data", data);
 
       const [organization] = await addOrganization({
-        picture: values.imageUrl,
         name: values.name,
         data: formData,
+        coordinates: coordinates,
+        bio: values.bio,
+        phoneNumber: values.phoneNumber,
+        email: values.email,
+        address: values.address,
       });
 
       revalidatePathAction();
@@ -182,50 +202,72 @@ export default function AddAnOrganization(props: any) {
             control={form.control}
             name="bio"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="w-full">
                 <FormLabel>Biography</FormLabel>
-                <FormControl>
-                  <Input placeholder="Email" {...field} />
+                <FormControl className="w-full">
+                  <Textarea
+                    placeholder="Enter your organization biography here"
+                    className="resize-none w-full"
+                    {...field}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        form.handleSubmit(onSubmit)();
+                      }
+                    }}
+                  />
                 </FormControl>
-                <FormDescription>
-                  Describe Your Organization in this biography section.
-                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Command className="mt-4">
-            <label className="text-sm" htmlFor="address-input">
-              Address
-            </label>
-            <CommandInput
-              id="address-input"
-              placeholder="Enter an address"
-              {...form.register("address")}
-              onFocus={() => setOpen(true)}
-              onInput={(e) => form.setValue("address", (e.target as any).value)}
-              value={address}
-              ref={commandRef}
-            />
-            <CommandList>
-              <CommandEmpty>
-                {open && <p>No suggestions found.</p>}
-              </CommandEmpty>
-              <CommandGroup>
-                {addressSuggestions.map((suggestion, index) => (
-                  <CommandItem
-                    key={index}
-                    onSelect={() =>
-                      handleSelectAddress((suggestion as any).place_name)
-                    }
-                    className="cursor-pointer"
-                  >
-                    {(suggestion as any).place_name}
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </CommandList>
-          </Command>
+          <FormField
+            control={form.control}
+            name="address"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Address</FormLabel>
+                <FormControl className="w-full">
+                  <Command className="mt-4">
+                    <CommandInput
+                      id="address-input"
+                      placeholder="Enter an address"
+                      {...form.register("address")}
+                      onFocus={() => setOpen(true)}
+                      onInput={(e) => {
+                        form.setValue("address", (e.target as any).value);
+                        setValidAddressSelected(false);
+                      }}
+                      value={address}
+                      ref={commandRef}
+                    />
+                    <CommandList>
+                      <CommandEmpty>
+                        {open && <p>No suggestions found.</p>}
+                      </CommandEmpty>
+                      <CommandGroup>
+                        {addressSuggestions.map((suggestion, index) => (
+                          <CommandItem
+                            key={index}
+                            onSelect={() =>
+                              handleSelectAddress(suggestion as any)
+                            }
+                            className="cursor-pointer"
+                          >
+                            {(suggestion as any).place_name}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </FormControl>
+                <FormMessage>
+                  {form.formState.errors.address?.message}
+                </FormMessage>{" "}
+                {/* Render error message here */}
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="phoneNumber"

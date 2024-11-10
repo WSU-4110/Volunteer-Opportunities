@@ -22,8 +22,6 @@ export const getOneUserOrganization = authenticatedAction
         where: eq(organizations.creator, user.id),
       });
 
-      console.log("userhasOrg is", userHasOrganization);
-
       return userHasOrganization.length > 0;
     } catch (err) {
       console.log(err);

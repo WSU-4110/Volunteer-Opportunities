@@ -317,26 +317,43 @@ export const addOrganization = authenticatedAction
   .createServerAction()
   .input(
     z.object({
-      picture: z.string(),
       name: z.string(),
       data: z.any(),
+      bio: z.string(),
+      phoneNumber: z.string(),
+      address: z.string(),
+      coordinates: z.object({
+        longitude: z.number(),
+        latitude: z.number(),
+      }),
+      email: z.string(),
     })
   )
-  .handler(async ({ ctx: { user }, input: { picture, name, data } }) => {
-    if (user != undefined) {
-      const image = await putImage(data.get("data"));
-      const url = await getImage(image);
-      return await database
-        .insert(organizations)
-        .values({
-          name: name,
-          thumbnail: { storageId: url, key: image },
-
-          creator: user.id,
-        })
-        .returning();
+  .handler(
+    async ({
+      ctx: { user },
+      input: { name, data, bio, phoneNumber, address, coordinates, email },
+    }) => {
+      if (user != undefined) {
+        const image = await putImage(data.get("data"));
+        const url = await getImage(image);
+        return await database
+          .insert(organizations)
+          .values({
+            name: name || "",
+            creator: user.id,
+            thumbnail: { storageId: url, key: image },
+            bio: bio,
+            email: email,
+            latitude: coordinates.latitude as any,
+            longitude: coordinates.longitude as any,
+            phoneNumber: phoneNumber,
+            address: address,
+          })
+          .returning();
+      }
     }
-  });
+  );
 
 export const revalidatePathAction = () => {
   revalidatePath("/profile/view");
