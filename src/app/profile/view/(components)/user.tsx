@@ -34,7 +34,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const formSchema = z.object({
-  username: z.string().min(1).max(50),
+  username: z.string().min(1, "Name is required"),
   picture: z.string(),
   bio: z.string(),
 });

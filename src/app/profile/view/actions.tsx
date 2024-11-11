@@ -244,6 +244,12 @@ export const getOrganizations = authenticatedAction
           id: organizations.id,
           name: organizations.name,
           image: organizations.thumbnail,
+          bio: organizations.bio,
+          email: organizations.email,
+          latitude: organizations.latitude,
+          longitude: organizations.longitude,
+          phoneNumber: organizations.phoneNumber,
+          address: organizations.address,
         })
         .from(organizations)
         .where(eq(organizations.creator, user.id));
@@ -278,39 +284,106 @@ export const updateOrganization = authenticatedAction
   .input(
     z.object({
       picture: z.string(),
-      name: z.string(),
       id: z.string(),
+      name: z.string(),
       data: z.any(),
+      bio: z.string(),
+      phoneNumber: z.string(),
+      address: z.string(),
+      coordinates: z.object({
+        longitude: z.number(),
+        latitude: z.number(),
+      }),
+      email: z.string(),
     })
   )
-  .handler(async ({ ctx: { user }, input: { picture, name, id, data } }) => {
-    if (user != undefined) {
-      return internalUpdateOrg(picture, name, id, user.id, data);
+  .handler(
+    async ({
+      ctx: { user },
+      input: {
+        picture,
+        id,
+        name,
+        data,
+        bio,
+        phoneNumber,
+        address,
+        coordinates,
+        email,
+      },
+    }) => {
+      console.log("Hi");
+      if (user != undefined) {
+        console.log(picture);
+        return internalUpdateOrg(
+          picture,
+          id,
+          user.id,
+          name,
+          data,
+          bio,
+          phoneNumber,
+          address,
+          coordinates,
+          email
+        );
+      }
     }
-  });
+  );
 
 async function internalUpdateOrg(
   picture: string,
-  name: string,
   id: string,
   userID: string,
-  data: any
+  name: string,
+  data: any,
+  bio: string,
+  phoneNumber: string,
+  address: string,
+  coordinates: any,
+  email: string
 ) {
   //console.log(name);
   let image = picture;
   //Either overwrites current image or adds a new image
-
+  console.log(data);
   if (picture != "") {
     image = await rePutImage(data.get("data"), image);
+
+    console.log(
+      await database
+        .update(organizations)
+        .set({
+          name: name || "",
+
+          bio: bio,
+          email: email,
+          latitude: coordinates.latitude as any,
+          longitude: coordinates.longitude as any,
+          phoneNumber: phoneNumber,
+          address: address,
+        })
+        .where(and(eq(organizations.id, id), eq(organizations.creator, userID)))
+    );
   } else {
     image = await putImage(data.get("data"));
+    const url = await getImage(image);
+    console.log(
+      await database
+        .update(organizations)
+        .set({
+          name: name || "",
+          thumbnail: { storageId: url, key: image },
+          bio: bio,
+          email: email,
+          latitude: coordinates.latitude as any,
+          longitude: coordinates.longitude as any,
+          phoneNumber: phoneNumber,
+          address: address,
+        })
+        .where(and(eq(organizations.id, id), eq(organizations.creator, userID)))
+    );
   }
-  const url = await getImage(image);
-
-  await database
-    .update(organizations)
-    .set({ name: name, thumbnail: { storageId: url, key: image } })
-    .where(eq(organizations.id, id));
 }
 
 export const addOrganization = authenticatedAction
