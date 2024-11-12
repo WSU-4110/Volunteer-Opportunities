@@ -57,7 +57,7 @@ const Navbar = ({
               className="float-left mr-[15px]"
             />
             <h1 className="text-lg font-bold">
-              Volunteer <br /> Opportunities!
+              Volunteer <br /> Opportunities
             </h1>
           </div>
         </Link>
@@ -99,7 +99,7 @@ const Navbar = ({
                           width={"100px"}
                           height={"100px"}
                         />
-                        <h1>Volunteer Opportunities?</h1>
+                        <h1>Volunteer Opportunities</h1>
                       </div>
                     </SheetTitle>
                     <SheetDescription className="h-full overflow-auto">
@@ -324,7 +324,7 @@ const Navbar = ({
                           width={"100px"}
                           height={"100px"}
                         />
-                        <h1>Volunteer Opportunities!?</h1>
+                        <h1>Volunteer Opportunities</h1>
                       </div>
                     </SheetTitle>
                     <SheetDescription>
