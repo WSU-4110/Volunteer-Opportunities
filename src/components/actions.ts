@@ -17,9 +17,13 @@ export const signInAction = async (arg: string) => {
 export const getOneUserOrganization = authenticatedAction
   .createServerAction()
   .handler(async ({ ctx: { user } }) => {
-    const userHasOrganization = await database.query.organizations.findFirst({
-      where: eq(organizations.creator, user.id),
-    });
+    try {
+      const userHasOrganization = await database.query.organizations.findMany({
+        where: eq(organizations.creator, user.id),
+      });
 
-    return !!userHasOrganization;
+      return userHasOrganization.length > 0;
+    } catch (err) {
+      console.log(err);
+    }
   });

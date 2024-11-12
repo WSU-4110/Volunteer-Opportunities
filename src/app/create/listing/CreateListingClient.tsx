@@ -31,10 +31,10 @@ const CreateListing = ({
   organizations: Organizations[] | null;
 }) => {
   const formSchema = z.object({
-    name: z.string(),
+    name: z.string().min(1, "Name is required"),
     organizationId: z.string(),
-    description: z.string(),
-    thumbnail: z.string(),
+    description: z.string().min(1, "description is required"),
+    thumbnail: z.string().min(1, "organization image is required"),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({

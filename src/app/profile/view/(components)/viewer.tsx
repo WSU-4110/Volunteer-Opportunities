@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 export default function Viewer(props: any) {
   return (
-    <div className="w-1/2 m-auto mt-20">
+    <div className="w-1/2 m-auto mt-20 bg-white p-8 rounded-lg shadow-md">
       <header className="text-2xl text-center font-bold">Volunteer Page</header>
 
       <div className="w-full m-auto mt-10">
@@ -26,9 +26,18 @@ export default function Viewer(props: any) {
           <tbody>
             <tr>
               {props.values.userS.map(
-                (skill: { skillId: string; skillName: string }) => (
+                (skill: {
+                  skillId: string;
+                  skillName: string;
+                  url: string;
+                }) => (
                   <td key={skill.skillName}>
-                    <Badge>{skill.skillName}</Badge>
+                    <div className="hover:bg-slate-100">
+                      <div className="p-2 hover:bg-slate-100 flex flex-row gap-2 items-center justify-center">
+                        <img className="w-[40px] h-[40px]" src={skill.url} />
+                        <h1>{skill.skillName}</h1>
+                      </div>
+                    </div>
                   </td>
                 )
               )}
@@ -53,11 +62,9 @@ export default function Viewer(props: any) {
               <tr key={org.id}>
                 <td>
                   <img
-                    src={org.image.url}
+                    src={org.image.storageId}
                     alt="Organization Profile Picture"
-                    className="m-auto rounded-xl"
-                    width={"70px"}
-                    height={"70px"}
+                    className="m-auto rounded-xl w-[70px] h-auto"
                   />
                 </td>
 

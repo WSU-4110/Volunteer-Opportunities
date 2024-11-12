@@ -40,6 +40,7 @@ type input = {
 type Skills = {
   skillId: string;
   skillName: string;
+  url: string;
 }[];
 
 export default function Talents(props: input) {
@@ -60,7 +61,11 @@ export default function Talents(props: input) {
 
     if (selectedSkill) {
       props.addSkill([
-        { skillId: values.skillId, skillName: selectedSkill?.skillName },
+        {
+          skillId: values.skillId,
+          skillName: selectedSkill?.skillName,
+          url: selectedSkill?.url,
+        },
       ]);
     }
   }
@@ -72,6 +77,7 @@ export default function Talents(props: input) {
             <Talent
               skillName={skill.skillName}
               skillId={skill.skillId}
+              skillUrl={skill.url}
               removeSkill={props.removeSkill}
             />
           </div>

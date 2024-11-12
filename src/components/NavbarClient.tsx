@@ -19,6 +19,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetDescription,
+  SheetClose,
 } from "@/components/ui/sheet";
 import { Switch } from "@/components/ui/switch";
 import { v4 } from "uuid";
@@ -95,17 +96,19 @@ const Navbar = ({
                 >
                   <SheetHeader className="h-full">
                     <SheetTitle>
-                      <Link href={"/"}>
-                        <div className="flex flex-col justify-center items-center">
-                          <img
-                            src="/Favicon.png"
-                            alt="Volunteer Opportunities Logo"
-                            width={"100px"}
-                            height={"100px"}
-                          />
-                          <h1>Volunteer Opportunities</h1>
-                        </div>
-                      </Link>
+                      <SheetClose asChild>
+                        <Link href={"/"}>
+                          <div className="flex flex-col justify-center items-center">
+                            <img
+                              src="/Favicon.png"
+                              alt="Volunteer Opportunities Logo"
+                              width={"100px"}
+                              height={"100px"}
+                            />
+                            <h1>Volunteer Opportunities</h1>
+                          </div>
+                        </Link>
+                      </SheetClose>
                     </SheetTitle>
                     <SheetDescription className="h-full">
                       <div className="flex flex-col justify-between h-full">
@@ -115,11 +118,13 @@ const Navbar = ({
                               Explore
                             </h1>
                             <div className="ml-5 mb-5 flex flex-col gap-3">
-                              <Link href={"/explore"} className="block">
-                                {!userStatus
-                                  ? "Search for the volunteer listings that correspond with your skills"
-                                  : "Search for the right volunteer for your organizational needs"}
-                              </Link>
+                              <SheetClose asChild>
+                                <Link href={"/explore"} className="block">
+                                  {!userStatus
+                                    ? "Search for the volunteer listings that correspond with your skills"
+                                    : "Search for the right volunteer for your organizational needs"}
+                                </Link>
+                              </SheetClose>
                             </div>
                           </div>
                           <div className="flex justify-start flex-col gap-5">
@@ -128,9 +133,11 @@ const Navbar = ({
                                 Message
                               </h1>
                               <div className="ml-5 mb-5 flex flex-col gap-3">
-                                <Link href="/message">
-                                  Message other users who need your help
-                                </Link>
+                                <SheetClose asChild>
+                                  <Link href="/message">
+                                    Message other users who need your help
+                                  </Link>
+                                </SheetClose>
                               </div>
                             </div>
                           </div>
@@ -141,14 +148,18 @@ const Navbar = ({
                               </h1>
                               <div className="ml-5 mb-5 flex flex-col gap-3">
                                 {!userStatus ? (
-                                  <Link href="/profile/view">
-                                    Create an organization for your account
-                                  </Link>
+                                  <SheetClose asChild>
+                                    <Link href="/profile/view">
+                                      Create an organization for your account
+                                    </Link>
+                                  </SheetClose>
                                 ) : (
-                                  <Link href="/create/listing">
-                                    Create a listing for your current
-                                    organization
-                                  </Link>
+                                  <SheetClose asChild>
+                                    <Link href="/create/listing">
+                                      Create a listing for your current
+                                      organization
+                                    </Link>
+                                  </SheetClose>
                                 )}
                               </div>
                             </div>
@@ -159,9 +170,14 @@ const Navbar = ({
                                 Profile
                               </h1>
                               <div className="ml-5 mb-5 flex flex-col gap-3">
-                                <Link href={"/profile/view"} className="block">
-                                  View Profile
-                                </Link>
+                                <SheetClose asChild>
+                                  <Link
+                                    href={"/profile/view"}
+                                    className="block"
+                                  >
+                                    View Profile
+                                  </Link>
+                                </SheetClose>
                               </div>
                             </div>
                           </div>
@@ -187,13 +203,15 @@ const Navbar = ({
                               authStatus?.user.image || "/blank_profile_pic.png"
                             }
                           ></ProductItem>
-                          <Button
-                            onClick={() => signOut()}
-                            className="w-full"
-                            variant={"destructive"}
-                          >
-                            Sign Out
-                          </Button>
+                          <SheetClose asChild>
+                            <Button
+                              onClick={() => signOut()}
+                              className="w-full"
+                              variant={"destructive"}
+                            >
+                              Sign Out
+                            </Button>
+                          </SheetClose>
                         </div>
                       </div>
                     </SheetDescription>
@@ -318,10 +336,12 @@ const Navbar = ({
                               Explore
                             </h1>
                             <div className="ml-5 mb-5 flex flex-col gap-3">
-                              <Link href={"/explore"} className="block">
-                                Search for your volunteering or organizational
-                                needs
-                              </Link>
+                              <SheetClose asChild>
+                                <Link href={"/explore"} className="block">
+                                  Search for your volunteering or organizational
+                                  needs
+                                </Link>
+                              </SheetClose>
                             </div>
                           </div>
                           <div className="flex flex-col gap-5">
@@ -329,9 +349,14 @@ const Navbar = ({
                               Login/Register
                             </h1>
                             <div className="ml-5 mb-5 flex flex-col gap-3">
-                              <Link href={"/api/auth/signin"} className="block">
-                                Sign In
-                              </Link>
+                              <SheetClose asChild>
+                                <Link
+                                  href={"/api/auth/signin"}
+                                  className="block"
+                                >
+                                  Sign In
+                                </Link>
+                              </SheetClose>
                             </div>
                           </div>
                         </div>
