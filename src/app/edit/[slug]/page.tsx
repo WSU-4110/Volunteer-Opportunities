@@ -7,7 +7,18 @@ import Listing from "@/components/Listing";
 export const Edit = async ({ params }: { params: { slug: string } }) => {
   const listingID = params.slug;
 
-  const listing = (await getListingFromID(listingID))[0];
+  const listingData = (await getListingFromID({ listingID: listingID }))[0];
+
+  if (listingData == null) {
+    return (
+      <h1 className="text-2xl font-black leading-10 text-center m-[20px]">
+        Unauthorized user
+      </h1>
+    );
+  }
+  const listing = listingData[0].listings;
+
+  console.log(listing);
 
   if (listing == null) {
     return;

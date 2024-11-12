@@ -22,7 +22,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { revalidateListing, updateListingWithTalent } from "./actions";
+import {
+  checkAuthorization,
+  getListingFromID,
+  revalidateListing,
+  updateListingWithTalent,
+} from "./actions";
 import { revalidatePath } from "next/cache";
 
 export default function EditListing({
