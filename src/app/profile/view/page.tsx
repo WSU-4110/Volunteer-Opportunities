@@ -52,7 +52,7 @@ export default async function EditProfile() {
 
     //console.log(userD[0]![0].userImage.id);
     return (
-      <div className="mb-20">
+      <div>
         <header></header>
         <p></p>
         {userD[0]![0].userImage ? (

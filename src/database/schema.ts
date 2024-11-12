@@ -141,6 +141,9 @@ export const listings = pgTable("listings", {
   createdAt: timestamp("createdAt", { mode: "date" })
     .default(sql`NOW()`)
     .notNull(),
+  address: text("address"),
+  latitude: numeric("latitude"),
+  longitude: numeric("longitude"),
 });
 
 export const conversationsToUsers = pgTable(

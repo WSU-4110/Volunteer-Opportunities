@@ -4,14 +4,14 @@ interface ListingProps {
   imageURL: string;
   title: string;
   description: string;
-  talents: string[];
+  skills: string[];
 }
 
 export default function Listing({
   imageURL,
   title,
   description,
-  talents,
+  skills,
 }: ListingProps) {
   return (
     <div className="p-[20px] my-[20px] w-[50%] mx-auto rounded-[20px] bg-slate-200">
@@ -26,7 +26,7 @@ export default function Listing({
       <br />
       <p className="font-bold">Looking for the following talents:</p>
       <div>
-        {talents.map((item) => (
+        {skills.map((item) => (
           <button
             type="button"
             key={item}
