@@ -115,8 +115,6 @@ export default function AddAnOrganization(props: any) {
 
   const handleSelectAddress = (suggestion: any) => {
     form.setValue("address", suggestion.place_name);
-    console.log(suggestion.geometry.coordinates[0]);
-    console.log(suggestion.geometry.coordinates[1]);
     setValidAddressSelected(true);
     setCoordinates({
       longitude: suggestion.geometry.coordinates[0],
@@ -161,146 +159,142 @@ export default function AddAnOrganization(props: any) {
   }
 
   return (
-    <div className="bg-slate-200 py-12">
-      <div className="w-1/2 m-auto mt-20 bg-white p-8 rounded-lg shadow-md">
-        <header className="text-3xl text-center font-semibold text-gray-800">
-          Add an Organization
-        </header>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <FileUpload onChange={handleFileUpload} />
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Organization Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Organization Name" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Choose your organization name
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email Address</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Email" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Link an email address to your organization
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="bio"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel>Biography</FormLabel>
-                  <FormControl className="w-full">
-                    <Textarea
-                      placeholder="Enter your organization biography here"
-                      className="resize-none w-full"
-                      {...field}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && !e.shiftKey) {
-                          e.preventDefault();
-                          form.handleSubmit(onSubmit)();
-                        }
+    <div className="w-1/2 m-auto mt-20 bg-white p-8 rounded-lg shadow-md">
+      <header className="text-3xl text-center font-semibold text-gray-800">
+        Add an Organization
+      </header>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <FileUpload onChange={handleFileUpload} />
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Organization Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Organization Name" {...field} />
+                </FormControl>
+                <FormDescription>Choose your organization name</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email Address</FormLabel>
+                <FormControl>
+                  <Input placeholder="Email" {...field} />
+                </FormControl>
+                <FormDescription>
+                  Link an email address to your organization
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="bio"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Biography</FormLabel>
+                <FormControl className="w-full">
+                  <Textarea
+                    placeholder="Enter your organization biography here"
+                    className="resize-none w-full"
+                    {...field}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        form.handleSubmit(onSubmit)();
+                      }
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="address"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Address</FormLabel>
+                <FormControl className="w-full">
+                  <Command className="mt-4">
+                    <CommandInput
+                      id="address-input"
+                      placeholder="Enter an address"
+                      {...form.register("address")}
+                      onFocus={() => setOpen(true)}
+                      onInput={(e) => {
+                        form.setValue("address", (e.target as any).value);
+                        setValidAddressSelected(false);
                       }}
+                      value={address}
+                      ref={commandRef}
                     />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="address"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel>Address</FormLabel>
-                  <FormControl className="w-full">
-                    <Command className="mt-4">
-                      <CommandInput
-                        id="address-input"
-                        placeholder="Enter an address"
-                        {...form.register("address")}
-                        onFocus={() => setOpen(true)}
-                        onInput={(e) => {
-                          form.setValue("address", (e.target as any).value);
-                          setValidAddressSelected(false);
-                        }}
-                        value={address}
-                        ref={commandRef}
-                      />
-                      <CommandList>
-                        <CommandEmpty>
-                          {open && <p>No suggestions found.</p>}
-                        </CommandEmpty>
-                        <CommandGroup>
-                          {addressSuggestions.map((suggestion, index) => (
-                            <CommandItem
-                              key={index}
-                              onSelect={() =>
-                                handleSelectAddress(suggestion as any)
-                              }
-                              className="cursor-pointer"
-                            >
-                              {(suggestion as any).place_name}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </FormControl>
-                  <FormMessage>
-                    {form.formState.errors.address?.message}
-                  </FormMessage>{" "}
-                  {/* Render error message here */}
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="phoneNumber"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <PhoneInput
-                      value={phoneNumber}
-                      onChange={(value) => form.setValue("phoneNumber", value)}
-                      containerClass="w-full text-sm"
-                      inputClass="w-full py-2 px-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-black"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="flex justify-start gap-4">
-              <Button type="submit">Submit</Button>
-              <Button
-                onClick={() => props.addOrganization(false)}
-                type="button"
-                variant="destructive"
-              >
-                Cancel
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </div>
+                    <CommandList>
+                      <CommandEmpty>
+                        {open && <p>No suggestions found.</p>}
+                      </CommandEmpty>
+                      <CommandGroup>
+                        {addressSuggestions.map((suggestion, index) => (
+                          <CommandItem
+                            key={index}
+                            onSelect={() =>
+                              handleSelectAddress(suggestion as any)
+                            }
+                            className="cursor-pointer"
+                          >
+                            {(suggestion as any).place_name}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </FormControl>
+                <FormMessage>
+                  {form.formState.errors.address?.message}
+                </FormMessage>{" "}
+                {/* Render error message here */}
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="phoneNumber"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <PhoneInput
+                    value={phoneNumber}
+                    onChange={(value) => form.setValue("phoneNumber", value)}
+                    containerClass="w-full text-sm"
+                    inputClass="w-full py-2 px-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="flex justify-start gap-4">
+            <Button type="submit">Submit</Button>
+            <Button
+              onClick={() => props.addOrganization(false)}
+              type="button"
+              variant="destructive"
+            >
+              Cancel
+            </Button>
+          </div>
+        </form>
+      </Form>
     </div>
   );
 }

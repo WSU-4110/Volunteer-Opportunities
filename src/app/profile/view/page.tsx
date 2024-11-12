@@ -39,45 +39,34 @@ export default async function EditProfile() {
     for (let i = 0; i < organizations[0]!.length; i++) {
       let id: organizationId = { orgID: organizations[0]![i].id };
       listings[i] = await getListings(id);
-      /* try {
-        for (let j = 0; j < listings[i]!.length; j++) {
-          listings[i]![j]!.thumbnail = await getImage(
-            listings[i]![j]!.thumbnail
-          );
-        }
-      } catch (caught) {
-        //console.log(caught);
-      }*/
     }
-
-    //console.log(userD[0]![0].userImage.id);
     return (
-      <div>
-        <header></header>
-        <p></p>
-        {userD[0]![0].userImage ? (
-          <UserPage
-            customImage={userD[0]![0].userImage.id}
-            name={userD[0]![0].name}
-            picture={picture}
-            bio={userD[0]![0].bio}
-            skills={skills[0]!}
-            userS={userSkill[0]!}
-            organizations={organizations[0]!}
-            listings={listings}
-          ></UserPage>
-        ) : (
-          <UserPage
-            customImage={null}
-            name={userD[0]![0].name}
-            picture={picture}
-            bio={userD[0]![0].bio}
-            skills={skills[0]!}
-            userS={userSkill[0]!}
-            organizations={organizations[0]!}
-            listings={listings}
-          ></UserPage>
-        )}
+      <div className="bg-slate-200 ">
+        <div className="py-12">
+          {userD[0]![0].userImage ? (
+            <UserPage
+              customImage={userD[0]![0].userImage.id}
+              name={userD[0]![0].name}
+              picture={picture}
+              bio={userD[0]![0].bio}
+              skills={skills[0]!}
+              userS={userSkill[0]!}
+              organizations={organizations[0]!}
+              listings={listings}
+            ></UserPage>
+          ) : (
+            <UserPage
+              customImage={null}
+              name={userD[0]![0].name}
+              picture={picture}
+              bio={userD[0]![0].bio}
+              skills={skills[0]!}
+              userS={userSkill[0]!}
+              organizations={organizations[0]!}
+              listings={listings}
+            ></UserPage>
+          )}
+        </div>
       </div>
     );
   } else {

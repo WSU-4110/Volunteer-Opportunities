@@ -93,6 +93,7 @@ async function internalGetSkills(id: string) {
     .select({
       skillId: skills.id,
       skillName: skills.name,
+      url: skills.iconUrl,
     })
     .from(skills)
     .where(notInArray(skills.id, userSkills));
@@ -164,7 +165,6 @@ export const updateUser = authenticatedAction
       ctx: { user },
       input: { picture, username, bio, image, data },
     }) => {
-      //console.log(data.get("data"));
       if (user != undefined) {
         return internalUpdateUser(
           picture,
@@ -187,14 +187,11 @@ async function internalUpdateUser(
   data: any
 ) {
   let customImage = true;
-  console.log("UserID");
-  console.log(userImage);
   try {
     if (userImage != "" && userImage != undefined) {
       userImage = await rePutImage(data, userImage);
       picture = await getImage(userImage);
     } else {
-      //console.log("Add image");
       userImage = await putImage(data);
       if (userImage == "") {
         //If put image fails and does not return a key
@@ -214,9 +211,7 @@ async function internalUpdateUser(
       })
       .where(eq(users.id, id))
       .returning();
-    //console.log("success");
   } catch (caught) {
-    //console.log(caught);
     //If put image fails and does not return a key
     customImage = false;
     return await database
@@ -312,9 +307,7 @@ export const updateOrganization = authenticatedAction
         email,
       },
     }) => {
-      console.log("Hi");
       if (user != undefined) {
-        console.log(picture);
         return internalUpdateOrg(
           picture,
           id,
@@ -343,46 +336,41 @@ async function internalUpdateOrg(
   coordinates: any,
   email: string
 ) {
-  //console.log(name);
   let image = picture;
   //Either overwrites current image or adds a new image
-  console.log(data);
   if (picture != "") {
     image = await rePutImage(data.get("data"), image);
 
-    console.log(
-      await database
-        .update(organizations)
-        .set({
-          name: name || "",
+    await database
+      .update(organizations)
+      .set({
+        name: name || "",
 
-          bio: bio,
-          email: email,
-          latitude: coordinates.latitude as any,
-          longitude: coordinates.longitude as any,
-          phoneNumber: phoneNumber,
-          address: address,
-        })
-        .where(and(eq(organizations.id, id), eq(organizations.creator, userID)))
-    );
+        bio: bio,
+        email: email,
+        latitude: coordinates.latitude as any,
+        longitude: coordinates.longitude as any,
+        phoneNumber: phoneNumber,
+        address: address,
+      })
+      .where(and(eq(organizations.id, id), eq(organizations.creator, userID)));
   } else {
     image = await putImage(data.get("data"));
     const url = await getImage(image);
-    console.log(
-      await database
-        .update(organizations)
-        .set({
-          name: name || "",
-          thumbnail: { storageId: url, key: image },
-          bio: bio,
-          email: email,
-          latitude: coordinates.latitude as any,
-          longitude: coordinates.longitude as any,
-          phoneNumber: phoneNumber,
-          address: address,
-        })
-        .where(and(eq(organizations.id, id), eq(organizations.creator, userID)))
-    );
+
+    await database
+      .update(organizations)
+      .set({
+        name: name || "",
+        thumbnail: { storageId: url, key: image },
+        bio: bio,
+        email: email,
+        latitude: coordinates.latitude as any,
+        longitude: coordinates.longitude as any,
+        phoneNumber: phoneNumber,
+        address: address,
+      })
+      .where(and(eq(organizations.id, id), eq(organizations.creator, userID)));
   }
 }
 

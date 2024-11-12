@@ -158,7 +158,6 @@ const EditOrgPage = ({ ...props }: any) => {
     setOpen(false);
   };
   async function onSubmit(values: z.infer<typeof orgSchema>) {
-    //console.log("submit");
     try {
       const form: FormData = new FormData();
       console.log(files);
@@ -166,22 +165,17 @@ const EditOrgPage = ({ ...props }: any) => {
         const data: File = await files[0];
         form.append("data", data);
       }
-      console.log("Submit");
-      console.log(coordinates);
-
-      console.log(
-        await updateOrganization({
-          picture: props.organizations[props.org.pos].image.storageId,
-          name: values.name,
-          id: props.org.id,
-          data: form,
-          coordinates: coordinates,
-          bio: values.bio,
-          phoneNumber: values.phoneNumber,
-          email: values.email,
-          address: values.address,
-        })
-      );
+      await updateOrganization({
+        picture: props.organizations[props.org.pos].image.storageId,
+        name: values.name,
+        id: props.org.id,
+        data: form,
+        coordinates: coordinates,
+        bio: values.bio,
+        phoneNumber: values.phoneNumber,
+        email: values.email,
+        address: values.address,
+      });
 
       revalidatePathAction();
       props.setEditProfile(false);
@@ -192,19 +186,17 @@ const EditOrgPage = ({ ...props }: any) => {
   const [files, setFiles] = useState<File[]>([]);
   const handleFileUpload = (files: File[]) => {
     setFiles(files);
-    //console.log(files);
   };
-  console.log(coordinates);
   return (
     <div>
-      <div className="w-1/2 m-auto mt-20">
-        <div className="w-full m-auto mt-10">
+      <div>
+        <div>
           <img
             src={props.organizations[props.org.pos].image.storageId}
             alt="Organization Profile Picture"
             className="m-auto rounded-xl"
-            width="400px"
-            height="400px"
+            width="300px"
+            height="300px"
           />
         </div>
       </div>
@@ -346,7 +338,7 @@ const EditOrgPage = ({ ...props }: any) => {
 
 const ViewOrgPage = (props: any) => {
   return (
-    <div className="w-1/2 m-auto mt-20">
+    <div>
       <div className="w-full m-auto mt-10">
         <img
           src={props.organizations[props.org.pos].image.storageId}
@@ -362,17 +354,50 @@ const ViewOrgPage = (props: any) => {
       </Label>
       <p id="name">{props.organizations[props.org.pos].name}</p>
       <br />
-      <Label htmlFor="listings">Listings:</Label>
-      <div id="listings">
-        {props.listings[props.org.pos][0].map(
-          (listing: { id: string; name: string; description: string }) => (
-            <div key={listing.id}>
-              <p>{listing.name}</p>
-              <p>{listing.description}</p>
-            </div>
-          )
-        )}
-      </div>
+      <Label className={cn("flex h-10")} htmlFor="email">
+        Email Address:
+      </Label>
+      <p id="email">{props.organizations[props.org.pos].email}</p>
+      <br />
+      <Label className={cn("flex h-10")} htmlFor="bio">
+        Biography:
+      </Label>
+      <p id="bio">{props.organizations[props.org.pos].bio}</p>
+      <br />
+      <Label className={cn("flex h-10")} htmlFor="address">
+        Address:
+      </Label>
+      <p id="address">{props.organizations[props.org.pos].address}</p>
+      <br />
+      <Label className={cn("flex h-10")} htmlFor="phone">
+        Phone:
+      </Label>
+      <p id="phone">
+        {"+" +
+          props.organizations[props.org.pos].phoneNumber.slice(0, 1) +
+          " (" +
+          props.organizations[props.org.pos].phoneNumber.slice(1, 4) +
+          ") " +
+          props.organizations[props.org.pos].phoneNumber.slice(4, 7) +
+          "-" +
+          props.organizations[props.org.pos].phoneNumber.slice(7, 11)}
+      </p>
+      <br />
+      {props.listings[props.org.pos][0] > 0 ? (
+        <>
+          <Label htmlFor="listings">Listings:</Label>
+          <div id="listings">
+            {props.listings[props.org.pos][0].map(
+              (listing: { id: string; name: string; description: string }) => (
+                <div key={listing.id}>
+                  <p>{listing.name}</p>
+                  <p>{listing.description}</p>
+                </div>
+              )
+            )}
+          </div>
+        </>
+      ) : null}
 
       <Button
         onClick={() => {
@@ -410,7 +435,7 @@ export default function Organization(props: input) {
   }
 
   return (
-    <div className="w-1/2 m-auto mt-20">
+    <div className="w-1/2 m-auto mt-20 bg-white p-8 rounded-lg shadow-md">
       <header className="text-2xl text-center font-bold">
         Organization Page
       </header>
