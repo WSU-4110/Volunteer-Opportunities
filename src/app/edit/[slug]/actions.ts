@@ -4,8 +4,13 @@ import { database } from "@/database/index";
 
 import { skills, listings, skillsToListings } from "@/database/schema";
 
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
+export async function revalidateListing(listing_id : string) {
+  revalidatePath("/explore");
+  revalidatePath("/edit" + listing_id);
+}
 
 export async function getListings() {
     return await database.select().from(listings);
@@ -36,9 +41,22 @@ export async function getListings() {
         return
     }
 
-    await database.insert(skillsToListings).values({skillId: talentID, listingId: listingID})
+    console.log(await database.select().from(skillsToListings).where(eq(skillsToListings.listingId, listingID)))
+    const talentExists = (await database.select().from(skillsToListings).where(and(eq(skillsToListings.skillId, talentID), eq(skillsToListings.listingId, listingID)))).length > 0
+
+    if (talentExists) {
+      await database.delete(skillsToListings).where(and(eq(skillsToListings.skillId, talentID), eq(skillsToListings.listingId, listingID)))
+    }
+    else {
+      await database.insert(skillsToListings).values({skillId: talentID, listingId: listingID})
+    }
   }
 
-  export async function updateListing(listingID: string, name: string, description: string, thumbnail: string, organizationID: string, talent: string) {
+  export async function updateListing(listingID: string, name: string, description: string, thumbnail: string, organizationID: string) {
+    await database.update(listings).set({name: name, description: description, thumbnail: thumbnail, organizationId: organizationID}).where(eq(listings.id, listingID))
+  }
+
+  export async function updateListingWithTalent(listingID: string, name: string, description: string, thumbnail: string, organizationID: string, talent: string) {
+    await updateListing(listingID, name, description, thumbnail, organizationID)
     await insertTalent(listingID, talent)
   }

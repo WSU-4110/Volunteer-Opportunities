@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ReactNode } from "react";
 
 export interface ListingWithTalentsInterface {
@@ -24,12 +25,12 @@ export default function Listing({
   return (
     <div className="p-[20px] my-[20px] w-[50%] mx-auto rounded-[20px] bg-slate-200">
       <div className="mb-[10px]">
-        <a
-          className="bg-slate-50 hover:bg-slate-100 text-2xl w-fit p-[5px] my-[55px] rounded-[5px]"
-          href={"edit/" + id}
+        <Link
+          className="bg-slate-50 hover:bg-slate-100 text-xl w-fit p-[5px] my-[55px] rounded-[5px]"
+          href={"/edit/" + id}
         >
           Edit ✎
-        </a>
+        </Link>
       </div>
       <div className="bg-black">
         <img className="max-w-full max-h-96 mx-auto block" src={thumbnail} />

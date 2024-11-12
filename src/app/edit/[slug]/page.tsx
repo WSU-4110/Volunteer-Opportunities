@@ -17,6 +17,10 @@ export const Edit = async ({ params }: { params: { slug: string } }) => {
 
   return (
     <>
+      <h1 className="text-2xl font-black leading-10 text-center m-[20px]">
+        Edit Current Listing
+      </h1>
+
       <Listing
         id={listing.id}
         name={listing.name}
