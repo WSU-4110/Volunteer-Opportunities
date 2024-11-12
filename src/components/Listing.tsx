@@ -23,6 +23,14 @@ export default function Listing({
 }: ListingWithTalentsInterface) {
   return (
     <div className="p-[20px] my-[20px] w-[50%] mx-auto rounded-[20px] bg-slate-200">
+      <div className="mb-[10px]">
+        <a
+          className="bg-slate-50 hover:bg-slate-100 text-2xl w-fit p-[5px] my-[55px] rounded-[5px]"
+          href={"edit/" + id}
+        >
+          Edit ✎
+        </a>
+      </div>
       <div className="bg-black">
         <img className="max-w-full max-h-96 mx-auto block" src={thumbnail} />
       </div>
