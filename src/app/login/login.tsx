@@ -51,11 +51,7 @@ const Login = ({
           marginTop: "20px",
         }}
       >
-        {status == "loading" ? (
-          <div className="w-fit my-0 m-auto">
-            <ClipLoader />
-          </div>
-        ) : !authStatus ? (
+        {!authStatus ? (
           <>
             <h1
               style={{
