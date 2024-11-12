@@ -48,14 +48,17 @@ const Navbar = ({
     <>
       <div className="flex w-[100%] flex-row justify-between items-center m-auto py-1 px-10 2xl:px-20 sticky z-[40] shadow-lg">
         <Link className="text-2xl cursor-pointer min-w-[240px]" href="/">
-          <div className="flex flex-col justify-center items-center">
+          <div className="justify-center items-center">
             <img
               src="/Favicon.png"
               alt="Volunteer Opportunities Logo"
-              width={"30px"}
-              height={"30px"}
+              width={"50px"}
+              height={"50px"}
+              className="float-left mr-[15px]"
             />
-            <h1 className="text-lg font-bold">Volunteer Opportunities</h1>
+            <h1 className="text-lg font-bold">
+              Volunteer <br /> Opportunities!
+            </h1>
           </div>
         </Link>
 
@@ -96,65 +99,70 @@ const Navbar = ({
                           width={"100px"}
                           height={"100px"}
                         />
-                        <h1>Volunteer Opportunities</h1>
+                        <h1>Volunteer Opportunities?</h1>
                       </div>
                     </SheetTitle>
-                    <SheetDescription className="h-full">
+                    <SheetDescription className="h-full overflow-auto">
                       <div className="flex flex-col justify-between h-full">
                         <div className="flex justify-start flex-col gap-5 mt-5">
                           <div className="flex flex-col gap-5">
-                            <h1 className="font-medium text-xl text-black">
-                              Explore
-                            </h1>
-                            <div className="ml-5 mb-5 flex flex-col gap-3">
-                              <Link href={"/explore"} className="block">
+                            <Link href={"/explore"} className="block">
+                              <h1 className="font-medium text-xl text-black">
+                                Explore
+                              </h1>
+                              <div className="ml-5 mb-5 flex flex-col gap-3">
                                 {!userStatus
                                   ? "Search for the volunteer listings that correspond with your skills"
                                   : "Search for the right volunteer for your organizational needs"}
+                              </div>
+                            </Link>
+                          </div>
+                          <div className="flex justify-start flex-col gap-5">
+                            <div className="flex flex-col gap-5">
+                              <Link href="/message">
+                                <h1 className="font-medium text-xl text-black">
+                                  Message
+                                </h1>
+                                <div className="ml-5 mb-5 flex flex-col gap-3">
+                                  Message other users who need your help
+                                </div>
                               </Link>
                             </div>
                           </div>
                           <div className="flex justify-start flex-col gap-5">
                             <div className="flex flex-col gap-5">
-                              <h1 className="font-medium text-xl text-black">
-                                Message
-                              </h1>
-                              <div className="ml-5 mb-5 flex flex-col gap-3">
-                                <Link href="/message">
-                                  Message other users who need your help
-                                </Link>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="flex justify-start flex-col gap-5">
-                            <div className="flex flex-col gap-5">
-                              <h1 className="font-medium text-xl text-black">
-                                Create
-                              </h1>
-                              <div className="ml-5 mb-5 flex flex-col gap-3">
-                                {!userStatus ? (
-                                  <Link href="/profile/view">
+                              {!userStatus ? (
+                                <Link href="/profile/view">
+                                  <h1 className="font-medium text-xl text-black">
+                                    Create
+                                  </h1>
+                                  <div className="ml-5 mb-5 flex flex-col gap-3">
                                     Create an organization for your account
-                                  </Link>
-                                ) : (
-                                  <Link href="/create/listing">
+                                  </div>
+                                </Link>
+                              ) : (
+                                <Link href="/create/listing">
+                                  <h1 className="font-medium text-xl text-black">
+                                    Create
+                                  </h1>
+                                  <div className="ml-5 mb-5 flex flex-col gap-3">
                                     Create a listing for your current
                                     organization
-                                  </Link>
-                                )}
-                              </div>
+                                  </div>
+                                </Link>
+                              )}
                             </div>
                           </div>
                           <div className="flex justify-start flex-col gap-5">
                             <div className="flex flex-col gap-5">
-                              <h1 className="font-medium text-xl text-black">
-                                Profile
-                              </h1>
-                              <div className="ml-5 mb-5 flex flex-col gap-3">
-                                <Link href={"/profile/view"} className="block">
+                              <Link href={"/profile/view"} className="block">
+                                <h1 className="font-medium text-xl text-black">
+                                  Profile
+                                </h1>
+                                <div className="ml-5 mb-5 flex flex-col gap-3">
                                   View Profile
-                                </Link>
-                              </div>
+                                </div>
+                              </Link>
                             </div>
                           </div>
                           <div className="flex flex-col items-center justify-center pl-5 min-w-[200px] text-black">
@@ -194,48 +202,76 @@ const Navbar = ({
             </div>
             <div className={cn("hidden xl:block ", className)}>
               <Menu setActive={setActive}>
-                <MenuItem setActive={setActive} active={active} item="Explore">
-                  <div className="flex flex-col space-y-4 text-sm">
-                    <HoveredLink href="/explore">
+                <HoveredLink href="/explore">
+                  <MenuItem
+                    setActive={setActive}
+                    active={active}
+                    item="Explore"
+                  >
+                    <div className="flex flex-col space-y-4 text-sm">
                       {!userStatus
                         ? "Search for the volunteer listings that correspond with your skills"
                         : "Search for the right volunteer for your organizational needs"}
-                    </HoveredLink>
-                  </div>
-                </MenuItem>
-                <MenuItem setActive={setActive} active={active} item="Create">
-                  <div className="flex flex-col space-y-4 text-sm">
-                    {!userStatus ? (
-                      <HoveredLink href="/profile/view">
+                    </div>
+                  </MenuItem>
+                </HoveredLink>
+
+                {!userStatus ? (
+                  <HoveredLink href="/profile/view">
+                    <MenuItem
+                      setActive={setActive}
+                      active={active}
+                      item="Create"
+                    >
+                      <div className="flex flex-col space-y-4 text-sm">
                         Create an organization for your account
-                      </HoveredLink>
-                    ) : (
-                      <HoveredLink href="/create/listing">
+                      </div>
+                    </MenuItem>
+                  </HoveredLink>
+                ) : (
+                  <HoveredLink href="/create/listing">
+                    <MenuItem
+                      setActive={setActive}
+                      active={active}
+                      item="Create"
+                    >
+                      <div className="flex flex-col space-y-4 text-sm">
                         Create a listing for your current organization
-                      </HoveredLink>
-                    )}
-                  </div>
-                </MenuItem>
-                <MenuItem setActive={setActive} active={active} item="Message">
-                  <div className="flex flex-col space-y-4 text-sm">
-                    <HoveredLink href="/message">
+                      </div>
+                    </MenuItem>
+                  </HoveredLink>
+                )}
+
+                <HoveredLink href="/message">
+                  <MenuItem
+                    setActive={setActive}
+                    active={active}
+                    item="Message"
+                  >
+                    <div className="flex flex-col space-y-4 text-sm">
                       Message other users who need your help
-                    </HoveredLink>
-                  </div>
-                </MenuItem>
-                <MenuItem setActive={setActive} active={active} item="Profile">
-                  <div className="flex flex-col space-y-4 text-sm">
-                    <ProductItem
-                      title={authStatus?.user.name || ""}
-                      description={authStatus?.user.email || ""}
-                      src={authStatus?.user.image || "/blank_profile_pic.png"}
-                    ></ProductItem>
-                    <HoveredLink href="/profile/view">View Profile</HoveredLink>
-                    <Button onClick={() => signOut()} variant={"destructive"}>
-                      Sign Out
-                    </Button>
-                  </div>
-                </MenuItem>
+                    </div>
+                  </MenuItem>
+                </HoveredLink>
+                <HoveredLink href="/profile/view">
+                  <MenuItem
+                    setActive={setActive}
+                    active={active}
+                    item="Profile"
+                  >
+                    <div className="flex flex-col space-y-4 text-sm">
+                      <ProductItem
+                        title={authStatus?.user.name || ""}
+                        description={authStatus?.user.email || ""}
+                        src={authStatus?.user.image || "/blank_profile_pic.png"}
+                      ></ProductItem>
+                      View Profile
+                      <Button onClick={() => signOut()} variant={"destructive"}>
+                        Sign Out
+                      </Button>
+                    </div>
+                  </MenuItem>
+                </HoveredLink>
               </Menu>
             </div>
             <div className="flex flex-col items-center justify-center pl-5 hidden min-w-[200px] xl:block">
@@ -288,7 +324,7 @@ const Navbar = ({
                           width={"100px"}
                           height={"100px"}
                         />
-                        <h1>Volunteer Opportunities</h1>
+                        <h1>Volunteer Opportunities!?</h1>
                       </div>
                     </SheetTitle>
                     <SheetDescription>
