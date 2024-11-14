@@ -46,34 +46,53 @@ export default function Viewer(props: any) {
         </table>
       </div>
       <br />
-      <Label htmlFor="name">Username:</Label>
-      <h1 id="name">{props.values.name}</h1>
-      <br />
-      <Label htmlFor="bio">User Bio:</Label>
-      <p className={cn("flex min-h-[80px] ")} id="bio">
-        {props.values.bio}
-      </p>
-
-      <Label htmlFor="organizations">Organizations</Label>
       <table>
         <tbody>
-          {props.values.organizations.map((org: any) => {
-            return (
-              <tr key={org.id}>
-                <td>
-                  <img
-                    src={org.image.storageId}
-                    alt="Organization Profile Picture"
-                    className="m-auto rounded-xl w-[70px] h-auto"
-                  />
-                </td>
+          <tr>
+            <td>
+              <Label htmlFor="name">Username:&nbsp;</Label>
+            </td>
+            <td>
+              <h1 id="name">&nbsp;{props.values.name}</h1>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <Label htmlFor="bio">User Bio:&nbsp;</Label>
+            </td>
 
-                <td>{org.name}</td>
-              </tr>
-            );
-          })}
+            <td>
+              <p className={cn("flex min-h-[80px] ")} id="bio">
+                {props.values.bio}
+              </p>
+            </td>
+          </tr>
         </tbody>
       </table>
+      {props.values.organizations > 0 ? (
+        <div>
+          <Label htmlFor="organizations">Organizations</Label>
+          <table>
+            <tbody>
+              {props.values.organizations.map((org: any) => {
+                return (
+                  <tr key={org.id}>
+                    <td>
+                      <img
+                        src={org.image.storageId}
+                        alt="Organization Profile Picture"
+                        className="m-auto rounded-xl w-[70px] h-auto"
+                      />
+                    </td>
+
+                    <td>{org.name}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      ) : null}
       <br />
       <Button
         onClick={() => {

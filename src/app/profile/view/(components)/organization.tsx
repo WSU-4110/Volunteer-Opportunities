@@ -187,22 +187,48 @@ const EditOrgPage = ({ ...props }: any) => {
   const handleFileUpload = (files: File[]) => {
     setFiles(files);
   };
+
+  const [editImage, setEditImage] = useState<boolean>(false);
   return (
     <div>
       <div>
-        <div>
-          <img
-            src={props.organizations[props.org.pos].image.storageId}
-            alt="Organization Profile Picture"
-            className="m-auto rounded-xl"
-            width="300px"
-            height="300px"
-          />
-        </div>
+        {editImage ? (
+          <div>
+            <div className="h-[440px]">
+              <FileUpload onChange={handleFileUpload} />
+            </div>
+            <Button
+              onClick={() => {
+                setFiles([]);
+                setEditImage(false);
+              }}
+              type="button"
+            >
+              Cancel
+            </Button>
+          </div>
+        ) : (
+          <div>
+            <img
+              src={props.organizations[props.org.pos].image.storageId}
+              alt="Organization Profile Picture"
+              className="m-auto rounded-xl"
+              width="400px"
+              height="400px"
+            />
+            <Button
+              onClick={() => {
+                setEditImage(true);
+              }}
+              type="button"
+            >
+              Edit
+            </Button>
+          </div>
+        )}
       </div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <FileUpload onChange={handleFileUpload} />
           <FormField
             control={form.control}
             name="name"
@@ -348,40 +374,82 @@ const ViewOrgPage = (props: any) => {
           height="400px"
         />
       </div>
-      <br />
-      <Label className={cn("flex h-10")} htmlFor="name">
-        Company Name:
-      </Label>
-      <p id="name">{props.organizations[props.org.pos].name}</p>
-      <br />
-      <Label className={cn("flex h-10")} htmlFor="email">
-        Email Address:
-      </Label>
-      <p id="email">{props.organizations[props.org.pos].email}</p>
-      <br />
-      <Label className={cn("flex h-10")} htmlFor="bio">
-        Biography:
-      </Label>
-      <p id="bio">{props.organizations[props.org.pos].bio}</p>
-      <br />
-      <Label className={cn("flex h-10")} htmlFor="address">
-        Address:
-      </Label>
-      <p id="address">{props.organizations[props.org.pos].address}</p>
-      <br />
-      <Label className={cn("flex h-10")} htmlFor="phone">
-        Phone:
-      </Label>
-      <p id="phone">
-        {"+" +
-          props.organizations[props.org.pos].phoneNumber.slice(0, 1) +
-          " (" +
-          props.organizations[props.org.pos].phoneNumber.slice(1, 4) +
-          ") " +
-          props.organizations[props.org.pos].phoneNumber.slice(4, 7) +
-          "-" +
-          props.organizations[props.org.pos].phoneNumber.slice(7, 11)}
-      </p>
+
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <Label className="align-text-top" htmlFor="name">
+                Company Name:&nbsp;
+              </Label>
+            </td>
+            <td>
+              <p id="name" className="align-text-top">
+                {props.organizations[props.org.pos].name}
+              </p>
+            </td>
+          </tr>
+          <br />
+          <tr>
+            <td>
+              <Label className="align-text-top" htmlFor="email">
+                Email Address:&nbsp;
+              </Label>
+            </td>
+            <td>
+              <p id="email" className="align-text-top">
+                {props.organizations[props.org.pos].email}
+              </p>
+            </td>
+          </tr>
+          <br />
+          <tr>
+            <td>
+              <Label className="align-text-top" htmlFor="bio">
+                Biography:&nbsp;
+              </Label>
+            </td>
+            <td>
+              <p id="bio" className="align-text-top">
+                {props.organizations[props.org.pos].bio}
+              </p>
+            </td>
+          </tr>
+          <br />
+          <tr>
+            <td>
+              <Label className="align-text-top" htmlFor="address">
+                Address:&nbsp;
+              </Label>
+            </td>
+            <td>
+              <p id="address" className="align-text-top">
+                {props.organizations[props.org.pos].address}
+              </p>
+            </td>
+          </tr>
+          <br />
+          <tr>
+            <td>
+              <Label className="align-text-top" htmlFor="phone">
+                Phone:&nbsp;
+              </Label>
+            </td>
+            <td>
+              <p id="phone" className="align-text-top">
+                {"+" +
+                  props.organizations[props.org.pos].phoneNumber.slice(0, 1) +
+                  " (" +
+                  props.organizations[props.org.pos].phoneNumber.slice(1, 4) +
+                  ") " +
+                  props.organizations[props.org.pos].phoneNumber.slice(4, 7) +
+                  "-" +
+                  props.organizations[props.org.pos].phoneNumber.slice(7, 11)}
+              </p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
       <br />
       {props.listings[props.org.pos][0] > 0 ? (
         <>

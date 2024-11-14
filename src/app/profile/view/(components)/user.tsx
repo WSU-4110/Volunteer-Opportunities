@@ -144,7 +144,7 @@ const EditUserPage = ({ ...props }: any) => {
     revalidatePathAction();
     props.setEditProfile(false);
   }
-
+  const [editImage, setEditImage] = useState<boolean>(false);
   const [files, setFiles] = useState<File[]>([]);
   const handleFileUpload = (files: File[]) => {
     setFiles(files);
@@ -154,15 +154,38 @@ const EditUserPage = ({ ...props }: any) => {
   return (
     <div className="w-1/2 m-auto mt-20 bg-white p-8 rounded-lg shadow-md">
       <header className="text-2xl text-center font-bold">Volunteer Form</header>
-
-      <div className="w-full m-auto mt-10">
-        <img
-          src={props.values.picture}
-          alt="User Profile Picture"
-          className="m-auto rounded-xl w-[400px] h-[400px]"
-        />
-      </div>
-
+      {editImage ? (
+        <div>
+          <div className="h-[440px]">
+            <FileUpload onChange={handleFileUpload} />
+          </div>
+          <Button
+            onClick={() => {
+              setFiles([]);
+              setEditImage(false);
+            }}
+            type="button"
+          >
+            Cancel
+          </Button>
+        </div>
+      ) : (
+        <div className="w-full m-auto mt-10">
+          <img
+            src={props.values.picture}
+            alt="User Profile Picture"
+            className="m-auto rounded-xl w-[400px] h-[400px]"
+          />
+          <Button
+            onClick={() => {
+              setEditImage(true);
+            }}
+            type="button"
+          >
+            Edit
+          </Button>
+        </div>
+      )}
       <br />
       <div id="skills">
         <Talents
@@ -176,7 +199,6 @@ const EditUserPage = ({ ...props }: any) => {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <FileUpload onChange={handleFileUpload} />
           <FormField
             control={form.control}
             name="username"
