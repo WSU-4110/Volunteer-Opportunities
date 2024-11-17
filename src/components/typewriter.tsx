@@ -1,4 +1,3 @@
-/*
 "use client";
 
 import { useState } from "react";
@@ -12,33 +11,46 @@ const typewriter = () => {
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const words = [
-    { text: "", className: "" },
-    { text: "", className: "" },
-    { text: "", className: "" },
+    { text: "Kind", className: "text-lime-700" },
+    { text: "Selfless", className: "text-lime-700" },
+    { text: "Thoughtful", className: "text-lime-700" },
     {
-      text: "Whirlwind",
-      className: "text-whirlwindDarkBlue",
+      text: "Priceless",
+      className: "text-blue-700",
     },
   ];
 
   const images = [
-    //need to add images
+    "/volunteer1.jpg",
+    "/volunteer2.jpg",
+    "/volunteer3.jpg",
+    "/volunteer4.jpg",
   ];
   return (
     <ImagesSlider
       images={images}
-      className="h-[80vh]"
+      className="h-[50vh]"
       words={words}
       currentIndex={currentIndex}
+      overlayClassName="bg-sky-200"
     >
       <div className="relative z-[30] w-full">
         <div className="relative block m-auto text-center">
-          <div className="inline-block text-5xl xl:text-8xl font-bold text-black">
+          <div className="inline-block text-5xl xl:text-8xl text-black">
             Volunteers are&nbsp;
             <TypewriterEffectDeleting
               words={words}
               handleIndexChange={handleIndexChange}
             />
+            <div className="font-medium font-bold text-[30pt]">
+              Welcome to Volunteer Opportunites
+            </div>
+            <div className="font-medium text-[12pt] text-center">
+              “It's easy to make a buck. It's a lot tougher to make a
+              difference.”
+              <br></br>
+              -Tom Brokaw
+            </div>
           </div>
         </div>
       </div>
@@ -47,4 +59,3 @@ const typewriter = () => {
 };
 
 export default typewriter;
-*/

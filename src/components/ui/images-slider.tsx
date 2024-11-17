@@ -26,7 +26,7 @@ export const ImagesSlider = ({
 }) => {
   const slideVariants = {
     initial: {
-      opacity: 0.2,
+      opacity: 0.0,
     },
     visible: {
       opacity: 0.3,
@@ -42,7 +42,7 @@ export const ImagesSlider = ({
     >
       {children}
       {overlay && (
-        <div className={cn("absolute inset-0 z-[20]", overlayClassName)} />
+        <div className={cn("absolute inset-0 z-[10]", overlayClassName)} />
       )}
 
       {
@@ -53,7 +53,9 @@ export const ImagesSlider = ({
           animate="visible"
           transition={{
             duration: 2,
-            ease: [0.42, 0, 0.58, 1],
+            ease: "easeInOut",
+            repeat: currentIndex == images.length - 1 ? 0 : 1,
+            repeatType: "reverse",
           }}
           variants={slideVariants}
           className="h-full w-full absolute inset-0 object-cover object-center z-[10]"

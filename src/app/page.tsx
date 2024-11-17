@@ -12,49 +12,18 @@ import {
 import { Typewriter } from "react-simple-typewriter";
 import Autoplay from "embla-carousel-autoplay";
 import { Card, CardContent } from "@/components/ui/card";
+import HomePageTypewriter from "@/components/typewriter";
 
 export default function Home() {
   return (
     <div>
       <div className="relative">
-        <div className="opacity-20">
-          <img src="volunteer-image.jpg" className="w-full"></img>
-        </div>
-        <div className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
-          <div className="text-center text-[30pt]">
-            <h1
-              style={{
-                paddingTop: "5rem",
-                margin: "auto 0",
-                fontWeight: "normal",
-              }}
-            >
-              Volunteers are{" "}
-              <span style={{ fontWeight: "bold" }}>
-                <Typewriter
-                  words={["Kind", "Selfless", "Thoughtful", "Priceless!"]}
-                  loop={5}
-                  cursor
-                  cursorStyle="_"
-                  typeSpeed={70}
-                  deleteSpeed={50}
-                  delaySpeed={1000}
-                />
-              </span>
-            </h1>
-          </div>
-          <div className="font-medium font-bold text-[30pt]">
-            Welcome to Volunteer Opportunites
-          </div>
-          <div className="font-medium text-[12pt] text-center">
-            “It's easy to make a buck. It's a lot tougher to make a difference.”
-            <br></br>
-            -Tom Brokaw
-          </div>
+        <div className="w-full">
+          <HomePageTypewriter />
         </div>
       </div>
       <div className="py-20">
-        <div className="font-medium text-center text-[30pt] font-bold text-sky-500 pb-10">
+        <div className="font-bold text-center text-[30pt] text-sky-500 pb-10">
           <h1>What do we do?</h1>
         </div>
         <div className="font-medium text-center text-[12pt] mx-20">
