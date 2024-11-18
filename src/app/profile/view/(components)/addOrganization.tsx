@@ -16,12 +16,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import ClipLoader from "react-spinners/ClipLoader";
+
 import {
   addOrganization,
   revalidatePathAction,
   revalidateOrganizationViewerPage,
 } from "@/app/profile/view/actions";
+
 import {
   Command,
   CommandEmpty,
@@ -66,6 +67,7 @@ export default function AddAnOrganization(props: any) {
   const commandRef = useRef<HTMLInputElement>(null);
 
   // Auto-suggest address from Mapbox API
+
   useEffect(() => {
     const fetchSuggestions = async (query: string) => {
       const params = new URLSearchParams({
@@ -149,18 +151,23 @@ export default function AddAnOrganization(props: any) {
       });
 
       revalidatePathAction();
+
       if (organization) {
         revalidateOrganizationViewerPage(organization[0].id);
       }
+
       props.addOrganization(false);
     } catch (error) {
-      console.error("Error during submission", error);
+      // console.error("Error during submission", error);
     }
   }
 
   return (
     <div className="w-1/2 m-auto mt-20 bg-white p-8 rounded-lg shadow-md">
-      <header className="text-3xl text-center font-semibold text-gray-800">
+      <header
+        className="text-3xl text-center font-semibold text-gray-800"
+        data-testid="title"
+      >
         Add an Organization
       </header>
       <Form {...form}>
@@ -171,7 +178,7 @@ export default function AddAnOrganization(props: any) {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Organization Name</FormLabel>
+                <FormLabel data-testid="name">Organization Name</FormLabel>
                 <FormControl>
                   <Input placeholder="Organization Name" {...field} />
                 </FormControl>

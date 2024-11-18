@@ -30,6 +30,7 @@ export default function Talent({ ...props }: input) {
             className="h-fit p-2 bg-white hover:bg-red-100"
             onClick={onSubmit}
             variant="outline"
+            data-testid="button"
           >
             X
           </Button>

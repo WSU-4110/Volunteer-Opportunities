@@ -17,6 +17,7 @@ export default function Viewer(props: any) {
           className="m-auto rounded-xl"
           width="400px"
           height="400px"
+          data-testid="image"
         />
       </div>
       <br />
@@ -49,19 +50,18 @@ export default function Viewer(props: any) {
       <table>
         <tbody>
           <tr>
-            <td>
+            <td className="p-2">
               <Label htmlFor="name">Username:&nbsp;</Label>
             </td>
-            <td>
-              <h1 id="name">&nbsp;{props.values.name}</h1>
+            <td className="p-2">
+              <p id="name">&nbsp;{props.values.name}</p>
             </td>
           </tr>
           <tr>
-            <td>
+            <td className="p-2">
               <Label htmlFor="bio">User Bio:&nbsp;</Label>
             </td>
-
-            <td>
+            <td className="p-2">
               <p className={cn("flex min-h-[80px] ")} id="bio">
                 {props.values.bio}
               </p>
@@ -69,7 +69,7 @@ export default function Viewer(props: any) {
           </tr>
         </tbody>
       </table>
-      {props.values.organizations > 0 ? (
+      {props.values.organizations.length > 0 ? (
         <div>
           <Label htmlFor="organizations">Organizations</Label>
           <table>
@@ -77,7 +77,7 @@ export default function Viewer(props: any) {
               {props.values.organizations.map((org: any) => {
                 return (
                   <tr key={org.id}>
-                    <td>
+                    <td className="p-6">
                       <img
                         src={org.image.storageId}
                         alt="Organization Profile Picture"
@@ -85,7 +85,7 @@ export default function Viewer(props: any) {
                       />
                     </td>
 
-                    <td>{org.name}</td>
+                    <td className="p-6">{org.name}</td>
                   </tr>
                 );
               })}
@@ -99,6 +99,7 @@ export default function Viewer(props: any) {
           props.addOrganization(true);
         }}
         type="button"
+        data-testid="buttonAddOrg"
       >
         Add Organizaiton
       </Button>
@@ -110,6 +111,7 @@ export default function Viewer(props: any) {
           props.setEditProfile(true);
         }}
         type="button"
+        data-testid="buttonEdit"
       >
         Edit
       </Button>

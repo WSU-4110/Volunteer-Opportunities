@@ -160,7 +160,7 @@ const EditOrgPage = ({ ...props }: any) => {
   async function onSubmit(values: z.infer<typeof orgSchema>) {
     try {
       const form: FormData = new FormData();
-      console.log(files);
+      //console.log(files);
       if (files.length > 0) {
         const data: File = await files[0];
         form.append("data", data);
@@ -363,6 +363,9 @@ const EditOrgPage = ({ ...props }: any) => {
 };
 
 const ViewOrgPage = (props: any) => {
+  //console.log(props.listings[0][0]);
+  //console.log(props.org.pos);
+  //console.log(props.listings[props.org.pos][0]);
   return (
     <div>
       <div className="w-full m-auto mt-10">
@@ -378,64 +381,64 @@ const ViewOrgPage = (props: any) => {
       <table>
         <tbody>
           <tr>
-            <td>
+            <td className="p-2">
               <Label className="align-text-top" htmlFor="name">
                 Company Name:&nbsp;
               </Label>
             </td>
-            <td>
+            <td className="p-2">
               <p id="name" className="align-text-top">
                 {props.organizations[props.org.pos].name}
               </p>
             </td>
           </tr>
-          <br />
+
           <tr>
-            <td>
+            <td className="p-2">
               <Label className="align-text-top" htmlFor="email">
                 Email Address:&nbsp;
               </Label>
             </td>
-            <td>
+            <td className="p-2">
               <p id="email" className="align-text-top">
                 {props.organizations[props.org.pos].email}
               </p>
             </td>
           </tr>
-          <br />
+
           <tr>
-            <td>
+            <td className="p-2">
               <Label className="align-text-top" htmlFor="bio">
                 Biography:&nbsp;
               </Label>
             </td>
-            <td>
+            <td className="p-2">
               <p id="bio" className="align-text-top">
                 {props.organizations[props.org.pos].bio}
               </p>
             </td>
           </tr>
-          <br />
+
           <tr>
-            <td>
+            <td className="p-2">
               <Label className="align-text-top" htmlFor="address">
                 Address:&nbsp;
               </Label>
             </td>
-            <td>
+            <td className="p-2">
               <p id="address" className="align-text-top">
                 {props.organizations[props.org.pos].address}
               </p>
             </td>
           </tr>
-          <br />
+
           <tr>
-            <td>
+            <td className="p-2">
               <Label className="align-text-top" htmlFor="phone">
                 Phone:&nbsp;
               </Label>
             </td>
-            <td>
+            <td className="p-2">
               <p id="phone" className="align-text-top">
                 {"+" +
                   props.organizations[props.org.pos].phoneNumber.slice(0, 1) +
@@ -451,18 +454,36 @@ const ViewOrgPage = (props: any) => {
         </tbody>
       </table>
       <br />
-      {props.listings[props.org.pos][0] > 0 ? (
+      {props.listings[props.org.pos][0].length > 0 ? (
         <>
-          <Label htmlFor="listings">Listings:</Label>
+          <Label htmlFor="listings" data-testid="listings">
+            Listings:
+          </Label>
           <div id="listings">
-            {props.listings[props.org.pos][0].map(
-              (listing: { id: string; name: string; description: string }) => (
-                <div key={listing.id}>
-                  <p>{listing.name}</p>
-                  <p>{listing.description}</p>
-                </div>
-              )
-            )}
+            <table>
+              <tbody>
+                {props.listings[props.org.pos][0].map(
+                  (listing: {
+                    id: string;
+                    name: string;
+                    description: string;
+                    thumbnail: any;
+                  }) => (
+                    <tr key={listing.id}>
+                      <td className="p-6">
+                        <img
+                          src={listing.thumbnail}
+                          alt="Listing Thumbnail"
+                          className="m-auto rounded-xl w-[70px] h-auto"
+                        />
+                      </td>
+                      <td className="p-6">{listing.name}</td>
+                      <td className="p-6">{listing.description}</td>
+                    </tr>
+                  )
+                )}
+              </tbody>
+            </table>
           </div>
         </>
       ) : null}
