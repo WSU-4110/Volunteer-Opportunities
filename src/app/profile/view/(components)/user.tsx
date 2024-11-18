@@ -156,7 +156,7 @@ const EditUserPage = ({ ...props }: any) => {
       <header className="text-2xl text-center font-bold">Volunteer Form</header>
       {editImage ? (
         <div>
-          <div className="h-[440px]">
+          <div className="h-[320px]">
             <FileUpload onChange={handleFileUpload} />
           </div>
           <Button
@@ -165,6 +165,7 @@ const EditUserPage = ({ ...props }: any) => {
               setEditImage(false);
             }}
             type="button"
+            variant="destructive"
           >
             Cancel
           </Button>
@@ -174,7 +175,7 @@ const EditUserPage = ({ ...props }: any) => {
           <img
             src={props.values.picture}
             alt="User Profile Picture"
-            className="m-auto rounded-xl w-[400px] h-[400px]"
+            className="m-auto rounded-xl w-[250px] h-[250px]"
           />
           <Button
             onClick={() => {
@@ -243,6 +244,7 @@ const EditUserPage = ({ ...props }: any) => {
                       props.setEditProfile(false);
                     }}
                     type="button"
+                    variant="destructive"
                   >
                     Cancel
                   </Button>
