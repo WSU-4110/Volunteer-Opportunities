@@ -89,7 +89,6 @@ const InitializeMessageComponent = ({
   const changeOrganizationSelection = (id: any) => {
     setOrganizationMessages((prevState: any) => {
       const updatedUsers = prevState.map((user: any) => {
-        console.log(user);
         if (user.id == id) {
           return { ...user, selected: !user.selected };
         } else {
@@ -200,7 +199,7 @@ const InitializeMessageComponent = ({
                 value == "users" ? getAllVolunteers() : getAllOrganizations();
               }}
             >
-              <TabsList className="grid w-1/2 m-auto grid-cols-2">
+              <TabsList className="grid w-fit m-auto grid-cols-2">
                 <TabsTrigger value="users">Volunteers</TabsTrigger>
                 <TabsTrigger value="organizations">Organizations</TabsTrigger>
               </TabsList>

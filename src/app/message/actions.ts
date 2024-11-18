@@ -15,6 +15,7 @@ import {
 } from "@/database/schema";
 import { z } from "zod";
 import { CustomError } from "@/util";
+import { pusherServer } from "@/lib/pusher";
 
 export const getOtherVolunteersAction = authenticatedAction
   .createServerAction()
@@ -420,12 +421,21 @@ export const createMessage = authenticatedAction
       senderUserId: z.string().nullable(),
       conversationId: z.string(),
       senderOrganizationId: z.string().nullable(),
+      userImage: z.string().nullable(),
+      organizationImage: z.string().nullable(),
     })
   )
   .handler(
     async ({
       ctx: { user },
-      input: { content, senderUserId, conversationId, senderOrganizationId },
+      input: {
+        content,
+        senderUserId,
+        conversationId,
+        senderOrganizationId,
+        userImage,
+        organizationImage,
+      },
     }) => {
       try {
         const newMessage = await database
@@ -439,6 +449,11 @@ export const createMessage = authenticatedAction
           })
           .returning();
 
+        pusherServer.trigger(conversationId, "incoming-message", {
+          ...newMessage[0],
+          userImage: userImage,
+          organizationImage: organizationImage,
+        });
         return newMessage;
       } catch (err) {
         console.log(err);
