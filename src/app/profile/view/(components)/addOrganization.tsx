@@ -162,7 +162,7 @@ export default function AddAnOrganization(props: any) {
 
   return (
     <div className="bg-slate-200 py-12">
-      <div className="w-1/2 m-auto mt-20 bg-white p-8 rounded-lg shadow-md">
+      <div className="w-1/2 m-auto bg-white p-8 rounded-lg shadow-md">
         <header className="text-3xl text-center font-semibold text-gray-800">
           Add an Organization
         </header>

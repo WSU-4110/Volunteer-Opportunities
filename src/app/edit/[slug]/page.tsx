@@ -1,23 +1,33 @@
-import { getSkills } from "@/app/explore/actions";
-import { getListingFromID } from "./actions";
+import {
+  getAllSkills,
+  getIndividualListing,
+  getListingOrganizations,
+} from "./actions";
 import EditListing from "./EditListing";
-
-import { getReactNodeFromListings } from "@/app/explore/(components)/Userpage";
 
 const Edit = async ({ params }: { params: { slug: string } }) => {
   const listingID = params.slug;
 
-  const listing = (await getListingFromID(listingID))[0];
+  const [listing, listingError] = await getIndividualListing(listingID);
+  const [organizations, getOrganizationError] = await getListingOrganizations();
 
-  if (listing == null) {
-    return;
-  }
+  const [allSkills, getAllSkillsError] = await getAllSkills();
 
-  const talents = await getSkills(listingID);
+  console.log(listing?.skills);
 
   return (
     <>
-      <EditListing listing={listing} talents={talents} />
+      {listing ? (
+        <EditListing
+          listing={listing}
+          organizations={organizations || []}
+          allSkills={allSkills && allSkills.length > 0 ? allSkills : []}
+        />
+      ) : (
+        <h1 className="mt-20 text-center text-2xl font-bold">
+          You do not own this listing and don't have the ability to edit it.
+        </h1>
+      )}
     </>
   );
 };

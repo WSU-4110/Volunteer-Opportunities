@@ -44,7 +44,7 @@ export default function Home() {
             </h1>
           </div>
           <div className="font-medium font-bold text-[30pt]">
-            Welcome to Volunteer Opportunites
+            Welcome to Volunteer Opportunities
           </div>
           <div className="font-medium text-[12pt] text-center">
             “It's easy to make a buck. It's a lot tougher to make a difference.”
@@ -126,7 +126,7 @@ export default function Home() {
               stopOnMouseEnter: true,
               stopOnInteraction: false,
               stopOnLastSnap: false,
-            }),
+            }) as any,
           ]}
           opts={{ loop: true }}
         >

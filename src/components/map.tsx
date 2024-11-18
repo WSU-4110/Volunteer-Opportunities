@@ -1,3 +1,4 @@
+"use-client";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Map, { Marker, Popup } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";

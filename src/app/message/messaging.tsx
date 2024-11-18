@@ -9,6 +9,7 @@ import ClipLoader from "react-spinners/ClipLoader";
 import MessageInput from "./messageInput";
 import BackIcon from "@/components/icons/backIcon";
 import Link from "next/link";
+import { pusherClient } from "@/lib/pusher-client";
 
 const Messaging = ({
   userStatus,
@@ -27,6 +28,7 @@ const Messaging = ({
 }) => {
   const [conversations, setConversations] = useState<any>([]);
   const [selectedConversation, setSelectedConversation] = useState<any>();
+  const [conversationIds, setConversationIds] = useState<any>([]);
 
   const [mobileViewConvSelected, setMobileViewConvSelected] = useState(false);
 
@@ -72,15 +74,12 @@ const Messaging = ({
   };
 
   const addMessage = (message: any) => {
+    console.log("ran");
     if (message.senderId) {
-      const userImage = selectedConversation.users.find((user: any) => {
-        return user.id == message.senderId;
-      }).image;
-
       const newMessage = {
         ...message,
         content: message.content.replace("/\t/g", "    "),
-        userImage: userImage,
+        userImage: message.userImage,
       };
 
       setSelectedConversation((prevState: any) => {
@@ -115,16 +114,10 @@ const Messaging = ({
         return prevState;
       });
     } else if (message.senderOrganizationId) {
-      const organizationImage = selectedConversation.organizations.find(
-        (org: any) => {
-          return org.id == message.senderOrganizationId;
-        }
-      ).thumbnail;
-
       const newMessage = {
         ...message,
         content: message.content.replace(/\t/g, "    "),
-        organizationImage: organizationImage,
+        organizationImage: message.organizationImage,
       };
 
       setSelectedConversation((prevState: any) => {
@@ -177,6 +170,15 @@ const Messaging = ({
           };
         }),
       ]);
+
+      for (let conversation of organizationMessages) {
+        pusherClient.subscribe(conversation.conversations.id);
+
+        setConversationIds((prevState: any) => [
+          ...prevState,
+          conversation.conversations.id,
+        ]);
+      }
     } else {
       setConversations([]);
     }
@@ -200,6 +202,15 @@ const Messaging = ({
           };
         }),
       ]);
+
+      for (let conversation of volunteerMessages) {
+        pusherClient.subscribe(conversation.conversations.id);
+
+        setConversationIds((prevState: any) => [
+          ...prevState,
+          conversation.conversations.id,
+        ]);
+      }
     } else {
       setConversations([]);
     }
@@ -209,11 +220,35 @@ const Messaging = ({
     setLoadingFalse();
   };
   useEffect(() => {
+    const subscribeToConversations = () => {
+      conversations.forEach((conversation: any) => {
+        if (!conversationIds.includes(conversation.conversations.id)) {
+          pusherClient.subscribe(conversation.conversations.id);
+          setConversationIds((prevState: any) => [
+            ...prevState,
+            conversation.conversations.id,
+          ]);
+        }
+      });
+    };
+
     if (userStatus) {
-      getOrganizationMessagesMethod();
+      getOrganizationMessagesMethod().then(subscribeToConversations);
     } else {
-      getVolunteerMessagesMethod();
+      getVolunteerMessagesMethod().then(subscribeToConversations);
     }
+
+    pusherClient.bind("incoming-message", addMessage);
+
+    setMobileViewConvSelected(false);
+
+    return () => {
+      // Unsubscribe from all conversations
+      conversationIds.forEach((conversationId: string) => {
+        pusherClient.unsubscribe(conversationId);
+      });
+      pusherClient.unbind("incoming-message", addMessage);
+    };
   }, [userStatus, userId, organizationId]);
   return (
     <>
@@ -411,6 +446,7 @@ const Messaging = ({
                       userId={!userStatus ? userId : null}
                       conversationId={selectedConversation.conversations.id}
                       addMessage={addMessage}
+                      selectedConversation={selectedConversation}
                     />
                   </div>
                 </div>
