@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 export default function Viewer(props: any) {
   return (
-    <div className="w-1/2 m-auto mt-20">
+    <div className="w-1/2 m-auto mt-20 bg-white p-8 rounded-lg shadow-md">
       <header className="text-2xl text-center font-bold">Volunteer Page</header>
 
       <div className="w-full m-auto mt-10">
@@ -17,6 +17,7 @@ export default function Viewer(props: any) {
           className="m-auto rounded-xl"
           width="400px"
           height="400px"
+          data-testid="image"
         />
       </div>
       <br />
@@ -26,9 +27,18 @@ export default function Viewer(props: any) {
           <tbody>
             <tr>
               {props.values.userS.map(
-                (skill: { skillId: string; skillName: string }) => (
+                (skill: {
+                  skillId: string;
+                  skillName: string;
+                  url: string;
+                }) => (
                   <td key={skill.skillName}>
-                    <Badge>{skill.skillName}</Badge>
+                    <div className="hover:bg-slate-100">
+                      <div className="p-2 hover:bg-slate-100 flex flex-row gap-2 items-center justify-center">
+                        <img className="w-[40px] h-[40px]" src={skill.url} />
+                        <h1>{skill.skillName}</h1>
+                      </div>
+                    </div>
                   </td>
                 )
               )}
@@ -37,40 +47,59 @@ export default function Viewer(props: any) {
         </table>
       </div>
       <br />
-      <Label htmlFor="name">Username:</Label>
-      <h1 id="name">{props.values.name}</h1>
-      <br />
-      <Label htmlFor="bio">User Bio:</Label>
-      <p className={cn("flex min-h-[80px] ")} id="bio">
-        {props.values.bio}
-      </p>
-
-      <Label htmlFor="organizations">Organizations</Label>
       <table>
         <tbody>
-          {props.values.organizations.map((org: any) => {
-            return (
-              <tr key={org.id}>
-                <td>
-                  <img
-                    src={org.image.storageId}
-                    alt="Organization Profile Picture"
-                    className="m-auto rounded-xl w-[70px] h-auto"
-                  />
-                </td>
-
-                <td>{org.name}</td>
-              </tr>
-            );
-          })}
+          <tr>
+            <td className="p-2">
+              <Label htmlFor="name">Username:&nbsp;</Label>
+            </td>
+            <td className="p-2">
+              <p id="name">&nbsp;{props.values.name}</p>
+            </td>
+          </tr>
+          <tr>
+            <td className="p-2">
+              <Label htmlFor="bio">User Bio:&nbsp;</Label>
+            </td>
+            <td className="p-2">
+              <p className={cn("flex min-h-[80px] ")} id="bio">
+                {props.values.bio}
+              </p>
+            </td>
+          </tr>
         </tbody>
       </table>
+      {props.values.organizations.length > 0 ? (
+        <div>
+          <Label htmlFor="organizations">Organizations</Label>
+          <table>
+            <tbody>
+              {props.values.organizations.map((org: any) => {
+                return (
+                  <tr key={org.id}>
+                    <td className="p-6">
+                      <img
+                        src={org.image.storageId}
+                        alt="Organization Profile Picture"
+                        className="m-auto rounded-xl w-[70px] h-auto"
+                      />
+                    </td>
+
+                    <td className="p-6">{org.name}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      ) : null}
       <br />
       <Button
         onClick={() => {
           props.addOrganization(true);
         }}
         type="button"
+        data-testid="buttonAddOrg"
       >
         Add Organizaiton
       </Button>
@@ -82,6 +111,7 @@ export default function Viewer(props: any) {
           props.setEditProfile(true);
         }}
         type="button"
+        data-testid="buttonEdit"
       >
         Edit
       </Button>

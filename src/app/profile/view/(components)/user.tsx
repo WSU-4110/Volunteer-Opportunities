@@ -34,7 +34,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const formSchema = z.object({
-  username: z.string().min(1).max(50),
+  username: z.string().min(1, "Name is required"),
   picture: z.string(),
   bio: z.string(),
 });
@@ -47,6 +47,7 @@ type InputValues = {
   skills: {
     skillId: string;
     skillName: string;
+    url: string;
   }[];
   userS: {
     skillId: string;
@@ -64,6 +65,7 @@ type InputValues = {
 type skills = {
   skillId: string;
   skillName: string;
+  url: string;
 }[];
 const EditUserPage = ({ ...props }: any) => {
   //From https://ui.shadcn.com/docs/components/form
@@ -84,7 +86,6 @@ const EditUserPage = ({ ...props }: any) => {
   const [skillsUserHas, setSkillsUserHas] = useState<skills>(props.userS);
 
   function addSkill(props: skills) {
-    console.log(props);
     editSkillsList((prevState) => [...prevState, ...props]);
     editSkillDeleteList((prevState) =>
       prevState.filter((skill) => skill.skillId != props[0].skillId)
@@ -117,12 +118,9 @@ const EditUserPage = ({ ...props }: any) => {
         skill: skillDeleteList.map((skill) => skill.skillId),
       });
     }
-    console.log("submit");
     try {
       const data: File = await files[0];
 
-      //console.log("Submit");
-      //console.log(data);
       const form: FormData = new FormData();
       form.append("data", data);
 
@@ -133,7 +131,6 @@ const EditUserPage = ({ ...props }: any) => {
         data: form,
         image: props.values.customImage,
       };
-      //console.log(input);
       const [updatedUser, updatedUserError] = await updateUser(input);
 
       if (updatedUser && updatedUser[0]) {
@@ -147,27 +144,48 @@ const EditUserPage = ({ ...props }: any) => {
     revalidatePathAction();
     props.setEditProfile(false);
   }
-
+  const [editImage, setEditImage] = useState<boolean>(false);
   const [files, setFiles] = useState<File[]>([]);
   const handleFileUpload = (files: File[]) => {
     setFiles(files);
-    //console.log(files);
   };
 
   // Form layout from https://ui.shadcn.com/docs/components/form
-  //console.log(props.values.picture);
   return (
-    <div className="w-1/2 m-auto mt-20">
+    <div className="w-1/2 m-auto mt-20 bg-white p-8 rounded-lg shadow-md">
       <header className="text-2xl text-center font-bold">Volunteer Form</header>
-
-      <div className="w-full m-auto mt-10">
-        <img
-          src={props.values.picture}
-          alt="User Profile Picture"
-          className="m-auto rounded-xl w-[400px] h-[400px]"
-        />
-      </div>
-
+      {editImage ? (
+        <div>
+          <div className="h-[440px]">
+            <FileUpload onChange={handleFileUpload} />
+          </div>
+          <Button
+            onClick={() => {
+              setFiles([]);
+              setEditImage(false);
+            }}
+            type="button"
+          >
+            Cancel
+          </Button>
+        </div>
+      ) : (
+        <div className="w-full m-auto mt-10">
+          <img
+            src={props.values.picture}
+            alt="User Profile Picture"
+            className="m-auto rounded-xl w-[400px] h-[400px]"
+          />
+          <Button
+            onClick={() => {
+              setEditImage(true);
+            }}
+            type="button"
+          >
+            Edit
+          </Button>
+        </div>
+      )}
       <br />
       <div id="skills">
         <Talents
@@ -181,7 +199,6 @@ const EditUserPage = ({ ...props }: any) => {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <FileUpload onChange={handleFileUpload} />
           <FormField
             control={form.control}
             name="username"
@@ -247,7 +264,7 @@ export default function UserPage(props: InputValues) {
   function addOrganization(value: boolean) {
     setAddOrg(value);
   }
-  //console.log(userStatus);
+
   if (!addOrg) {
     return (
       <>

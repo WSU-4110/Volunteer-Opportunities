@@ -93,6 +93,7 @@ async function internalGetSkills(id: string) {
     .select({
       skillId: skills.id,
       skillName: skills.name,
+      url: skills.iconUrl,
     })
     .from(skills)
     .where(notInArray(skills.id, userSkills));
@@ -164,7 +165,6 @@ export const updateUser = authenticatedAction
       ctx: { user },
       input: { picture, username, bio, image, data },
     }) => {
-      //console.log(data.get("data"));
       if (user != undefined) {
         return internalUpdateUser(
           picture,
@@ -187,14 +187,11 @@ async function internalUpdateUser(
   data: any
 ) {
   let customImage = true;
-  console.log("UserID");
-  console.log(userImage);
   try {
     if (userImage != "" && userImage != undefined) {
       userImage = await rePutImage(data, userImage);
       picture = await getImage(userImage);
     } else {
-      //console.log("Add image");
       userImage = await putImage(data);
       if (userImage == "") {
         //If put image fails and does not return a key
@@ -214,9 +211,7 @@ async function internalUpdateUser(
       })
       .where(eq(users.id, id))
       .returning();
-    //console.log("success");
   } catch (caught) {
-    //console.log(caught);
     //If put image fails and does not return a key
     customImage = false;
     return await database
@@ -244,6 +239,12 @@ export const getOrganizations = authenticatedAction
           id: organizations.id,
           name: organizations.name,
           image: organizations.thumbnail,
+          bio: organizations.bio,
+          email: organizations.email,
+          latitude: organizations.latitude,
+          longitude: organizations.longitude,
+          phoneNumber: organizations.phoneNumber,
+          address: organizations.address,
         })
         .from(organizations)
         .where(eq(organizations.creator, user.id));
@@ -278,39 +279,99 @@ export const updateOrganization = authenticatedAction
   .input(
     z.object({
       picture: z.string(),
-      name: z.string(),
       id: z.string(),
+      name: z.string(),
       data: z.any(),
+      bio: z.string(),
+      phoneNumber: z.string(),
+      address: z.string(),
+      coordinates: z.object({
+        longitude: z.number(),
+        latitude: z.number(),
+      }),
+      email: z.string(),
     })
   )
-  .handler(async ({ ctx: { user }, input: { picture, name, id, data } }) => {
-    if (user != undefined) {
-      return internalUpdateOrg(picture, name, id, user.id, data);
+  .handler(
+    async ({
+      ctx: { user },
+      input: {
+        picture,
+        id,
+        name,
+        data,
+        bio,
+        phoneNumber,
+        address,
+        coordinates,
+        email,
+      },
+    }) => {
+      if (user != undefined) {
+        return internalUpdateOrg(
+          picture,
+          id,
+          user.id,
+          name,
+          data,
+          bio,
+          phoneNumber,
+          address,
+          coordinates,
+          email
+        );
+      }
     }
-  });
+  );
 
 async function internalUpdateOrg(
   picture: string,
-  name: string,
   id: string,
   userID: string,
-  data: any
+  name: string,
+  data: any,
+  bio: string,
+  phoneNumber: string,
+  address: string,
+  coordinates: any,
+  email: string
 ) {
-  //console.log(name);
   let image = picture;
   //Either overwrites current image or adds a new image
-
   if (picture != "") {
     image = await rePutImage(data.get("data"), image);
+
+    await database
+      .update(organizations)
+      .set({
+        name: name || "",
+
+        bio: bio,
+        email: email,
+        latitude: coordinates.latitude as any,
+        longitude: coordinates.longitude as any,
+        phoneNumber: phoneNumber,
+        address: address,
+      })
+      .where(and(eq(organizations.id, id), eq(organizations.creator, userID)));
   } else {
     image = await putImage(data.get("data"));
-  }
-  const url = await getImage(image);
+    const url = await getImage(image);
 
-  await database
-    .update(organizations)
-    .set({ name: name, thumbnail: { storageId: url, key: image } })
-    .where(eq(organizations.id, id));
+    await database
+      .update(organizations)
+      .set({
+        name: name || "",
+        thumbnail: { storageId: url, key: image },
+        bio: bio,
+        email: email,
+        latitude: coordinates.latitude as any,
+        longitude: coordinates.longitude as any,
+        phoneNumber: phoneNumber,
+        address: address,
+      })
+      .where(and(eq(organizations.id, id), eq(organizations.creator, userID)));
+  }
 }
 
 export const addOrganization = authenticatedAction
