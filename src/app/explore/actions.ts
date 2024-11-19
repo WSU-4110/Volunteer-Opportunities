@@ -65,8 +65,6 @@ export const getListings = unauthenticatedAction
         .groupBy(listings.id, organizations.id)
         .execute();
 
-      console.log(results);
-
       return results;
     } catch (err) {
       console.log(err);

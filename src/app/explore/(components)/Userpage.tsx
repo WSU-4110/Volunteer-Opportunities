@@ -246,9 +246,8 @@ export default function Userpage({
             <div className="xl:flex-3 p-20 bg-white shadow-lg rounded-xl xl:w-[1000px]">
               <h1 className="text-2xl font-bold text-center">Listings</h1>
               {listings.length > 0 ? (
-                <div className="grid grid-cols-1 xl:grid-cols-2 flex-wrap max-h-[1000px] overflow-y-auto mt-5 gap-4">
+                <div className="grid grid-cols-1 xl:grid-cols-2 flex-wrap max-h-[700px] overflow-y-auto mt-5 gap-4">
                   {listings?.map((listing: any) => {
-                    console.log(listing.volunteers);
                     return (
                       <Card
                         key={listing.listings.id}
@@ -362,7 +361,7 @@ export default function Userpage({
               )}
             </div>
             <div className="w-full xl:flex-1 p-4">
-              <MapMultipleLocations />
+              <MapMultipleLocations listings={listings} />
             </div>
           </div>
         </div>
