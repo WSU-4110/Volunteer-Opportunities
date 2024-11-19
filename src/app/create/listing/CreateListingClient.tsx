@@ -68,11 +68,10 @@ const CreateListing = ({
     name: z.string().min(1, "Name is required"),
     organizationId: z.string(),
     description: z.string().min(1, "description is required"),
-    thumbnail: z.string().min(1, "organization image is required"),
     address: z.string(),
   });
 
-  const customForm = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
@@ -82,7 +81,7 @@ const CreateListing = ({
     },
   });
 
-  const address = customForm.watch("address");
+  const address = form.watch("address");
 
   const [open, setOpen] = useState(false);
   const commandRef = useRef<HTMLInputElement>(null);
@@ -92,11 +91,11 @@ const CreateListing = ({
     setFiles(files);
   };
 
-  const orgId = customForm.watch("organizationId");
+  const orgId = form.watch("organizationId");
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  const onSubmitHandler = async (values: z.infer<typeof formSchema>) => {
     if (!validAddressSelected) {
-      customForm.setError("address", {
+      form.setError("address", {
         type: "manual",
         message:
           "Please select an address from the dropdown of options, so that we know its a valid address.",
@@ -123,10 +122,10 @@ const CreateListing = ({
     }
 
     router.push("/explore");
-  }
+  };
 
   const handleSelectAddress = (suggestion: any) => {
-    customForm.setValue("address", suggestion.place_name);
+    form.setValue("address", suggestion.place_name);
     console.log(suggestion.geometry.coordinates[0]);
     console.log(suggestion.geometry.coordinates[1]);
     setValidAddressSelected(true);
@@ -220,28 +219,48 @@ const CreateListing = ({
         <header className="text-3xl text-center font-semibold text-gray-800">
           Create a Listing
         </header>
-        <Form {...customForm}>
+        <Form {...form}>
           <form
-            onSubmit={customForm.handleSubmit(onSubmit)}
+            onSubmit={(e) => {
+              e.preventDefault();
+              form.handleSubmit(onSubmitHandler)();
+            }}
             className="space-y-8"
           >
             <FileUpload onChange={handleFileUpload} />
             <FormField
-              control={customForm.control}
+              control={form.control}
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>Listing Title</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input placeholder="Listing Title" {...field} />
                   </FormControl>
-                  <FormDescription>Name of your listing</FormDescription>
+                  <FormDescription>Choose your listing title</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <FormField
-              control={customForm.control}
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormLabel>Description</FormLabel>
+                  <FormControl className="w-full">
+                    <Textarea
+                      placeholder="Enter your listing description"
+                      className="resize-none w-full"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="organizationId"
               render={({ field }) => (
                 <FormItem>
@@ -263,23 +282,6 @@ const CreateListing = ({
                   </FormControl>
                   <FormDescription>
                     Organization that is behind carrying out this opportunity
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={customForm.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Describe what you wish to accomplish with this volunteer
-                    activity
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -313,7 +315,7 @@ const CreateListing = ({
                 Select
               </Button>
               <div className="flex flex-row justify-center items-center gap-4 flex-wrap">
-                {acceptedSkills.map((skill) => (
+                {acceptedSkills.map((skill: any) => (
                   <div key={skill.id} className="hover:bg-slate-100">
                     <div className="p-2 hover:bg-slate-100 flex flex-row gap-2 items-center justify-center">
                       <img className="w-[40px] h-[40px]" src={skill.iconUrl} />
@@ -332,7 +334,7 @@ const CreateListing = ({
               </div>
             </div>
             <FormField
-              control={customForm.control}
+              control={form.control}
               name="address"
               render={({ field }) => (
                 <FormItem className="w-full">
@@ -342,13 +344,10 @@ const CreateListing = ({
                       <CommandInput
                         id="address-input"
                         placeholder="Enter an address"
-                        {...customForm.register("address")}
+                        {...form.register("address")}
                         onFocus={() => setOpen(true)}
                         onInput={(e) => {
-                          customForm.setValue(
-                            "address",
-                            (e.target as any).value
-                          );
+                          form.setValue("address", (e.target as any).value);
                           setValidAddressSelected(false);
                         }}
                         value={address}
@@ -375,14 +374,12 @@ const CreateListing = ({
                     </Command>
                   </FormControl>
                   <FormMessage>
-                    {customForm.formState.errors.address?.message}
+                    {form.formState.errors.address?.message}
                   </FormMessage>
                 </FormItem>
               )}
             />
-            <Button type="submit" disabled={orgId == ""}>
-              Submit
-            </Button>
+            <Button type="submit">Submit</Button>
           </form>
         </Form>
       </div>

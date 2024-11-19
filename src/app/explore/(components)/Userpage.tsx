@@ -26,6 +26,9 @@ import MapMultipleLocations from "@/components/mapMultipleLocations";
 import { Card } from "@/components/ui/card";
 import { deleteIndividualListing, filterListings } from "../actions";
 import { useRouter } from "next/navigation";
+import useUserStatusStore from "@/stores/userStatusStore";
+import { revalidateListingPaths } from "@/app/edit/[slug]/actions";
+import { volunteerForSpecificOpportunity } from "../actions";
 
 type Skill = {
   id: string;
@@ -43,6 +46,8 @@ export default function Userpage({
   skills: Skill[];
   userId: string;
 }) {
+  const { userStatus, changeUserStatus } = useUserStatusStore((state) => state);
+
   const router = useRouter();
   const [skillOptions, setSkillOptions] = useState<Skill[]>(skills);
   const [filterSkills, setFilterSkills] = useState<Skill[]>([]);
@@ -93,6 +98,11 @@ export default function Userpage({
     setFilterSkills((prevState) => [
       ...prevState.filter((skill) => skill.id != newSkill.id),
     ]);
+  };
+
+  const volunteerSpecificListing = async (listingId: string) => {
+    await volunteerForSpecificOpportunity(listingId);
+    revalidateListingPaths();
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -236,78 +246,110 @@ export default function Userpage({
             <div className="xl:flex-3 p-20 bg-white shadow-lg rounded-xl xl:w-[1000px]">
               <h1 className="text-2xl font-bold text-center">Listings</h1>
               {listings.length > 0 ? (
-                <div className="grid grid-cols-1 xl:grid-cols-2 flex-wrap max-h-[1000px] overflow-y-auto mt-5 gap-4">
+                <div className="grid grid-cols-1 xl:grid-cols-2 flex-wrap max-h-[700px] overflow-y-auto mt-5 gap-4">
                   {listings?.map((listing: any) => {
                     return (
                       <Card
                         key={listing.listings.id}
                         className="p-4 flex flex-col gap-2"
                       >
-                        <h1 className="font-bold text-center text-xl">
-                          {listing.listings.name}
-                        </h1>
-                        <img
-                          className="w-full md:w-2/3 md:mx-auto xl:w-full h-[300px] object-cover object-top"
-                          src={listing.listings.thumbnail || ""}
-                          alt={listing.listings.name}
-                        />
-                        <p>{listing.listings.description}</p>
-                        <h1 className="font-bold text-xl">Skills Needed:</h1>
-                        <div className="flex flex-row gap-2 ">
-                          {listing.skills.length > 0 ? (
-                            listing.skills.map((skill: any) => {
-                              return (
-                                <div
-                                  className="p-2 hover:bg-slate-100 flex flex-col items-center justify-start cursor-pointer"
-                                  key={skill.id}
-                                >
-                                  <img
-                                    className="w-[40px] h-[40px]"
-                                    src={skill.iconUrl}
-                                  />
-                                  <h1>{skill.name}</h1>
-                                </div>
-                              );
-                            })
-                          ) : (
-                            <h1>NONE</h1>
-                          )}
-                        </div>
-                        <div
-                          className="flex flex-col justify-center items-center cursor-pointer"
-                          onClick={() =>
-                            router.push(
-                              `/view/organization/${listing.organizations.id}`
-                            )
-                          }
-                        >
-                          <h1 className="font-bold">Created By:</h1>
-                          <h1>{listing.organizations.name}</h1>
-                          <img
-                            src={listing.organizations.thumbnail.storageId}
-                            className="w-[60px] h-[60px]"
-                          ></img>
-                        </div>
-                        {userId == listing.organizations.creator ? (
-                          <div className="flex flex-col xl:flex-row justify-between gap-4 ">
-                            <Button
-                              onClick={() =>
-                                router.push(`/edit/${listing.listings.id}`)
-                              }
-                              className="bg-blue-500 text-white hover:bg-blue-400"
-                            >
-                              Edit
-                            </Button>
-                            <Button
-                              onClick={() =>
-                                deleteSpecificListing(listing.listings.id)
-                              }
-                              variant="destructive"
-                            >
-                              Delete
-                            </Button>
+                        <div className="flex flex-col justify-between h-full w-full">
+                          <div>
+                            <h1 className="font-bold text-center text-xl">
+                              {listing.listings.name}
+                            </h1>
+                            <img
+                              className="w-full md:w-2/3 md:mx-auto xl:w-full h-[300px] object-cover object-top"
+                              src={listing.listings.thumbnail || ""}
+                              alt={listing.listings.name}
+                            />
+                            <p>{listing.listings.description}</p>
+                            <h1 className="font-bold text-xl mt-4">
+                              Skills Needed:
+                            </h1>
+                            <div className="flex flex-row gap-2 ">
+                              {listing.skills.length > 0 ? (
+                                listing.skills.map((skill: any) => {
+                                  return (
+                                    <div
+                                      className="p-2 hover:bg-slate-100 flex flex-col items-center justify-start cursor-pointer"
+                                      key={skill.id}
+                                    >
+                                      <img
+                                        className="w-[40px] h-[40px]"
+                                        src={skill.iconUrl}
+                                      />
+                                      <h1>{skill.name}</h1>
+                                    </div>
+                                  );
+                                })
+                              ) : (
+                                <h1>NONE</h1>
+                              )}
+                            </div>
                           </div>
-                        ) : null}
+                          <div className="flex flex-row justify-between items-end mt-4">
+                            <div
+                              className="flex flex-col justify-center items-center cursor-pointer"
+                              onClick={() =>
+                                router.push(
+                                  `/view/organization/${listing.organizations.id}`
+                                )
+                              }
+                            >
+                              <h1 className="font-bold">Created By:</h1>
+                              <h1>{listing.organizations.name}</h1>
+                              <img
+                                src={listing.organizations.thumbnail.storageId}
+                                className="w-[60px] h-[60px]"
+                              ></img>
+                            </div>
+                            <div>
+                              {userStatus &&
+                              userId == listing.organizations.creator ? (
+                                <div className="flex flex-col gap-4 items-center">
+                                  <Button
+                                    onClick={() =>
+                                      router.push(
+                                        `/edit/${listing.listings.id}`
+                                      )
+                                    }
+                                    className="bg-blue-500 text-white hover:bg-blue-400 w-full"
+                                  >
+                                    Edit
+                                  </Button>
+                                  <Button
+                                    onClick={() =>
+                                      deleteSpecificListing(listing.listings.id)
+                                    }
+                                    variant="destructive"
+                                    className="w-full"
+                                  >
+                                    Delete
+                                  </Button>
+                                </div>
+                              ) : !userStatus &&
+                                userId != listing.organizations.creator ? (
+                                <Button
+                                  onClick={() =>
+                                    volunteerSpecificListing(
+                                      listing.listings.id
+                                    )
+                                  }
+                                  disabled={listing.volunteers.some(
+                                    (vol: any) => vol.id == userId
+                                  )}
+                                >
+                                  {listing.volunteers.some(
+                                    (vol: any) => vol.id == userId
+                                  )
+                                    ? "You have already volunteered for this"
+                                    : "Volunteer for This Opportunity"}
+                                </Button>
+                              ) : null}
+                            </div>
+                          </div>
+                        </div>
                       </Card>
                     );
                   })}
@@ -319,7 +361,7 @@ export default function Userpage({
               )}
             </div>
             <div className="w-full xl:flex-1 p-4">
-              <MapMultipleLocations />
+              <MapMultipleLocations listings={listings} />
             </div>
           </div>
         </div>
