@@ -205,6 +205,7 @@ const EditOrgPage = ({ ...props }: any) => {
                 setEditImage(false);
               }}
               type="button"
+              variant="destructive"
             >
               Cancel
             </Button>
@@ -518,6 +519,7 @@ export default function Organization(props: input) {
     for (let i = 0; i < props.organizations.length; i++) {
       if (props.organizations[i].id == values.id) {
         setOrg({ id: values.id, pos: i });
+        props.setEditProfile(false);
         revalidatePathAction();
         break;
       }
