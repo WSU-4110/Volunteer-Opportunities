@@ -21,6 +21,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import { Card } from "@/components/ui/card";
+
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -194,7 +196,7 @@ const EditOrgPage = ({ ...props }: any) => {
       <div>
         {editImage ? (
           <div>
-            <div className="h-[440px]">
+            <div className="h-[320px]">
               <FileUpload onChange={handleFileUpload} />
             </div>
             <Button
@@ -203,6 +205,7 @@ const EditOrgPage = ({ ...props }: any) => {
                 setEditImage(false);
               }}
               type="button"
+              variant="destructive"
             >
               Cancel
             </Button>
@@ -213,8 +216,8 @@ const EditOrgPage = ({ ...props }: any) => {
               src={props.organizations[props.org.pos].image.storageId}
               alt="Organization Profile Picture"
               className="m-auto rounded-xl"
-              width="400px"
-              height="400px"
+              width="250px"
+              height="250px"
             />
             <Button
               onClick={() => {
@@ -373,8 +376,8 @@ const ViewOrgPage = (props: any) => {
           src={props.organizations[props.org.pos].image.storageId}
           alt="Organization Profile Picture"
           className="m-auto rounded-xl"
-          width="400px"
-          height="400px"
+          width="250px"
+          height="250px"
         />
       </div>
 
@@ -456,34 +459,33 @@ const ViewOrgPage = (props: any) => {
       <br />
       {props.listings[props.org.pos][0].length > 0 ? (
         <>
-          <Label htmlFor="listings" data-testid="listings">
+          <Label htmlFor="listing" data-testid="listings">
             Listings:
           </Label>
-          <div id="listings">
-            <table>
-              <tbody>
-                {props.listings[props.org.pos][0].map(
-                  (listing: {
-                    id: string;
-                    name: string;
-                    description: string;
-                    thumbnail: any;
-                  }) => (
-                    <tr key={listing.id}>
-                      <td className="p-6">
-                        <img
-                          src={listing.thumbnail}
-                          alt="Listing Thumbnail"
-                          className="m-auto rounded-xl w-[70px] h-auto"
-                        />
-                      </td>
-                      <td className="p-6">{listing.name}</td>
-                      <td className="p-6">{listing.description}</td>
-                    </tr>
-                  )
-                )}
-              </tbody>
-            </table>
+          <div id="listing">
+            {/* This is not a real error the key listing.id will always unique to that listing */}
+            {props.listings[props.org.pos][0].map((opportunity: any) => (
+              <div key={opportunity.id}>
+                <Card className="p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-lg cursor-pointer">
+                  <div className="flex items-center gap-4">
+                    <img
+                      src={opportunity.thumbnail || ""}
+                      alt={opportunity.name}
+                      className="rounded-md object-cover w-[70px] h-[70px]"
+                    />
+                    <div className="flex flex-col">
+                      <h3 className="font-bold text-gray-800">
+                        {opportunity.name}
+                      </h3>
+                      <p className="text-gray-600 text-sm">
+                        {opportunity.description}
+                      </p>
+                    </div>
+                  </div>
+                </Card>
+                <br />
+              </div>
+            ))}
           </div>
         </>
       ) : null}
@@ -517,6 +519,7 @@ export default function Organization(props: input) {
     for (let i = 0; i < props.organizations.length; i++) {
       if (props.organizations[i].id == values.id) {
         setOrg({ id: values.id, pos: i });
+        props.setEditProfile(false);
         revalidatePathAction();
         break;
       }
