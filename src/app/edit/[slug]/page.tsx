@@ -13,8 +13,6 @@ const Edit = async ({ params }: { params: { slug: string } }) => {
 
   const [allSkills, getAllSkillsError] = await getAllSkills();
 
-  console.log(listing?.skills);
-
   return (
     <>
       {listing ? (

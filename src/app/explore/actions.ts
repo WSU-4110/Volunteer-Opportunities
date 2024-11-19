@@ -71,13 +71,13 @@ export const getListings = unauthenticatedAction
     }
   });
 
-export const getAllSkills = authenticatedAction
+export const getAllSkills = unauthenticatedAction
   .createServerAction()
-  .handler(async ({ ctx: { user } }) => {
+  .handler(async () => {
     return await database.query.skills.findMany();
   });
 
-export const filterListings = authenticatedAction
+export const filterListings = unauthenticatedAction
   .createServerAction()
   .input(
     z.object({
@@ -86,16 +86,12 @@ export const filterListings = authenticatedAction
       skills: z.array(z.string()),
     })
   )
-  .handler(
-    async ({
-      ctx: { user },
-      input: { title, description, skills: listingSkills },
-    }) => {
-      try {
-        const query = database
-          .select({
-            listings,
-            skills: sql`
+  .handler(async ({ input: { title, description, skills: listingSkills } }) => {
+    try {
+      const query = database
+        .select({
+          listings,
+          skills: sql`
         COALESCE(
           (
             SELECT json_agg(subquery) 
@@ -108,8 +104,8 @@ export const filterListings = authenticatedAction
             ) as subquery
           ), '[]'::json
         ) AS skills`,
-            organizations,
-            volunteers: sql`
+          organizations,
+          volunteers: sql`
           COALESCE(
             (
               SELECT json_agg(subquery) 
@@ -122,46 +118,39 @@ export const filterListings = authenticatedAction
               ) as subquery
             ), '[]'::json
           ) AS users`,
-          })
-          .from(listings)
-          .leftJoin(
-            organizations,
-            eq(listings.organizationId, organizations.id)
-          )
-          .leftJoin(
-            skillsToListings,
-            eq(listings.id, skillsToListings.listingId)
-          )
-          .leftJoin(skills, eq(skillsToListings.skillId, skills.id))
-          .groupBy(listings.id, organizations.id);
+        })
+        .from(listings)
+        .leftJoin(organizations, eq(listings.organizationId, organizations.id))
+        .leftJoin(skillsToListings, eq(listings.id, skillsToListings.listingId))
+        .leftJoin(skills, eq(skillsToListings.skillId, skills.id))
+        .groupBy(listings.id, organizations.id);
 
-        const conditions = [];
+      const conditions = [];
 
-        // Add conditions based on the presence of values
-        if (title != "") {
-          conditions.push(ilike(listings.name, `%${title}%`));
-        }
-        if (description != "") {
-          conditions.push(ilike(listings.description, `%${description}%`));
-        }
-        if (listingSkills && listingSkills.length > 0) {
-          conditions.push(inArray(skills.id, listingSkills));
-        }
-
-        // Use and() to combine all conditions with AND
-
-        if (conditions.length > 0) {
-          query.where(and(...conditions));
-        }
-
-        const data = await query.execute();
-
-        return data;
-      } catch (err) {
-        console.log(err);
+      // Add conditions based on the presence of values
+      if (title != "") {
+        conditions.push(ilike(listings.name, `%${title}%`));
       }
+      if (description != "") {
+        conditions.push(ilike(listings.description, `%${description}%`));
+      }
+      if (listingSkills && listingSkills.length > 0) {
+        conditions.push(inArray(skills.id, listingSkills));
+      }
+
+      // Use and() to combine all conditions with AND
+
+      if (conditions.length > 0) {
+        query.where(and(...conditions));
+      }
+
+      const data = await query.execute();
+
+      return data;
+    } catch (err) {
+      console.log(err);
     }
-  );
+  });
 
 export const volunteerForSpecificOpportunity = authenticatedAction
   .createServerAction()

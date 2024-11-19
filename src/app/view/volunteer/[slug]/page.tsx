@@ -3,6 +3,7 @@ import { getUserById } from "./actions";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { redirect } from "next/navigation";
 
 const ViewerPage = async ({ params }: { params: { slug: string } }) => {
   const { slug } = params;
@@ -89,24 +90,29 @@ const ViewerPage = async ({ params }: { params: { slug: string } }) => {
               </h2>
               <div className="grid grid-cols-1 gap-6">
                 {user?.listings.map((opportunity, index) => (
-                  <Card
-                    className="p-6 rounded-lg border shadow-md hover:shadow-lg transition-shadow w-full flex gap-4 items-center"
-                    key={opportunity.listingId}
+                  <Link
+                    href={`/view/listing/${opportunity.listings.id}`}
+                    key={opportunity.listings.id}
                   >
-                    <img
-                      src={opportunity.listings.thumbnail || ""}
-                      alt={opportunity.listings.name}
-                      className="w-16 h-16 rounded-lg object-cover"
-                    />
-                    <div>
-                      <h3 className="font-bold text-gray-800">
-                        {opportunity.listings.name}
-                      </h3>
-                      <p className="text-gray-600 text-sm">
-                        {opportunity.listings.description}
-                      </p>
-                    </div>
-                  </Card>
+                    <Card
+                      className="p-6 rounded-lg border shadow-md hover:shadow-lg transition-shadow w-full flex gap-4 items-center cursor-pointer"
+                      key={opportunity.listingId}
+                    >
+                      <img
+                        src={opportunity.listings.thumbnail || ""}
+                        alt={opportunity.listings.name}
+                        className="w-16 h-16 rounded-lg object-cover"
+                      />
+                      <div>
+                        <h3 className="font-bold text-gray-800">
+                          {opportunity.listings.name}
+                        </h3>
+                        <p className="text-gray-600 text-sm">
+                          {opportunity.listings.description}
+                        </p>
+                      </div>
+                    </Card>
+                  </Link>
                 ))}
               </div>
             </section>

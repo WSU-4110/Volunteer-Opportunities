@@ -10,8 +10,6 @@ import {
   organizations,
   users,
 } from "@/database/schema";
-import Listing from "@/app/explore/(components)/Listing";
-
 import { z } from "zod";
 import { eq, sql, inArray, and } from "drizzle-orm";
 import { list } from "postcss";
@@ -162,4 +160,8 @@ export const revalidateListingPaths = () => {
   revalidatePath("/message");
   revalidatePath("/explore");
   revalidatePath("/profile/view");
+};
+
+export const revalidateIndividualListing = (listingId: string) => {
+  revalidatePath(`/view/listing/${listingId}`);
 };
