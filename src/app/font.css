@@ -1,0 +1,10 @@
+@font-face {
+  font-family: "CustomFont";
+  src: url("./fonts/Raleway-Regular.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: "CustomFont";
+}
