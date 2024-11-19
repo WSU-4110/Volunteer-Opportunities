@@ -11,8 +11,6 @@
     "drizzle-migrate": "drizzle-kit migrate --config=drizzle.config.ts",
     "drizzle-studio": "drizzle-kit studio",
     "test": "jest"
-    "drizzle-studio": "drizzle-kit studio",
-    "test": "jest"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.4.2",
