@@ -54,6 +54,7 @@ export default function Userpage({
   const router = useRouter();
   const [skillOptions, setSkillOptions] = useState<Skill[]>(skills);
   const [filterSkills, setFilterSkills] = useState<Skill[]>([]);
+  const [showMap, setShowMap] = useState(false);
 
   const [currentSkill, setCurrentSkill] = useState("");
 
@@ -140,7 +141,7 @@ export default function Userpage({
         </h1>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <div className="flex flex-col items-center justify-start gap-30">
+            <div className="flex flex-col items-center justify-start">
               <div className="flex flex-col xl:flex-row justify-between items-start gap-5 w-[90%] m-auto">
                 <div className="flex-1 flex flex-col justify-center items-center gap-2 w-full">
                   <div className="flex flex-col justify-center gap-4 w-full">
@@ -247,10 +248,10 @@ export default function Userpage({
         </Form>
         <div className="mt-20 h-full">
           <div className="flex flex-col xl:flex-row justify-between h-full shadow-lg bg-slate-200 py-12 gap-10 w-full">
-            <div className="xl:flex-3 p-20 bg-white shadow-lg rounded-xl xl:w-[1000px]">
+            <div className="xl:flex-1 p-20 bg-white shadow-lg rounded-xl min-h-[800px]">
               <h1 className="text-2xl font-bold text-center">Listings</h1>
               {listings.length > 0 ? (
-                <div className="grid grid-cols-1 xl:grid-cols-2 flex-wrap max-h-[700px] overflow-y-auto mt-5 gap-4">
+                <div className="grid grid-cols-1 xl:grid-cols-2 flex-wrap max-h-full overflow-y-auto mt-5 gap-4">
                   {listings?.map((listing: any) => {
                     return (
                       <Card
@@ -371,7 +372,7 @@ export default function Userpage({
                 </h1>
               )}
             </div>
-            <div className="w-full xl:flex-1 p-4">
+            <div className={`w-full xl:flex-1 p-4 hidden`}>
               <MapMultipleLocations listings={listings} />
             </div>
           </div>
