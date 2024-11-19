@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { getImage } from "@/database/sthree";
 import { cn } from "@/lib/utils";
 
+import { Card } from "@/components/ui/card";
+
 export default function Viewer(props: any) {
   return (
     <div className="w-1/2 m-auto mt-20 bg-white p-8 rounded-lg shadow-md">
@@ -15,8 +17,8 @@ export default function Viewer(props: any) {
           src={props.values?.picture}
           alt="User Profile Picture"
           className="m-auto rounded-xl"
-          width="400px"
-          height="400px"
+          width="250px"
+          height="250px"
           data-testid="image"
         />
       </div>
@@ -62,9 +64,7 @@ export default function Viewer(props: any) {
               <Label htmlFor="bio">User Bio:&nbsp;</Label>
             </td>
             <td className="p-2">
-              <p className={cn("flex min-h-[80px] ")} id="bio">
-                {props.values.bio}
-              </p>
+              <p id="bio">{props.values.bio}</p>
             </td>
           </tr>
         </tbody>
@@ -72,28 +72,28 @@ export default function Viewer(props: any) {
       {props.values.organizations.length > 0 ? (
         <div>
           <Label htmlFor="organizations">Organizations</Label>
-          <table>
-            <tbody>
-              {props.values.organizations.map((org: any) => {
-                return (
-                  <tr key={org.id}>
-                    <td className="p-6">
-                      <img
-                        src={org.image.storageId}
-                        alt="Organization Profile Picture"
-                        className="m-auto rounded-xl w-[70px] h-auto"
-                      />
-                    </td>
-
-                    <td className="p-6">{org.name}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+          {props.values.organizations.map((org: any) => (
+            <div key={org.id}>
+              <Card className="p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-lg cursor-pointer">
+                <div className="flex items-center gap-4">
+                  <img
+                    src={org.image.storageId || ""}
+                    alt={org.name}
+                    className="rounded-md object-cover w-[70px] h-[70px]"
+                  />
+                  <div className="flex flex-col">
+                    <h3 className="font-bold text-gray-800">{org.name}</h3>
+                    <p className="text-gray-600 text-sm">{org.bio}</p>
+                  </div>
+                </div>
+              </Card>
+              <br />
+            </div>
+          ))}
+          ;
         </div>
       ) : null}
-      <br />
+
       <Button
         onClick={() => {
           props.addOrganization(true);
@@ -105,7 +105,7 @@ export default function Viewer(props: any) {
       </Button>
       <br />
       <br />
-      <br />
+
       <Button
         onClick={() => {
           props.setEditProfile(true);
