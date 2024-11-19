@@ -379,8 +379,11 @@ const CreateListing = ({
                 </FormItem>
               )}
             />
-            <div className="w-full text-center">
-              <Button type="submit" disabled={orgId == ""}>
+            <div className="w-full text-center ">
+              <Button
+                className="w-24 text-lg bg-volunteer hover:bg-blue-400"
+                type="submit"
+              >
                 Submit
               </Button>
             </div>

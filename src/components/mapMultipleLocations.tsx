@@ -7,7 +7,7 @@ const MapMultipleLocations = ({ listings }: { listings: any }) => {
   const [selectedListing, setSelectedListing] = useState<string | null>(null);
 
   return (
-    <div className="h-[400px] w-[400px] m-auto xl:w-full xl:h-full">
+    <div className="h-[400px] w-[400px] mx-auto xl:w-full xl:h-full">
       <Map
         initialViewState={{
           latitude: 39.8283,
@@ -18,7 +18,6 @@ const MapMultipleLocations = ({ listings }: { listings: any }) => {
           width: "100%",
           height: "100%",
           overflow: "hidden",
-          margin: "auto",
         }}
         mapStyle="mapbox://styles/mapbox/streets-v11"
         mapboxAccessToken={process.env.NEXT_PUBLIC_GL_MAPBOX_ACCESS_TOKEN}
