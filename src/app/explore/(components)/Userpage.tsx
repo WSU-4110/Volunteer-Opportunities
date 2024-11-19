@@ -136,17 +136,16 @@ export default function Userpage({
     <>
       <div className="w-full mt-12">
         <h1 className="text-2xl text-center font-bold my-12">
-          Explore Organizations Offering Volunteer Opportunities That Need Your
-          Assistance in Completing Their Goals
+          Explore Volunteer Opportunities
         </h1>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div className="flex flex-col items-center justify-start">
               <div className="flex flex-col xl:flex-row justify-between items-start gap-5 w-[90%] m-auto">
-                <div className="flex-1 flex flex-col justify-center items-center gap-2 w-full">
+                <div className="flex-1 flex flex-col justify-center items-center gap-5 w-full">
                   <div className="flex flex-col justify-center gap-4 w-full">
                     <FormItem>
-                      <FormLabel>Filter Listings By Skills</FormLabel>
+                      <FormLabel>Filter Listings by Skills</FormLabel>
                       <Select
                         onValueChange={handleSkillOptionSelect}
                         value={currentSkill}
@@ -202,7 +201,7 @@ export default function Userpage({
                         <FormLabel>Filter Listings by Title</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="Listing Title"
+                            placeholder="Title"
                             {...field}
                             onKeyDown={handleKeyDown}
                           />
@@ -221,10 +220,10 @@ export default function Userpage({
                     name="description"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Filter Listings By Description</FormLabel>
+                        <FormLabel>Filter Listings by Description</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="Organization Name"
+                            placeholder="Description"
                             {...field}
                             onKeyDown={handleKeyDown}
                           />
@@ -238,17 +237,20 @@ export default function Userpage({
                   />
                 </div>
               </div>
-              <div className="w-full text-center mt-12">
-                <Button type="submit" className="w-1/2">
+              <div className="w-full text-center mt-4">
+                <Button
+                  type="submit"
+                  className="w-24 text-2xl bg-volunteer hover:bg-blue-400"
+                >
                   Filter
                 </Button>
               </div>
             </div>
           </form>
         </Form>
-        <div className="mt-20 h-full">
+        <div className="mt-12 h-full">
           <div className="flex flex-col xl:flex-row justify-between h-full shadow-lg bg-slate-200 py-12 gap-10 w-full">
-            <div className="xl:flex-1 p-20 bg-white shadow-lg rounded-xl min-h-[800px]">
+            <div className="xl:flex-3 p-10 bg-white shadow-lg rounded-xl xl:w-[1000px]">
               <h1 className="text-2xl font-bold text-center">Listings</h1>
               {listings.length > 0 ? (
                 <div
@@ -267,7 +269,7 @@ export default function Userpage({
                         <div className="flex flex-col justify-between h-full w-full">
                           <div>
                             <h1
-                              className="font-bold text-center text-xl hover:text-blue-500 cursor-pointer"
+                              className="font-bold mb-6 text-center text-xl hover:text-blue-500 cursor-pointer"
                               onClick={() =>
                                 router.push(
                                   `/view/listing/${listing.listings.id}`
@@ -277,7 +279,7 @@ export default function Userpage({
                               {listing.listings.name}
                             </h1>
                             <img
-                              className="w-full md:w-2/3 md:mx-auto xl:w-full h-[300px] object-cover object-top"
+                              className="w-full my-4 md:w-2/3 md:mx-auto xl:w-full h-[300px] object-cover object-top"
                               src={listing.listings.thumbnail || ""}
                               alt={listing.listings.name}
                             />
@@ -302,7 +304,7 @@ export default function Userpage({
                                   );
                                 })
                               ) : (
-                                <h1>NONE</h1>
+                                <h1>None</h1>
                               )}
                             </div>
                           </div>
@@ -316,11 +318,11 @@ export default function Userpage({
                               }
                             >
                               <h1 className="font-bold">Created By:</h1>
-                              <h1>{listing.organizations.name}</h1>
                               <img
                                 src={listing.organizations.thumbnail.storageId}
                                 className="w-[60px] h-[60px]"
                               ></img>
+                              <h1>{listing.organizations.name}</h1>
                             </div>
                             <div>
                               {userStatus &&
@@ -374,7 +376,7 @@ export default function Userpage({
                 </div>
               ) : (
                 <h1 className="text-center font-bold w-full mt-6 text-xl">
-                  NO LISTINGS
+                  No Listings
                 </h1>
               )}
             </div>

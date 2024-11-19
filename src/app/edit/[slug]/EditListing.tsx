@@ -267,7 +267,7 @@ export default function EditListing({
                     <FormControl>
                       <Input placeholder="Listing Title" {...field} />
                     </FormControl>
-                    <FormDescription>Choose your listing title</FormDescription>
+                    <FormDescription>Choose your Listing Title</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
