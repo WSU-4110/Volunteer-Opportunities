@@ -31,12 +31,14 @@ const SendMessage = ({
   userId,
   conversationId,
   addMessage,
+  selectedConversation,
 }: {
   userStatus?: boolean;
   organizationId?: string | null;
   userId?: string | null;
   conversationId?: string;
   addMessage?: (message: any) => void;
+  selectedConversation?: any;
 }) => {
   const formSchema = z.object({
     content: z.string(),
@@ -57,13 +59,17 @@ const SendMessage = ({
       senderOrganizationId: organizationId || null,
       senderUserId: userId || null,
       conversationId: conversationId || "",
+      userImage: userId
+        ? selectedConversation.users.find((user: any) => {
+            return user.id == userId;
+          }).image
+        : null,
+      organizationImage: organizationId
+        ? selectedConversation.organizations.find((organization: any) => {
+            return organization.id == organizationId;
+          }).thumbnail
+        : null,
     });
-
-    if (addMessage) {
-      if (newMessage) {
-        addMessage(newMessage[0]);
-      }
-    }
 
     form.reset({ content: "" });
   }

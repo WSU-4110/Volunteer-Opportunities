@@ -1,50 +1,167 @@
-"use server"
+"use server";
 
 import { database } from "@/database/index";
 
-import { skills, listings, skillsToListings } from "@/database/schema";
-import Listing from "@/app/explore/(components)/Listing";
-import { ListingInterface, ListingsProps } from "@/app/explore/(components)/Userpage";
-
+import {
+  skills,
+  listings,
+  skillsToListings,
+  listingsToUsers,
+  organizations,
+  users,
+} from "@/database/schema";
 import { z } from "zod";
-import { eq, sql } from "drizzle-orm";
+import { eq, sql, inArray, and } from "drizzle-orm";
 import { list } from "postcss";
 import { PgColumn } from "drizzle-orm/pg-core";
-import { getSkills } from "@/app/explore/actions";
+import { revalidatePath } from "next/cache";
+import { authenticatedAction, unauthenticatedAction } from "@/lib/safe-action";
+import { getImage, putImage } from "@/database/sthree";
 
+export const getAllSkills = unauthenticatedAction
+  .createServerAction()
+  .handler(async () => {
+    return await database.query.skills.findMany();
+  });
 
-export async function getListings() {
-    return await database.select().from(listings);
-  }
-
-  export async function getListingFromID(listingID: string) {
-    return await database.select().from(listings).where(eq(listings.id, listingID))
-  }
-
-  export async function addTalentToListing(listingID: string, skillID: string) {
-    await database.insert(skillsToListings).values({skillId: skillID, listingId: listingID})
-  }
-
-  export async function getTalentID(talent: string) {
-    const talentID = (await database.select({id: skills.id}).from(skills).where(eq(skills.name, talent)))[0]
-
-    if (talentID == null) {
-        return
+export const getListingOrganizations = authenticatedAction
+  .createServerAction()
+  .handler(async ({ ctx: { user } }) => {
+    try {
+      return await database.query.organizations.findMany({
+        where: eq(organizations.creator, user.id),
+      });
+    } catch (err) {
+      console.log(err);
     }
+  });
 
-    return talentID.id
-  }
+export const updateListing = authenticatedAction
+  .createServerAction()
+  .input(
+    z.object({
+      listingID: z.string(),
+      name: z.string(),
+      description: z.string(),
+      organizationId: z.string(),
+      address: z.string(),
+      coordinates: z.object({
+        latitude: z.number(),
+        longitude: z.number(),
+      }),
+      skills: z.array(z.string()),
+      data: z.any().nullable(),
+    })
+  )
+  .handler(
+    async ({
+      ctx: { user },
+      input: {
+        listingID,
+        name,
+        description,
+        organizationId,
+        address,
+        coordinates,
+        skills,
+        data,
+      },
+    }) => {
+      try {
+        const validListing = await database
+          .select({ listings })
+          .from(listings)
+          .innerJoin(
+            organizations,
+            eq(organizations.id, listings.organizationId)
+          )
+          .innerJoin(
+            users,
+            and(eq(users.id, organizations.creator), eq(users.id, user.id))
+          )
+          .where(eq(listings.id, listingID));
 
-  export async function insertTalent(listingID: string, talent: string) {
-    const talentID = await getTalentID(talent)
+        if (validListing.length == 0) {
+          return;
+        }
+        if (data) {
+          const image = await putImage(data.get("data"));
+          const url = await getImage(image);
+          await database
+            .update(listings)
+            .set({
+              name: name,
+              description: description,
+              organizationId: organizationId,
+              latitude: coordinates.latitude as any,
+              longitude: coordinates.longitude as any,
+              address: address,
+              thumbnail: url,
+            })
+            .where(eq(listings.id, listingID));
+        } else {
+          await database
+            .update(listings)
+            .set({
+              name: name,
+              description: description,
+              organizationId: organizationId,
+              latitude: coordinates.latitude as any,
+              longitude: coordinates.longitude as any,
+              address: address,
+            })
+            .where(eq(listings.id, listingID));
+        }
 
-    if (talentID == null) {
-        return
+        await database
+          .delete(skillsToListings)
+          .where(eq(skillsToListings.listingId, listingID));
+
+        if (skills.length > 0) {
+          await database.insert(skillsToListings).values([
+            ...skills.map((addSkill) => {
+              return { listingId: listingID, skillId: addSkill };
+            }),
+          ]);
+        }
+      } catch (err) {
+        console.log(err);
+      }
     }
+  );
 
-    await database.insert(skillsToListings).values({skillId: talentID, listingId: listingID})
-  }
+export const getIndividualListing = authenticatedAction
+  .createServerAction()
+  .input(z.string())
+  .handler(async ({ ctx: { user }, input }) => {
+    try {
+      const validListing = await database
+        .select({ listings })
+        .from(listings)
+        .innerJoin(organizations, eq(organizations.id, listings.organizationId))
+        .innerJoin(
+          users,
+          and(eq(users.id, organizations.creator), eq(users.id, user.id))
+        )
+        .where(eq(listings.id, input));
 
-  export async function updateListing(listingID: string, name: string, description: string, thumbnail: string, organizationID: string, talent: string) {
-    await insertTalent(listingID, talent)
-  }
+      if (validListing.length > 0) {
+        return await database.query.listings.findFirst({
+          where: eq(listings.id, input),
+          with: { skills: { with: { skills: true } } },
+        });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+export const revalidateListingPaths = () => {
+  revalidatePath("/message");
+  revalidatePath("/explore");
+  revalidatePath("/profile/view");
+};
+
+export const revalidateIndividualListing = (listingId: string) => {
+  revalidatePath(`/view/listing/${listingId}`);
+};

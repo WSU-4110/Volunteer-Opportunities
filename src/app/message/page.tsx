@@ -11,7 +11,7 @@ const MessagesPage = async () => {
   const [userOrganizations, userOrgerror] = await getUserOrganizations();
 
   if (!authStatus?.user) {
-    redirect("/api/auth/signin");
+    redirect("/login");
   }
 
   return (

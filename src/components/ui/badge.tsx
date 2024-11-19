@@ -1,3 +1,5 @@
+// This button component comes from shadcn-ui and was not modified at all. (https://ui.shadcn.com/docs/components/badge)
+
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 

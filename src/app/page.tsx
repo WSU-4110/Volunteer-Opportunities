@@ -12,49 +12,19 @@ import {
 import { Typewriter } from "react-simple-typewriter";
 import Autoplay from "embla-carousel-autoplay";
 import { Card, CardContent } from "@/components/ui/card";
+import HomePageTypewriter from "@/components/typewriter";
+import "./font.css";
 
 export default function Home() {
   return (
     <div>
       <div className="relative">
-        <div className="opacity-20">
-          <img src="volunteer-image.jpg" className="w-full"></img>
-        </div>
-        <div className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
-          <div className="text-center text-[30pt]">
-            <h1
-              style={{
-                paddingTop: "5rem",
-                margin: "auto 0",
-                fontWeight: "normal",
-              }}
-            >
-              Volunteers are{" "}
-              <span style={{ fontWeight: "bold" }}>
-                <Typewriter
-                  words={["Kind", "Selfless", "Thoughtful", "Priceless!"]}
-                  loop={5}
-                  cursor
-                  cursorStyle="_"
-                  typeSpeed={70}
-                  deleteSpeed={50}
-                  delaySpeed={1000}
-                />
-              </span>
-            </h1>
-          </div>
-          <div className="font-medium font-bold text-[30pt]">
-            Welcome to Volunteer Opportunites
-          </div>
-          <div className="font-medium text-[12pt] text-center">
-            “It's easy to make a buck. It's a lot tougher to make a difference.”
-            <br></br>
-            -Tom Brokaw
-          </div>
+        <div className="w-full">
+          <HomePageTypewriter />
         </div>
       </div>
       <div className="py-20">
-        <div className="font-medium text-center text-[30pt] font-bold text-sky-500 pb-10">
+        <div className="font-bold text-center text-[30pt] text-sky-500 pb-10">
           <h1>What do we do?</h1>
         </div>
         <div className="font-medium text-center text-[12pt] mx-20">
@@ -126,7 +96,7 @@ export default function Home() {
               stopOnMouseEnter: true,
               stopOnInteraction: false,
               stopOnLastSnap: false,
-            }),
+            }) as any,
           ]}
           opts={{ loop: true }}
         >
@@ -136,19 +106,27 @@ export default function Home() {
                 <div className="flex flex-row items-center jusify-center gap-5">
                   <div className="flex flex-col justify-center items-center flex-1">
                     <img
-                      width={"150px"}
-                      height={"150px"}
-                      src="profile-photo.png"
+                      className="w-[200px] h-[200px]"
+                      src="Sebastian-Profile.png"
                       alt={"Sebastian Newberry"}
                     />
                     <h1 className="font-bold">Sebastian Newberry</h1>
                   </div>
                   <div className="text-lg flex-1">
                     <p>
-                      Computer Science Major at Wayne State University.
-                      Passionate in web development and cybersecurity. Excited
-                      to explore the industry to see what Computer Science has
-                      to offer.
+                      Driven and adaptable Computer Science student with a
+                      comprehensive understanding of software development,
+                      algorithms, and system architecture. Proficient in
+                      languages such as Python, Java, and C++, with practical
+                      experience in building scalable applications and working
+                      with databases. Highly skilled in troubleshooting and
+                      optimizing code, as well as collaborating in diverse team
+                      settings. Demonstrates a strong ability to learn new
+                      technologies quickly and apply them to solve real-world
+                      problems. Known for a proactive approach to
+                      problem-solving, strong organizational abilities, and
+                      effective communication both in group projects and
+                      individual assignments.
                     </p>
                   </div>
                 </div>
@@ -159,19 +137,22 @@ export default function Home() {
                 <div className="flex flex-row items-center jusify-center gap-5">
                   <div className="flex flex-col justify-center items-center flex-1">
                     <img
-                      width={"150px"}
-                      height={"150px"}
-                      src="profile-photo.png"
+                      className="w-[200px] h-[200px]"
+                      src="Ian-Profile.png"
                       alt={"Ian Crowe-Sittig"}
                     />
                     <h1 className="font-bold">Ian Crowe-Sittig</h1>
                   </div>
                   <div className="text-lg flex-1">
                     <p>
-                      Computer Science Major at Wayne State University.
-                      Passionate in web development and cybersecurity. Excited
-                      to explore the industry to see what Computer Science has
-                      to offer.
+                      Motivated and detail-oriented Computer Science student
+                      with hands-on experience in programming, software
+                      development, and problem-solving. Proficient in languages
+                      such as Java, Python, and C++, with a solid understanding
+                      of algorithms, data structures, and object-oriented
+                      design. Strong collaborator and quick learner, eager to
+                      apply academic knowledge to real-world projects and
+                      contribute to innovative software solutions.
                     </p>
                   </div>
                 </div>
@@ -182,9 +163,8 @@ export default function Home() {
                 <div className="flex flex-row items-center jusify-center gap-5">
                   <div className="flex flex-col justify-center items-center flex-1">
                     <img
-                      width={"150px"}
-                      height={"150px"}
-                      src="profile-photo.png"
+                      className="w-[200px] h-[200px]"
+                      src="Jacob-Profile.png"
                       alt={"Jacob Ulbrich"}
                     />
                     <h1 className="font-bold">Jacob Ulbrich</h1>
@@ -193,7 +173,11 @@ export default function Home() {
                     <p>
                       Third-year student at Wayne State University working
                       towards earning his bachelor’s degree in honors computer
-                      science with a mathematics minor.
+                      science with a mathematics minor. Hopes to use his
+                      mathematics minor as well as an interest in statistics to
+                      pursue a career in data analytics. He enjoys volunteer
+                      work and helping others learn about the many opportunities
+                      computer science has to offer.
                     </p>
                   </div>
                 </div>
@@ -204,19 +188,23 @@ export default function Home() {
                 <div className="flex flex-row items-center jusify-center gap-5">
                   <div className="flex flex-col justify-center items-center flex-1">
                     <img
-                      width={"150px"}
-                      height={"150px"}
-                      src="profile-photo.png"
+                      className="w-[200px] h-[200px]"
+                      src="Loc-Profile.png"
                       alt={"Loc Phan"}
                     />
                     <h1 className="font-bold">Loc Phan</h1>
                   </div>
                   <div className="text-lg flex-1">
                     <p>
-                      Computer Science Major at Wayne State University.
-                      Passionate in web development and cybersecurity. Excited
-                      to explore the industry to see what Computer Science has
-                      to offer.
+                      Driven Computer Science student with a passion for
+                      technology and coding. Experienced in developing software
+                      solutions, troubleshooting, and optimizing systems.
+                      Skilled in languages like Python, Java, and C++, with a
+                      strong foundation in algorithms, databases, and software
+                      engineering principles. Adept at working in collaborative
+                      environments, with a keen interest in applying academic
+                      learning to real-world challenges and contributing to
+                      impactful tech projects
                     </p>
                   </div>
                 </div>
@@ -227,19 +215,27 @@ export default function Home() {
                 <div className="flex flex-row items-center jusify-center gap-5">
                   <div className="flex flex-col justify-center items-center flex-1">
                     <img
-                      width={"150px"}
-                      height={"150px"}
-                      src="profile-photo.png"
+                      className="w-[200px] h-[200px]"
+                      src="Parsa-Profile.png"
                       alt={"Parsa Nematollahe"}
                     />
                     <h1 className="font-bold">Parsa Nematollahe</h1>
                   </div>
                   <div className="text-lg flex-1">
                     <p>
-                      A quirky and goofy goober. Also a 3rd year Wayne State
-                      Student studying Computer Science, Mathematics, and
-                      Statistics. I enjoy long walks to the fridge and love to
-                      sleep.
+                      Enthusiastic Computer Science student with a solid grasp
+                      of core programming concepts, software engineering, and
+                      computer systems. Skilled in programming languages such as
+                      Python, Java, and C++, with experience in building both
+                      front-end and back-end applications. Adept at
+                      problem-solving, debugging, and optimizing code, with a
+                      focus on writing efficient and maintainable solutions.
+                      Experienced in collaborative projects and agile
+                      development processes, and eager to continue learning
+                      emerging technologies. Strong analytical thinker with
+                      excellent communication and time-management skills, able
+                      to balance academic responsibilities with extracurricular
+                      involvement.
                     </p>
                   </div>
                 </div>

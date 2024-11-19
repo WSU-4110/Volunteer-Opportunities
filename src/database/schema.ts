@@ -8,6 +8,7 @@ import {
   pgEnum,
   json,
   unique,
+  numeric,
 } from "drizzle-orm/pg-core";
 
 import { AdapterAccount } from "next-auth/adapters";
@@ -111,6 +112,12 @@ export const organizations = pgTable("organizations", {
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   images: json("images"),
+  email: text("email"),
+  address: text("address"),
+  phoneNumber: text("phoneNumber"),
+  bio: text("bio"),
+  latitude: numeric("latitude"),
+  longitude: numeric("longitude"),
 });
 
 export const skills = pgTable("skills", {
@@ -134,6 +141,9 @@ export const listings = pgTable("listings", {
   createdAt: timestamp("createdAt", { mode: "date" })
     .default(sql`NOW()`)
     .notNull(),
+  address: text("address"),
+  latitude: numeric("latitude"),
+  longitude: numeric("longitude"),
 });
 
 export const conversationsToUsers = pgTable(

@@ -1,9 +1,15 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { getOrganizationMessages, getVolunteerMessages } from "./actions";
-import { AnimatedTooltip } from "@/components/ui/animated-tooltip";
+import {
+  AnimatedLinkTooltip,
+  AnimatedTooltip,
+} from "@/components/ui/animated-tooltip";
 import ClipLoader from "react-spinners/ClipLoader";
 import MessageInput from "./messageInput";
+import BackIcon from "@/components/icons/backIcon";
+import Link from "next/link";
+import { pusherClient } from "@/lib/pusher-client";
 
 const Messaging = ({
   userStatus,
@@ -22,9 +28,11 @@ const Messaging = ({
 }) => {
   const [conversations, setConversations] = useState<any>([]);
   const [selectedConversation, setSelectedConversation] = useState<any>();
+  const [conversationIds, setConversationIds] = useState<any>([]);
+
+  const [mobileViewConvSelected, setMobileViewConvSelected] = useState(false);
 
   const chatContainerRef = useRef(null);
-  const textboxRef = useRef(null);
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -51,18 +59,27 @@ const Messaging = ({
     });
 
     setSelectedConversation(currentConversation);
+
+    setMobileViewConvSelected(true);
+  };
+
+  const handleMobileViewChangeClick = () => {
+    setMobileViewConvSelected(false);
+    setSelectedConversation(null);
+    setConversations((prevState: any) => [
+      ...prevState.map((item: any) => {
+        return { ...item, selected: false };
+      }),
+    ]);
   };
 
   const addMessage = (message: any) => {
+    console.log("ran");
     if (message.senderId) {
-      const userImage = selectedConversation.users.find((user: any) => {
-        return user.id == message.senderId;
-      }).image;
-
       const newMessage = {
         ...message,
         content: message.content.replace("/\t/g", "    "),
-        userImage: userImage,
+        userImage: message.userImage,
       };
 
       setSelectedConversation((prevState: any) => {
@@ -75,42 +92,32 @@ const Messaging = ({
             conversation.conversations.id == message.conversationId
         );
 
-        // If the conversation is found, proceed to update it
         if (indexOfNewConversation !== -1) {
-          const oldConversations = [...prevState]; // Make a shallow copy of the previous state
+          const oldConversations = [...prevState];
 
-          const newConversation = oldConversations[indexOfNewConversation]; // Get the existing conversation
+          const newConversation = oldConversations[indexOfNewConversation];
 
-          // Update the messages of the found conversation
           const updatedConversation = {
             ...newConversation,
             messages: [...newConversation.messages, newMessage],
           };
 
-          // Use splice to update the conversation in the array
           oldConversations.splice(
             indexOfNewConversation,
             1,
             updatedConversation
           );
 
-          return oldConversations; // Return the modified array
+          return oldConversations;
         }
 
-        // If the conversation isn't found, return the original state (or handle accordingly)
         return prevState;
       });
     } else if (message.senderOrganizationId) {
-      const organizationImage = selectedConversation.organizations.find(
-        (org: any) => {
-          return org.id == message.senderOrganizationId;
-        }
-      ).thumbnail;
-
       const newMessage = {
         ...message,
         content: message.content.replace(/\t/g, "    "),
-        organizationImage: organizationImage,
+        organizationImage: message.organizationImage,
       };
 
       setSelectedConversation((prevState: any) => {
@@ -163,6 +170,15 @@ const Messaging = ({
           };
         }),
       ]);
+
+      for (let conversation of organizationMessages) {
+        pusherClient.subscribe(conversation.conversations.id);
+
+        setConversationIds((prevState: any) => [
+          ...prevState,
+          conversation.conversations.id,
+        ]);
+      }
     } else {
       setConversations([]);
     }
@@ -186,6 +202,15 @@ const Messaging = ({
           };
         }),
       ]);
+
+      for (let conversation of volunteerMessages) {
+        pusherClient.subscribe(conversation.conversations.id);
+
+        setConversationIds((prevState: any) => [
+          ...prevState,
+          conversation.conversations.id,
+        ]);
+      }
     } else {
       setConversations([]);
     }
@@ -195,28 +220,54 @@ const Messaging = ({
     setLoadingFalse();
   };
   useEffect(() => {
+    const subscribeToConversations = () => {
+      conversations.forEach((conversation: any) => {
+        if (!conversationIds.includes(conversation.conversations.id)) {
+          pusherClient.subscribe(conversation.conversations.id);
+          setConversationIds((prevState: any) => [
+            ...prevState,
+            conversation.conversations.id,
+          ]);
+        }
+      });
+    };
+
     if (userStatus) {
-      getOrganizationMessagesMethod();
+      getOrganizationMessagesMethod().then(subscribeToConversations);
     } else {
-      getVolunteerMessagesMethod();
+      getVolunteerMessagesMethod().then(subscribeToConversations);
     }
+
+    pusherClient.bind("incoming-message", addMessage);
+
+    setMobileViewConvSelected(false);
+
+    return () => {
+      // Unsubscribe from all conversations
+      conversationIds.forEach((conversationId: string) => {
+        pusherClient.unsubscribe(conversationId);
+      });
+      pusherClient.unbind("incoming-message", addMessage);
+    };
   }, [userStatus, userId, organizationId]);
   return (
     <>
       {loading ? (
         <ClipLoader />
       ) : conversations.length > 0 ? (
-        <div className="flex flex-row w-full m-auto border border-2 rounded-xl border-black h-[800px]">
-          <div className="flex flex-col w-2/5 border-r-4 ">
-            <div className="flex flex-col w-full w-full bg-slate-300 rounded-tl-xl py-10 text-center font-bold text-2xl">
+        <div className="flex flex-row w-full m-auto border border-2 border-black h-[800px]">
+          <div
+            className={`flex overflow-y-auto flex-col w-full h-full xl:w-2/5 border-r-4 ${mobileViewConvSelected ? "hidden" : "block"} xl:block`}
+          >
+            <div className="flex flex-col w-full w-full bg-slate-300 py-10 text-center font-bold text-2xl">
               Inbox
             </div>
-            <div className="overflow-y-auto divide-y overflow-x-hidden">
+            <div className="divide-y">
               {conversations.map((conversation: any, index: number) => {
                 let userData = conversation.users.map(
                   (user: any, index: number) => {
                     return {
-                      id: index,
+                      id: user.id,
                       name: user.name,
                       image: user.image,
                       designation: "USER",
@@ -227,7 +278,7 @@ const Messaging = ({
                 let organizationData = conversation.organizations.map(
                   (org: any, index: number) => {
                     return {
-                      id: index + conversation.users.length,
+                      id: org.id,
                       name: org.name,
                       image: JSON.parse(org.thumbnail).storageId,
                       designation: "ORGANIZATION",
@@ -236,7 +287,7 @@ const Messaging = ({
                 );
                 return (
                   <div
-                    className={`flex flex-col justify-center cursor-pointer items-start p-5 ${index == conversations.length - 1 ? "rounded-bl-xl" : ""} ${conversation.selected ? "border-l-4 border-l-indigo-500" : null}`}
+                    className={`flex flex-col justify-center cursor-pointer items-start p-5 ${conversation.selected ? "border-l-4 border-l-indigo-500" : null}`}
                     key={conversation.conversations.id}
                     onClick={() =>
                       changeSelectedConversation(conversation.conversations.id)
@@ -272,33 +323,48 @@ const Messaging = ({
               })}
             </div>
           </div>
-          <div className="flex flex-col w-4/5 h-full">
+          <div
+            className={`flex flex-col w-full xl:w-4/5 h-full ${mobileViewConvSelected ? "block" : "hidden"} xl:block`}
+          >
             <div className="w-full flex flex-col h-full">
               {selectedConversation ? (
                 <div className="flex flex-col justify-between items-center h-full">
-                  <div className="flex flex-col justify-between items-center text-center w-full py-8 border-b-4 border-black">
-                    <h1 className="font-bold text-xl mb-2">
-                      {selectedConversation.conversations.subject}
-                    </h1>
+                  <div className="flex flex-col justify-between items-center w-full py-8 px-4 border-b-4 border-black gap-5 xl:gap-0">
+                    <div className="flex flex-row justify-start w-full items-start">
+                      <div
+                        className="flex flex-col justify-center cursor-pointer"
+                        onClick={handleMobileViewChangeClick}
+                      >
+                        {mobileViewConvSelected ? (
+                          <BackIcon className="text-left w-[30px] h-[30px] w-fit xl:hidden"></BackIcon>
+                        ) : null}
+                        <p className="xl:hidden">Back</p>
+                      </div>
+                      <h1 className="font-bold text-xl mb-2 w-full text-center">
+                        {selectedConversation.conversations.subject}
+                      </h1>
+                    </div>
                     <div className="flex flex-row w-full justify-between gap-2 px-5 items-center">
                       <div className="flex flex-col items-center justify-center font-bold">
                         <h1 className="text-sm">Users</h1>
                         <div className="flex flex-row items-center justify-start">
                           {selectedConversation.users.length > 0 ? (
-                            <AnimatedTooltip
+                            <AnimatedLinkTooltip
                               key={
                                 selectedConversation.conversations.id + "user"
                               }
                               items={selectedConversation.users.map(
                                 (user: any, index: number) => {
                                   return {
-                                    id: index,
+                                    id: user.id,
                                     name: user.name,
                                     image: user.image,
                                     designation: user.bio,
                                   };
                                 }
                               )}
+                              type="volunteer"
+                              className="cursor-pointer"
                             />
                           ) : (
                             <h1 className="text-center w-full">NONE</h1>
@@ -309,21 +375,22 @@ const Messaging = ({
                         <h1 className="text-sm">Organizations</h1>
                         <div className="flex flex-row items-center justify-center">
                           {selectedConversation.organizations.length > 0 ? (
-                            <AnimatedTooltip
+                            <AnimatedLinkTooltip
                               key={
                                 selectedConversation.conversations.id + "org"
                               }
                               items={selectedConversation.organizations.map(
                                 (org: any, index: number) => {
                                   return {
-                                    id:
-                                      index + selectedConversation.users.length,
+                                    id: org.id,
                                     name: org.name,
                                     image: JSON.parse(org.thumbnail).storageId,
                                     designation: "ORGANIZATION",
                                   };
                                 }
                               )}
+                              className="cursor-pointer"
+                              type="organization"
                             />
                           ) : (
                             <h1 className="text-center w-full">NONE</h1>
@@ -343,9 +410,9 @@ const Messaging = ({
                             <img
                               src={message.userImage}
                               alt="Sender User"
-                              className="w-[100px] h-[100px] rounded-full"
+                              className="w-[40px] h-[40px] rounded-full"
                             />
-                            <p className="rounded-xl bg-blue-400 h-fit p-5">
+                            <p className="rounded-xl bg-blue-400 h-fit p-3 text-sm">
                               {message.content
                                 .replace(/^["']|["']$/g, "")
                                 .replace(/\\(['"])/g, "$1")}
@@ -360,9 +427,9 @@ const Messaging = ({
                                 JSON.parse(message.organizationImage).storageId
                               }
                               alt="Sender Organization"
-                              className="w-[100px] h-[100px] rounded-full"
+                              className="w-[40px] h-[40px] rounded-full"
                             />
-                            <p className="rounded-xl bg-blue-400 h-fit p-5">
+                            <p className="rounded-xl bg-blue-400 h-fit p-3 text-sm">
                               {message.content
                                 .replace(/^["']|["']$/g, "")
                                 .replace(/\\(['"])/g, "$1")}
@@ -379,12 +446,13 @@ const Messaging = ({
                       userId={!userStatus ? userId : null}
                       conversationId={selectedConversation.conversations.id}
                       addMessage={addMessage}
+                      selectedConversation={selectedConversation}
                     />
                   </div>
                 </div>
               ) : (
                 <div className="flex flex-col justify-between items-start h-full">
-                  <h1 className="font-bold text-xl text-center w-full py-8 border-b-4 border-black">
+                  <h1 className="font-bold text-xl text-center w-full py-10 border-b-4 border-black">
                     Please Select a Conversation
                   </h1>
                   <div className="w-full h-full"></div>
