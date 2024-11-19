@@ -27,7 +27,10 @@ import { Card } from "@/components/ui/card";
 import { deleteIndividualListing, filterListings } from "../actions";
 import { useRouter } from "next/navigation";
 import useUserStatusStore from "@/stores/userStatusStore";
-import { revalidateListingPaths } from "@/app/edit/[slug]/actions";
+import {
+  revalidateIndividualListing,
+  revalidateListingPaths,
+} from "@/app/edit/[slug]/actions";
 import { volunteerForSpecificOpportunity } from "../actions";
 
 type Skill = {
@@ -103,6 +106,7 @@ export default function Userpage({
   const volunteerSpecificListing = async (listingId: string) => {
     await volunteerForSpecificOpportunity(listingId);
     revalidateListingPaths();
+    revalidateIndividualListing(listingId);
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -255,7 +259,14 @@ export default function Userpage({
                       >
                         <div className="flex flex-col justify-between h-full w-full">
                           <div>
-                            <h1 className="font-bold text-center text-xl">
+                            <h1
+                              className="font-bold text-center text-xl hover:text-blue-500 cursor-pointer"
+                              onClick={() =>
+                                router.push(
+                                  `/view/listing/${listing.listings.id}`
+                                )
+                              }
+                            >
                               {listing.listings.name}
                             </h1>
                             <img

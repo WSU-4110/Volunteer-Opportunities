@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/button";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { Card } from "@/components/ui/card";
 import MapComponent from "@/components/map";
+import { useRouter } from "next/navigation";
 
 const ViewerPageClient = ({ organizations }: { organizations: any }) => {
+  const router = useRouter();
   return (
     <div>
       {organizations ? (
@@ -84,11 +86,13 @@ const ViewerPageClient = ({ organizations }: { organizations: any }) => {
               <section className="w-full max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-8 mt-8">
                 <div className="text-center">
                   <p className="text-gray-700 font-semibold">📍 Address</p>
-                  {organizations.latitude && organizations.longitude && (
+                  {organizations.latitude && organizations.longitude ? (
                     <MapComponent
                       latitude={parseFloat(organizations.latitude)}
                       longitude={parseFloat(organizations.longitude)}
                     />
+                  ) : (
+                    <h1>No Address</h1>
                   )}
                   <p className="text-gray-700 font-semibold">
                     {organizations.address}
@@ -105,6 +109,9 @@ const ViewerPageClient = ({ organizations }: { organizations: any }) => {
                     <Card
                       key={opportunity.id}
                       className="p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-lg cursor-pointer"
+                      onClick={() =>
+                        router.push(`/view/listing/${opportunity.id}`)
+                      }
                     >
                       <div className="flex items-center gap-4">
                         <img

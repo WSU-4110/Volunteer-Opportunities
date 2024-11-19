@@ -163,3 +163,7 @@ export const revalidateListingPaths = () => {
   revalidatePath("/explore");
   revalidatePath("/profile/view");
 };
+
+export const revalidateIndividualListing = (listingId: string) => {
+  revalidatePath(`/view/listing/${listingId}`);
+};

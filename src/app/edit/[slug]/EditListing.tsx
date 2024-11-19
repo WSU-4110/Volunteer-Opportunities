@@ -2,7 +2,7 @@
 
 import { Textarea } from "@/components/ui/textarea";
 
-import { updateListing } from "./actions";
+import { revalidateIndividualListing, updateListing } from "./actions";
 import { useEffect, useRef, useState } from "react";
 import {
   Form,
@@ -242,6 +242,7 @@ export default function EditListing({
       }
 
       revalidatePathAction();
+      revalidateIndividualListing(listing.id);
 
       router.push("/explore");
     } catch (error) {
