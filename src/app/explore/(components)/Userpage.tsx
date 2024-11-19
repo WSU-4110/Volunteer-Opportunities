@@ -373,9 +373,6 @@ export default function Userpage({
                 </h1>
               )}
             </div>
-            <div className="w-full xl:flex-1 p-4">
-              <MapMultipleLocations listings={listings} />
-            </div>
           </div>
         </div>
       </div>

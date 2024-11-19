@@ -123,7 +123,7 @@ const Navbar = ({
                                 <Link href={"/explore"} className="block">
                                   {!userStatus
                                     ? "Search for listings that suit you"
-                                    : "Search for the right volunteer for your organization"}
+                                    : "Search for volunteers for your organization"}
                                 </Link>
                               </SheetClose>
                             </div>
@@ -231,7 +231,7 @@ const Navbar = ({
                     <div className="flex flex-col space-y-4 text-sm">
                       {!userStatus
                         ? "Search for listings that suit you"
-                        : "Search for the right volunteer for your organization"}
+                        : "Search for volunteers for your organization"}
                     </div>
                   </MenuItem>
                 </HoveredLink>
@@ -400,7 +400,7 @@ const Navbar = ({
                     <div className="flex flex-col space-y-4 text-sm">
                       {!userStatus
                         ? "Search for listings that suit you"
-                        : "Search for the right volunteer for your organization"}
+                        : "Search for volunteers for your organization"}
                     </div>
                   </MenuItem>
                 </HoveredLink>
