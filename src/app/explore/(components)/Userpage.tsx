@@ -54,7 +54,7 @@ export default function Userpage({
   const router = useRouter();
   const [skillOptions, setSkillOptions] = useState<Skill[]>(skills);
   const [filterSkills, setFilterSkills] = useState<Skill[]>([]);
-  const [showMap, setShowMap] = useState(false);
+  const [showMap, setShowMap] = useState<boolean>(true);
 
   const [currentSkill, setCurrentSkill] = useState("");
 
@@ -251,7 +251,13 @@ export default function Userpage({
             <div className="xl:flex-1 p-20 bg-white shadow-lg rounded-xl min-h-[800px]">
               <h1 className="text-2xl font-bold text-center">Listings</h1>
               {listings.length > 0 ? (
-                <div className="grid grid-cols-1 xl:grid-cols-2 flex-wrap max-h-full overflow-y-auto mt-5 gap-4">
+                <div
+                  className={
+                    showMap
+                      ? "grid grid-cols-1 xl:grid-cols-2 flex-wrap max-h-full overflow-y-auto mt-5 gap-4"
+                      : "grid grid-cols-1 xl:grid-cols-3 flex-wrap max-h-full overflow-y-auto mt-5 gap-4"
+                  }
+                >
                   {listings?.map((listing: any) => {
                     return (
                       <Card
@@ -372,7 +378,32 @@ export default function Userpage({
                 </h1>
               )}
             </div>
-            <div className={`w-full xl:flex-1 p-4 hidden`}>
+            <div>
+              {showMap ? (
+                <Button
+                  className="flex justify-center h-screen"
+                  type="button"
+                  variant="secondary"
+                  onClick={() => setShowMap(false)}
+                >
+                  &gt;
+                </Button>
+              ) : (
+                <Button
+                  className="flex justify-center h-screen"
+                  type="button"
+                  variant="secondary"
+                  onClick={() => setShowMap(true)}
+                >
+                  &lt;
+                </Button>
+              )}
+            </div>
+            <div
+              className={
+                showMap ? `w-full xl:flex-1 p-4` : `w-full xl:flex-1 p-4 hidden`
+              }
+            >
               <MapMultipleLocations listings={listings} />
             </div>
           </div>
