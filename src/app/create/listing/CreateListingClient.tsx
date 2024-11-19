@@ -379,7 +379,14 @@ const CreateListing = ({
                 </FormItem>
               )}
             />
-            <Button type="submit">Submit</Button>
+            <div className="w-full text-center ">
+              <Button
+                className="w-24 text-lg bg-volunteer hover:bg-blue-400"
+                type="submit"
+              >
+                Submit
+              </Button>
+            </div>
           </form>
         </Form>
       </div>

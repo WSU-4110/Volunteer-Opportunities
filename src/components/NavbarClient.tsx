@@ -50,7 +50,7 @@ const Navbar = ({
 
   return (
     <>
-      <div className="flex w-[100%] flex-row justify-between items-center m-auto py-1 px-14 2xl:px-20 sticky z-[40] shadow-lg">
+      <div className="flex h-24 w-[100%] flex-row justify-between items-center m-auto py-1 px-14 2xl:px-20 sticky z-[40] shadow-lg">
         <Link className="text-2xl cursor-pointer min-w-[240px]" href="/">
           <div className="flex flex-col justify-center items-center">
             <img
@@ -122,8 +122,8 @@ const Navbar = ({
                               <SheetClose asChild>
                                 <Link href={"/explore"} className="block">
                                   {!userStatus
-                                    ? "Search for the volunteer listings that correspond with your skills"
-                                    : "Search for the right volunteer for your organizational needs"}
+                                    ? "Search for listings that suit you"
+                                    : "Search for the right volunteer for your organization"}
                                 </Link>
                               </SheetClose>
                             </div>
@@ -230,8 +230,8 @@ const Navbar = ({
                   >
                     <div className="flex flex-col space-y-4 text-sm">
                       {!userStatus
-                        ? "Search for the volunteer listings that correspond with your skills"
-                        : "Search for the right volunteer for your organizational needs"}
+                        ? "Search for listings that suit you"
+                        : "Search for the right volunteer for your organization"}
                     </div>
                   </MenuItem>
                 </HoveredLink>
@@ -399,8 +399,8 @@ const Navbar = ({
                   >
                     <div className="flex flex-col space-y-4 text-sm">
                       {!userStatus
-                        ? "Search for the volunteer listings that correspond with your skills"
-                        : "Search for the right volunteer for your organizational needs"}
+                        ? "Search for listings that suit you"
+                        : "Search for the right volunteer for your organization"}
                     </div>
                   </MenuItem>
                 </HoveredLink>
