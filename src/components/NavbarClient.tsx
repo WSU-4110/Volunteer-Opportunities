@@ -92,7 +92,7 @@ const Navbar = ({
                   </div>
                 </SheetTrigger>
                 <SheetContent
-                  side="left"
+                  side="right"
                   className="w-[90%] md:w-1/2 overflow-y-scroll hidden-scrollbar"
                 >
                   <SheetHeader className="h-full">
@@ -334,7 +334,7 @@ const Navbar = ({
                   </div>
                 </SheetTrigger>
                 <SheetContent
-                  side="left"
+                  side="right"
                   className="w-[90%] md:w-1/2 overflow-y-scroll hidden-scrollbar"
                 >
                   <SheetHeader>
