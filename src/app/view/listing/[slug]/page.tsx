@@ -122,7 +122,9 @@ const ListingPage = async ({ params }: { params: { slug: string } }) => {
               <h2 className="text-xl font-semibold mb-4 text-center">
                 Volunteers
               </h2>
-              <div className="grid grid-cols-1 xl:grid-cols-4 gap-4">
+              <div
+                className={`${listing?.volunteers && listing?.volunteers.length > 0 ? "grid grid-cols-1 xl:grid-cols-4 gap-4" : null}`}
+              >
                 {listing?.volunteers && listing?.volunteers.length > 0 ? (
                   <>
                     {listing.volunteers.map((vol) => {

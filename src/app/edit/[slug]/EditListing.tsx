@@ -422,7 +422,7 @@ export default function EditListing({
                   </FormItem>
                 )}
               />
-              <div className="flex justify-start gap-4">
+              <div className="w-full text-center">
                 <Button type="submit">Submit</Button>
               </div>
             </form>

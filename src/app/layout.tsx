@@ -19,7 +19,6 @@ const geistMono = localFont({
 const raleWayFont = localFont({
   src: "/fonts/Raleway-Regular.woff",
   variable: "--font-raleway",
-  weight: "100 900",
 });
 
 export const metadata: Metadata = {
