@@ -31,18 +31,15 @@ export const createListingAction = authenticatedAction
     try {
       let listing;
       if (thumbnail) {
-        console.log("ran with picture");
         const image = await putImage(thumbnail.get("data"));
         const url = await getImage(image);
 
-        listing = await database
-          .insert(listings)
-          .values({
-            ...rest,
-            thumbnail: url,
-            latitude: coordinates.latitude as any,
-            longitude: coordinates.longitude as any,
-          });
+        listing = await database.insert(listings).values({
+          ...rest,
+          thumbnail: url,
+          latitude: coordinates.latitude as any,
+          longitude: coordinates.longitude as any,
+        });
       } else {
         listing = await database
           .insert(listings)

@@ -79,10 +79,9 @@ export const FileUpload = ({
           <div className="relative w-full mt-10 max-w-xl mx-auto">
             {files.length > 0 &&
               files.map((file, idx) => (
-                <div>
+                <div key={"file" + idx}>
                   {idx < 1 && (
                     <motion.div
-                      key={"file" + idx}
                       layoutId={
                         idx === 0 ? "file-upload" : "file-upload-" + idx
                       }

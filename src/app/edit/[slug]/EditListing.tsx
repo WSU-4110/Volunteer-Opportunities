@@ -2,7 +2,6 @@
 
 import { Textarea } from "@/components/ui/textarea";
 
-import Listing from "@/app/explore/(components)/Listing";
 import { updateListing } from "./actions";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -16,7 +15,6 @@ import {
 } from "@/components/ui/form";
 import { FileUpload } from "@/app/profile/view/(components)/fileUpload";
 import { Button } from "@/components/ui/button";
-import PhoneInput from "react-phone-input-2";
 import { Input } from "@/components/ui/input";
 import {
   Command,

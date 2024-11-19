@@ -10,6 +10,7 @@ import {
   skillsToListings,
   organizations,
   users,
+  listingsToUsers,
 } from "@/database/schema";
 
 import { z } from "zod";
@@ -45,11 +46,26 @@ export const getListings = unauthenticatedAction
           ), '[]'::json
         ) AS skills`,
           organizations,
+          volunteers: sql`
+          COALESCE(
+            (
+              SELECT json_agg(subquery) 
+              FROM (
+                SELECT DISTINCT ON (u.id)
+                  u.id, u.name, u.image
+                FROM "user" AS u
+                JOIN "listing_volunteers" AS ltu ON ltu."userId" = u.id
+                WHERE ltu."listing_id" = listings.id
+              ) as subquery
+            ), '[]'::json
+          ) AS users`,
         })
         .from(listings)
         .leftJoin(organizations, eq(listings.organizationId, organizations.id))
         .groupBy(listings.id, organizations.id)
         .execute();
+
+      console.log(results);
 
       return results;
     } catch (err) {
@@ -95,6 +111,19 @@ export const filterListings = authenticatedAction
           ), '[]'::json
         ) AS skills`,
             organizations,
+            volunteers: sql`
+          COALESCE(
+            (
+              SELECT json_agg(subquery) 
+              FROM (
+                SELECT DISTINCT ON (u.id)
+                  u.id, u.name, u.image
+                FROM "user" AS u
+                JOIN "listing_volunteers" AS ltu ON ltu."userId" = u.id
+                WHERE ltu."listing_id" = listings.id
+              ) as subquery
+            ), '[]'::json
+          ) AS users`,
           })
           .from(listings)
           .leftJoin(
@@ -135,6 +164,19 @@ export const filterListings = authenticatedAction
       }
     }
   );
+
+export const volunteerForSpecificOpportunity = authenticatedAction
+  .createServerAction()
+  .input(z.string())
+  .handler(async ({ ctx: { user }, input }) => {
+    try {
+      await database
+        .insert(listingsToUsers)
+        .values({ volunteerId: user.id, listingId: input });
+    } catch (err) {
+      console.log(err);
+    }
+  });
 
 export const deleteIndividualListing = authenticatedAction
   .createServerAction()
