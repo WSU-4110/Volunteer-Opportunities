@@ -1,23 +1,47 @@
-export function add(a : number[], b : number[]) {
-    return a.map((value, index) => value + b[index]);
-}
+export class Vector {
+    v : number[]
 
-export function pairwise_mult(a : number[], b : number[]) {
-    return a.map((value, index) => value * b[index]);
-}
+    constructor(v : number[]) {
+        this.v = v;
+    }
 
-export function dot(a : number[], b : number[]) {
-    return pairwise_mult(a, b).reduce((prev, curr) => prev + curr);
-}
+    add(b : Vector) {
+        if (this.v.length !== b.v.length) {
+            throw new Error("Dimension of v doesn't match dimension of b");
+        }
 
-export function scalar_mult(a : number, b : number[]) {
-    return b.map((value) => a * value);
-}
+        return new Vector(this.v.map((value, index) => value + b.v[index]));
+    }
+    
+    pairwise_mult(b : Vector) {
+        if (this.v.length !== b.v.length) {
+            throw new Error("Dimension of v doesn't match dimension of b");
+        }
 
-export function negate(a : number[]) {
-    return a.map((value) => -value);
-}
+        return new Vector(this.v.map((value, index) => value * b.v[index]));
+    }
+    
+    dot(b : Vector) {
+        if (this.v.length !== b.v.length) {
+            throw new Error("Dimension of v doesn't match dimension of b");
+        }
+        
+        if (this.v.length === 0) {
+            return 0;
+        }
 
-export function reverse(a : number[]) {
-    return a.map((value, index) => a[a.length - 1 - index]);
+        return this.pairwise_mult(b).v.reduce((prev, curr) => prev + curr);
+    }
+    
+    scalar_mult(a : number) {
+        return new Vector(this.v.map((value) => a * value));
+    }
+    
+    negate() {
+        return new Vector(this.v.map((value) => -value));
+    }
+    
+    reverse() {
+        return new Vector(this.v.map((value, index) => this.v[this.v.length - 1 - index]));
+    }
 }
