@@ -28,7 +28,7 @@ export default function Home() {
           <h1>What do we do?</h1>
         </div>
         <div className="font-medium text-center text-[12pt] mx-20">
-          At Volunteer Opportunites, we believe that every individual has the
+          At Volunteer Opportunities, we believe that every individual has the
           power to make a difference. Our platform serves as a comprehensive
           resource for those eager to contribute their time, skills, and passion
           to causes that matter. Whether you’re a seasoned volunteer or looking
