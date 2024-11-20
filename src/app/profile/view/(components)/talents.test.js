@@ -29,6 +29,20 @@ describe("Talents component", () => {
     expect(button).toBeInTheDocument();
   });
   //Test 2
+  test("Rendering A Talent", async () => {
+    render(
+      <Talents
+        addSkill={addSkill}
+        removeSkill={removeSkill}
+        skillsUserHas={[{ skillId: "1", skillName: "Skill 1", url: "" }]}
+        skillsUserDoesntHave={[]}
+      />
+    );
+    const skill1 = await screen.getByText("Skill 1");
+
+    expect(skill1).toBeInTheDocument();
+  });
+  //Test 3
   test("Rendering Multiple Talents", async () => {
     render(
       <Talents

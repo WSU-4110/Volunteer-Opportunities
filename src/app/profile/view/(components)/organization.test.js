@@ -1,5 +1,12 @@
-import { render, screen, cleanup, fireEvent } from "@testing-library/react";
+import {
+  act,
+  render,
+  screen,
+  cleanup,
+  fireEvent,
+} from "@testing-library/react";
 import "@testing-library/jest-dom";
+
 import React from "react";
 import Organization from "./organization";
 import { describe } from "node:test";
@@ -9,7 +16,6 @@ afterEach(() => {
 });
 
 describe("Organization Profile View/Edit Tests", () => {
-  const setEditProfile = jest.fn();
   // Using
   const organizations = [
     {
@@ -59,6 +65,7 @@ describe("Organization Profile View/Edit Tests", () => {
   ];
   //Test 1
   test("Organization Page Rendering all elements", async () => {
+    const setEditProfile = jest.fn();
     render(
       <Organization
         organizations={organizations}
@@ -86,6 +93,7 @@ describe("Organization Profile View/Edit Tests", () => {
 
   //Test 2
   test("Organization Edit Button working", async () => {
+    const setEditProfile = jest.fn();
     render(
       <Organization
         organizations={organizations}
@@ -104,6 +112,7 @@ describe("Organization Profile View/Edit Tests", () => {
 
   //Test 3
   test("Organization Edit Page Rendering all elements", async () => {
+    const setEditProfile = jest.fn();
     render(
       <Organization
         organizations={organizations}
@@ -119,7 +128,7 @@ describe("Organization Profile View/Edit Tests", () => {
     const address = await screen.findByText("Address");
     const phone = await screen.findByText("Phone");
     const edit_button = await screen.findByText("Edit");
-    const submit_button = await screen.findByText("Submit");
+    const submit_button = await screen.findByTestId("submit");
     const cancel_button = await screen.findByText("Cancel");
 
     expect(name).toBeInTheDocument();
@@ -133,6 +142,7 @@ describe("Organization Profile View/Edit Tests", () => {
   });
   //Test 4
   test("Toggle Edit picture button working", async () => {
+    const setEditProfile = jest.fn();
     render(
       <Organization
         organizations={organizations}
@@ -143,7 +153,9 @@ describe("Organization Profile View/Edit Tests", () => {
     );
     const edit_button = await screen.findByText("Edit");
     expect(edit_button).toBeInTheDocument();
-    fireEvent.click(edit_button);
+    act(() => {
+      fireEvent.click(edit_button);
+    });
 
     const image_upload = await screen.findByText("Upload file");
 
@@ -151,6 +163,7 @@ describe("Organization Profile View/Edit Tests", () => {
   });
   //Test 5
   test("Button Testing", async () => {
+    const setEditProfile = jest.fn();
     render(
       <Organization
         organizations={organizations}
@@ -159,15 +172,19 @@ describe("Organization Profile View/Edit Tests", () => {
         setEditProfile={setEditProfile}
       />
     );
+    const cancel_button = await screen.findByTestId("cancel");
 
-    const submit_button = await screen.findByText("Submit");
-    expect(submit_button).toBeInTheDocument();
-    fireEvent.click(submit_button);
+    expect(cancel_button).toBeInTheDocument();
+    expect(cancel_button).not.toBeDisabled();
+    expect(cancel_button).toBeVisible();
+    fireEvent.click(cancel_button);
+
     expect(setEditProfile).toHaveBeenCalled();
   });
 
   //Test 6
   test("Button Testing 2", async () => {
+    const setEditProfile = jest.fn();
     render(
       <Organization
         organizations={organizations}
@@ -176,10 +193,15 @@ describe("Organization Profile View/Edit Tests", () => {
         setEditProfile={setEditProfile}
       />
     );
+    const submit_button = await screen.findByTestId("submit");
 
-    const cancel_button = await screen.findByText("Submit");
-    expect(cancel_button).toBeInTheDocument();
-    fireEvent.click(cancel_button);
+    console.log(submit_button);
+    expect(submit_button).toBeInTheDocument();
+    expect(submit_button).not.toBeDisabled();
+    expect(submit_button).toBeVisible();
+
+    fireEvent.click(submit_button);
+
     expect(setEditProfile).toHaveBeenCalled();
   });
 });

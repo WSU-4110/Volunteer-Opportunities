@@ -160,6 +160,7 @@ const EditOrgPage = ({ ...props }: any) => {
     setOpen(false);
   };
   async function onSubmit(values: z.infer<typeof orgSchema>) {
+    console.log("Testing reached");
     try {
       const form: FormData = new FormData();
       //console.log(files);
@@ -350,11 +351,14 @@ const EditOrgPage = ({ ...props }: any) => {
             )}
           />
           <div className="flex justify-start gap-4">
-            <Button type="submit">Submit</Button>
+            <Button type="submit" data-testid="submit">
+              Submit
+            </Button>
             <Button
               onClick={() => props.setEditProfile(false)}
               type="button"
               variant="destructive"
+              data-testid="cancel"
             >
               Cancel
             </Button>
