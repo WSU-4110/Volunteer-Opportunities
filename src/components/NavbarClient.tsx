@@ -121,9 +121,7 @@ const Navbar = ({
                             <div className="ml-5 mb-5 flex flex-col gap-3">
                               <SheetClose asChild>
                                 <Link href={"/explore"} className="block">
-                                  {!userStatus
-                                    ? "Search for listings that suit you"
-                                    : "Search for volunteers for your organization"}
+                                  Search for listings that suit you
                                 </Link>
                               </SheetClose>
                             </div>
@@ -229,9 +227,7 @@ const Navbar = ({
                     item="Explore"
                   >
                     <div className="flex flex-col space-y-4 text-sm">
-                      {!userStatus
-                        ? "Search for listings that suit you"
-                        : "Search for volunteers for your organization"}
+                      Search for listings that suit you
                     </div>
                   </MenuItem>
                 </HoveredLink>
@@ -361,8 +357,7 @@ const Navbar = ({
                             <div className="ml-5 mb-5 flex flex-col gap-3">
                               <SheetClose asChild>
                                 <Link href={"/explore"} className="block">
-                                  Search for your volunteering or organizational
-                                  needs
+                                  Search for listings that suit you
                                 </Link>
                               </SheetClose>
                             </div>
@@ -398,9 +393,7 @@ const Navbar = ({
                     item="Explore"
                   >
                     <div className="flex flex-col space-y-4 text-sm">
-                      {!userStatus
-                        ? "Search for listings that suit you"
-                        : "Search for volunteers for your organization"}
+                      Search for listings that suit you
                     </div>
                   </MenuItem>
                 </HoveredLink>
