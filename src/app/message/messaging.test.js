@@ -1,20 +1,42 @@
 import Home from "@/app/page.tsx";
 import { render, screen } from "@testing-library/react";
+import useEmblaCarousel from "embla-carousel-react";
+import "@testing-library/jest-dom";
 
-test("adds 1 + 2 to equal 3", () => {
-  render(<Home></Home>);
-  const descriptionText = screen.getByText(
-    /Welcome to Volunteer Opportunities/i
-  );
-
-  expect(descriptionText);
+// Mock useEmblaCarousel
+jest.mock("embla-carousel-react", () => {
+  return jest.fn(() => [
+    jest.fn(), // carouselRef
+    {
+      canScrollPrev: jest.fn(() => true),
+      canScrollNext: jest.fn(() => true),
+      scrollPrev: jest.fn(),
+      scrollNext: jest.fn(),
+      on: jest.fn(),
+      off: jest.fn(),
+    },
+  ]);
 });
 
-test("adds 1 + 2 to equal 3", () => {
-  render(<Home></Home>);
-  const descriptionText = screen.getByText(
-    /Welcome to Volunteer Opportunities/i
-  );
+beforeEach(() => {
+  // Mock IntersectionObserver
+  const mockIntersectionObserver = jest.fn();
+  mockIntersectionObserver.mockReturnValue({
+    observe: jest.fn(),
+    unobserve: jest.fn(),
+    disconnect: jest.fn(),
+  });
+  window.IntersectionObserver = mockIntersectionObserver;
+});
 
-  expect(descriptionText);
+describe("Home Page Tests", () => {
+  it("renders the correct heading text", async () => {
+    render(<Home />);
+
+    // Match the heading text "Welcome to Volunteer Opportunities"
+    const heading = await screen.findByRole("heading", {
+      name: /welcome to volunteer opportunities/i,
+    });
+    expect(heading).toBeInTheDocument();
+  });
 });
