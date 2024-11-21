@@ -48,10 +48,12 @@ const typewriter = () => {
               </h1>
             </div>
             <div className="font-medium text-[12pt] text-center">
-              “It's easy to make a buck. It's a lot tougher to make a
-              difference.”
-              <br></br>
-              -Tom Brokaw
+              <h1>
+                “It's easy to make a buck. It's a lot tougher to make a
+                difference”
+                <br></br>
+                -Tom Brokaw
+              </h1>
             </div>
           </div>
         </div>
