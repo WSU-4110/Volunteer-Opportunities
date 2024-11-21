@@ -48,6 +48,8 @@ describe("Talent component", () => {
     const button = await screen.getByTestId("button");
 
     expect(button).toBeInTheDocument();
+    expect(button).not.toBeDisabled();
+    expect(button).toBeVisible();
     fireEvent.click(button);
 
     expect(removeSkill).toHaveBeenCalled();

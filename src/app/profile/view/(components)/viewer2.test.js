@@ -65,12 +65,15 @@ describe("Volunteer Profile View", () => {
     const edit = await screen.getByTestId("buttonEdit");
 
     expect(addOrg).toBeInTheDocument();
-
+    expect(addOrg).not.toBeDisabled();
+    expect(addOrg).toBeVisible();
     fireEvent.click(addOrg);
 
     expect(setAddOrg).toHaveBeenCalled();
 
     expect(edit).toBeInTheDocument();
+    expect(edit).not.toBeDisabled();
+    expect(edit).toBeVisible();
 
     fireEvent.click(edit);
 

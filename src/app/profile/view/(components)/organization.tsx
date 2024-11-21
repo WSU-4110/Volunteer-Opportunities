@@ -68,6 +68,14 @@ type choice = {
 const formSchema = z.object({
   id: z.string(),
 });
+// exported schema for testing
+export const orgSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email(),
+  address: z.string().min(1, "Address is required"),
+  phoneNumber: z.string().min(1, "Phone Number is required"),
+  bio: z.string().min(1, "Bio is required"),
+});
 
 const EditOrgPage = ({ ...props }: any) => {
   const [addressSuggestions, setAddressSuggestions] = useState([]);
@@ -76,13 +84,6 @@ const EditOrgPage = ({ ...props }: any) => {
     latitude: parseFloat(props.organizations[props.org.pos].latitude) || 0,
   });
   const [validAddressSelected, setValidAddressSelected] = useState(true);
-  const orgSchema = z.object({
-    name: z.string().min(1, "Name is required"),
-    email: z.string().email(),
-    address: z.string().min(1, "Address is required"),
-    phoneNumber: z.string().min(1, "Phone Number is required"),
-    bio: z.string().min(1, "Bio is required"),
-  });
 
   const form = useForm<z.infer<typeof orgSchema>>({
     resolver: zodResolver(orgSchema),
@@ -160,10 +161,9 @@ const EditOrgPage = ({ ...props }: any) => {
     setOpen(false);
   };
   async function onSubmit(values: z.infer<typeof orgSchema>) {
-    console.log("Testing reached");
     try {
       const form: FormData = new FormData();
-      //console.log(files);
+
       if (files.length > 0) {
         const data: File = await files[0];
         form.append("data", data);
@@ -370,9 +370,6 @@ const EditOrgPage = ({ ...props }: any) => {
 };
 
 const ViewOrgPage = (props: any) => {
-  //console.log(props.listings[0][0]);
-  //console.log(props.org.pos);
-  //console.log(props.listings[props.org.pos][0]);
   return (
     <div>
       <div className="w-full m-auto mt-10">
