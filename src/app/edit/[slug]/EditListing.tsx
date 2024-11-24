@@ -267,7 +267,7 @@ export default function EditListing({
                     <FormControl>
                       <Input placeholder="Listing Title" {...field} />
                     </FormControl>
-                    <FormDescription>Choose your listing title</FormDescription>
+                    <FormDescription>Choose your Listing Title</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -422,8 +422,13 @@ export default function EditListing({
                   </FormItem>
                 )}
               />
-              <div className="flex justify-start gap-4">
-                <Button type="submit">Submit</Button>
+              <div className="w-full text-center ">
+                <Button
+                  className="w-24 text-lg bg-volunteer hover:bg-blue-400"
+                  type="submit"
+                >
+                  Submit
+                </Button>
               </div>
             </form>
           </Form>

@@ -54,6 +54,7 @@ export default function Userpage({
   const router = useRouter();
   const [skillOptions, setSkillOptions] = useState<Skill[]>(skills);
   const [filterSkills, setFilterSkills] = useState<Skill[]>([]);
+  const [showMap, setShowMap] = useState<boolean>(true);
 
   const [currentSkill, setCurrentSkill] = useState("");
 
@@ -135,17 +136,16 @@ export default function Userpage({
     <>
       <div className="w-full mt-12">
         <h1 className="text-2xl text-center font-bold my-12">
-          Explore Organizations Offering Volunteer Opportunities That Need Your
-          Assistance in Completing Their Goals
+          Explore Volunteer Opportunities
         </h1>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <div className="flex flex-col items-center justify-start gap-30">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <div className="flex flex-col items-center justify-start">
               <div className="flex flex-col xl:flex-row justify-between items-start gap-5 w-[90%] m-auto">
-                <div className="flex-1 flex flex-col justify-center items-center gap-2 w-full">
+                <div className="flex-1 flex flex-col justify-center items-center gap-5 w-full">
                   <div className="flex flex-col justify-center gap-4 w-full">
                     <FormItem>
-                      <FormLabel>Filter Listings By Skills</FormLabel>
+                      <FormLabel>Filter Listings by Skills</FormLabel>
                       <Select
                         onValueChange={handleSkillOptionSelect}
                         value={currentSkill}
@@ -201,7 +201,7 @@ export default function Userpage({
                         <FormLabel>Filter Listings by Title</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="Listing Title"
+                            placeholder="Title"
                             {...field}
                             onKeyDown={handleKeyDown}
                           />
@@ -220,10 +220,10 @@ export default function Userpage({
                     name="description"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Filter Listings By Description</FormLabel>
+                        <FormLabel>Filter Listings by Description</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="Organization Name"
+                            placeholder="Description"
                             {...field}
                             onKeyDown={handleKeyDown}
                           />
@@ -237,8 +237,11 @@ export default function Userpage({
                   />
                 </div>
               </div>
-              <div className="w-full text-center mt-12">
-                <Button type="submit" className="w-1/2">
+              <div className="w-full text-center mt-4">
+                <Button
+                  type="submit"
+                  className="w-24 text-2xl bg-volunteer hover:bg-blue-400"
+                >
                   Filter
                 </Button>
               </div>
@@ -278,7 +281,7 @@ export default function Userpage({
                             <h1 className="font-bold text-xl mt-4">
                               Skills Needed:
                             </h1>
-                            <div className="flex flex-row gap-2 ">
+                            <div className="flex flex-row gap-2 flex-wrap">
                               {listing.skills.length > 0 ? (
                                 listing.skills.map((skill: any) => {
                                   return (
@@ -354,8 +357,8 @@ export default function Userpage({
                                   {listing.volunteers.some(
                                     (vol: any) => vol.id == userId
                                   )
-                                    ? "You have already volunteered for this"
-                                    : "Volunteer for This Opportunity"}
+                                    ? "Successfully Volunteered!"
+                                    : "Volunteer"}
                                 </Button>
                               ) : null}
                             </div>

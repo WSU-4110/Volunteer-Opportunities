@@ -42,14 +42,18 @@ const typewriter = () => {
               words={words}
               handleIndexChange={handleIndexChange}
             />
-            <div className="font-medium font-bold text-[30pt]">
-              Welcome to Volunteer Opportunites
+            <div>
+              <h1 className="font-medium font-bold text-[30pt]">
+                Welcome to Volunteer Opportunities
+              </h1>
             </div>
             <div className="font-medium text-[12pt] text-center">
-              “It's easy to make a buck. It's a lot tougher to make a
-              difference.”
-              <br></br>
-              -Tom Brokaw
+              <h1>
+                “It's easy to make a buck. It's a lot tougher to make a
+                difference”
+                <br></br>
+                -Tom Brokaw
+              </h1>
             </div>
           </div>
         </div>

@@ -222,68 +222,21 @@ const InitializeMessageComponent = ({
                                 />
                                 <h1>{otherUser.name}</h1>
                               </div>
-                              <div className="flex-1 text-center">
-                                <h1>
-                                  Activities this user has participated in:
-                                </h1>
-                                <div className="flex flex-row m-4 overflow-y-scroll hidden-scrollbar shadow-lg max-h-[200px]">
-                                  {otherUser.listings.map((listings: any) => {
-                                    return (
-                                      <div
-                                        className={`w-full p-5 bg-inherit border-none`}
-                                        key={listings.listingId}
-                                      >
-                                        <div className="flex flex-row justify-between items-center gap-3">
-                                          <img
-                                            width={"100px"}
-                                            height={"100px"}
-                                            src={listings.listings.thumbnail}
-                                            className="object-cover"
-                                          />
-                                          <div className="flex flex-col font-normal text-center justify-between items-center gap-3">
-                                            <div>
-                                              <h1 className="font-medium text-xl">
-                                                {listings.listings.name}
-                                              </h1>
-                                              <br />
-                                              <p>
-                                                {listings.listings.description}
-                                              </p>
-                                            </div>
-                                            <div className="flex flex-row justify-end items-center w-full">
-                                              {
-                                                listings.listings.organizations
-                                                  .name
-                                              }
-                                              <img
-                                                src={
-                                                  listings.listings
-                                                    .organizations.thumbnail
-                                                    .storageId
-                                                }
-                                                width={"70px"}
-                                                height={"70px"}
-                                                className="object-cover"
-                                              />
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    );
-                                  })}
-                                </div>
-                              </div>
                             </div>
                             <div className="font-bold text-underline w-full text-center">
                               <h1 className="font-bold">Talents</h1>
                               <ul className="flex flex-row gap-2 font-normal justify-center items-center w-full">
-                                {otherUser.skills.map((skill: any) => {
-                                  return (
-                                    <li key={skill.skillId}>
-                                      - {skill.skills.name}
-                                    </li>
-                                  );
-                                })}
+                                {otherUser.skills.length > 0 ? (
+                                  otherUser.skills.map((skill: any) => {
+                                    return (
+                                      <li key={skill.skillId}>
+                                        - {skill.skills.name}
+                                      </li>
+                                    );
+                                  })
+                                ) : (
+                                  <h1>No Registered Skills</h1>
+                                )}
                               </ul>
                             </div>
                           </div>

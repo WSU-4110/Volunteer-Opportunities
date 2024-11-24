@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { motion, stagger, useAnimate, useInView } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export const TypewriterEffect = ({
   words,
@@ -114,53 +114,77 @@ export const TypewriterEffectDeleting = ({
   handleIndexChange: () => void;
 }) => {
   const [scope, animate] = useAnimate();
-  const isInView = useInView(scope);
+  const [isInViewStable, setIsInViewStable] = useState(false);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isAnimating, setIsAnimating] = useState(true);
+  const isMounted = useRef(true); // Track if the component is mounted
+  const animationInProgress = useRef(false); // Track if animation is in progress
+
+  const isInView = useInView(scope);
+
+  // Use effect to debounce the inView state and avoid rapid changes triggering animations
+  useEffect(() => {
+    let debounceTimer: NodeJS.Timeout;
+
+    if (isInView) {
+      debounceTimer = setTimeout(() => {
+        setIsInViewStable(true); // Set stable view state after debounce
+      }, 200); // 200ms debounce to prevent rapid triggering
+    } else {
+      setIsInViewStable(false);
+    }
+
+    return () => clearTimeout(debounceTimer); // Cleanup debounce timer
+  }, [isInView]);
 
   useEffect(() => {
-    if (isInView) {
-      const cycleWords = async () => {
-        if (currentWordIndex >= words.length) {
+    if (!isInViewStable || animationInProgress.current) return; // Do nothing if not in view or animation is running
+
+    const cycleWords = async () => {
+      if (currentWordIndex >= words.length) {
+        return;
+      }
+
+      const word = words[currentWordIndex].text.split("");
+      animationInProgress.current = true; // Set flag to prevent other animations from starting
+
+      for (let i = 0; i < word.length; i++) {
+        await animate(
+          `span.char-${i}`,
+          { opacity: 1, display: "inline" },
+          { duration: 0.1, ease: "easeInOut" }
+        );
+      }
+
+      if (!isDeleting) {
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait before deleting
+        setIsDeleting(true);
+      }
+
+      if (isDeleting) {
+        if (currentWordIndex === words.length - 1) {
           return;
         }
-        const word = words[currentWordIndex].text.split("");
-        for (let i = 0; i < word.length; i++) {
+        for (let i = word.length - 1; i >= 0; i--) {
+          if (!isMounted.current) return; // Stop animation if unmounted
           await animate(
             `span.char-${i}`,
-            { opacity: 1, display: "inline" },
+            { opacity: 0, display: "none" },
             { duration: 0.1, ease: "easeInOut" }
           );
         }
 
-        if (!isDeleting) {
-          await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait before deleting
-          setIsDeleting(true);
-        }
+        setIsDeleting(false);
+        setCurrentWordIndex((prev) => prev + 1);
+        handleIndexChange();
+      }
 
-        if (isDeleting) {
-          if (currentWordIndex == words.length - 1) {
-            return;
-          }
-          for (let i = word.length - 1; i >= 0; i--) {
-            await animate(
-              `span.char-${i}`,
-              { opacity: 0, display: "none" },
-              { duration: 0.1, ease: "easeInOut" }
-            );
-          }
+      animationInProgress.current = false; // Reset flag when animation is finished
+    };
 
-          setIsDeleting(false);
-
-          setCurrentWordIndex((prev) => prev + 1);
-          handleIndexChange();
-        }
-      };
-
-      cycleWords();
-    }
-  }, [isInView, currentWordIndex, isDeleting]);
+    cycleWords();
+  }, [isInViewStable, currentWordIndex, isDeleting]);
 
   const renderWords = () => {
     const word = words[currentWordIndex].text.split("");

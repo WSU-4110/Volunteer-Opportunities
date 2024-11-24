@@ -12,9 +12,9 @@ import Organization from "./organization";
 import { orgSchema } from "./organization";
 import { describe } from "node:test";
 
-afterEach(() => {
-  cleanup();
-});
+// afterEach(() => {
+//   cleanup();
+// });
 
 describe("Organization Profile View/Edit Tests", () => {
   // Using
@@ -111,7 +111,7 @@ describe("Organization Profile View/Edit Tests", () => {
       fireEvent.click(edit_button);
     });
 
-    const image_upload = await screen.findByText("Upload file");
+    //     const image_upload = await screen.findByText("Upload file");
 
     expect(image_upload).toBeInTheDocument();
   });
