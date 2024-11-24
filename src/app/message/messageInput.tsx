@@ -26,11 +26,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { createMessage } from "./actions";
 
 const SendMessage = ({
-  userStatus,
   organizationId,
   userId,
   conversationId,
-  addMessage,
   selectedConversation,
 }: {
   userStatus?: boolean;
