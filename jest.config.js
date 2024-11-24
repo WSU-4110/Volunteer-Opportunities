@@ -19,6 +19,9 @@ const config = {
   },
   moduleNameMapper: {
     "/actions": "<rootDir>/_mocks_/actions.tsx",
+
+    // NEW: Added mapping for @/ alias to resolve paths like "@/database/index"
+    "^@/(.*)$": "<rootDir>/src/$1",
   },
   moduleDirectories: ["node_modules", "src", "_mocks_"],
   modulePathIgnorePatterns: ["/node_modules/", "^.*/lib/"],
@@ -30,3 +33,4 @@ const config = {
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
 module.exports = createJestConfig(config);
+
