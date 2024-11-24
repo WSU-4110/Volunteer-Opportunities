@@ -17,32 +17,36 @@ jest.mock("./actions", () => ({
 
 //TEST 3: fetches user data by ID
 describe("getUserById Action Tests", () => {
-  it("fetches user data by ID", async () => {
-    const mockUser = { id: "1", name: "Loc Phan", bio: "Test bio" };
+    it("fetches user data by ID", async () => {
+        const mockUser = { id: "1", name: "Loc Phan", bio: "Test bio" };
+        console.log("Mock user data:", mockUser);
+    
+        (database.query.users.findFirst as jest.Mock).mockResolvedValue(mockUser);
+        (getUserById as jest.Mock).mockResolvedValue([mockUser, null]);
+    
+        const [user, error] = await getUserById("1");
+        console.log("Result - User:", user, "Error:", error);
+    
+        expect(user).toEqual(mockUser);
+        expect(error).toBeNull();
+      });
+    
 
-    (database.query.users.findFirst as jest.Mock).mockResolvedValue(mockUser);
-    (getUserById as jest.Mock).mockResolvedValue([mockUser, null]);
-
-    const [user, error] = await getUserById("1");
-
-    expect(user).toEqual(mockUser);
-    expect(error).toBeNull(); 
-    if (error) {
-      throw new Error("This should not happen if error is null.");
-    }
-  });
 
   //TEST 4:  if the user is not found
   it("returns error if user is not found", async () => {
+    console.log("Test: Fetching user with non-existent ID");
     (database.query.users.findFirst as jest.Mock).mockResolvedValue(null);
     (getUserById as jest.Mock).mockResolvedValue([null, new Error("User not found")]);
 
     const [user, error] = await getUserById("999");
+    console.log("Result - User:", user, "Error:", error);
 
     expect(user).toBeNull();
-    expect(error).toBeDefined(); 
+    expect(error).toBeDefined();
     if (error) {
-      expect(error.message).toBe("User not found"); 
+      console.log("Error message:", error.message);
+      expect(error.message).toBe("User not found");
     }
   });
 
