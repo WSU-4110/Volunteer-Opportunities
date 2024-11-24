@@ -15,6 +15,7 @@ jest.mock("./actions", () => ({
   getUserById: jest.fn(), 
 }));
 
+//TEST 3: fetches user data by ID
 describe("getUserById Action Tests", () => {
   it("fetches user data by ID", async () => {
     const mockUser = { id: "1", name: "Loc Phan", bio: "Test bio" };
@@ -31,6 +32,7 @@ describe("getUserById Action Tests", () => {
     }
   });
 
+  //TEST 4:  if the user is not found
   it("returns error if user is not found", async () => {
     (database.query.users.findFirst as jest.Mock).mockResolvedValue(null);
     (getUserById as jest.Mock).mockResolvedValue([null, new Error("User not found")]);
@@ -44,6 +46,7 @@ describe("getUserById Action Tests", () => {
     }
   });
 
+  //TEST 5: return error for empty ID
   it("returns error for empty user ID", async () => {
     (database.query.users.findFirst as jest.Mock).mockResolvedValue(null);
     (getUserById as jest.Mock).mockResolvedValue([null, new Error("Invalid user ID")]);
@@ -57,6 +60,7 @@ describe("getUserById Action Tests", () => {
     }
   });
 
+  //TEST 6: handle database query failure
   it("handles database query failure", async () => {
     const mockError = new Error("Database query failed");
     (database.query.users.findFirst as jest.Mock).mockRejectedValue(mockError);

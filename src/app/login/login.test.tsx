@@ -1,8 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import Login from "./login"; // Adjust the path as needed
+import Login from "./login"; 
 import "@testing-library/jest-dom";
 
+//TEST 1: show sign in when not authenticated
 describe("Login Component", () => {
   it("shows 'Sign in with Google' button when not authenticated", () => {
     render(
@@ -17,6 +18,7 @@ describe("Login Component", () => {
     expect(button).toBeInTheDocument();
   });
 
+  //TEST 2: show user detail after login
   it("shows user details and 'Sign Out' button when authenticated", () => {
     const mockAuthStatus = {
       user: { id: "24e069f5-ac14-4b1a-86c9-deb0750bf440", name: "Loc Phan", email: "locphan0321@gmail.com" },
