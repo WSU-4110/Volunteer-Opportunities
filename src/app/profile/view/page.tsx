@@ -23,23 +23,29 @@ export default async function EditProfile() {
   const userD: any = await userData();
   const userSkill = await userSkills();
 
-  const organizations = await getOrganizations();
+  const organizations: any = await getOrganizations();
 
   if (
-    skills != null &&
-    userD != null &&
-    userSkill != null &&
-    organizations != null
+    skills &&
+    userD &&
+    userSkill &&
+    organizations &&
+    skills[0] &&
+    userD[0] &&
+    userSkill[0] &&
+    organizations[0] &&
+    userD[0][0]
   ) {
-    let picture = "";
-    picture = userD[0]![0].image || "";
+    let picture = userD[0][0].image || "";
 
     // Added type any to allow access tp the inside of json data
     const listings: any = [];
-    for (let i = 0; i < organizations[0]!.length; i++) {
-      let id: organizationId = { orgID: organizations[0]![i].id };
-      listings[i] = await getListings(id);
-    }
+    try {
+      for (let i = 0; i < organizations[0]!.length; i++) {
+        let id: organizationId = { orgID: organizations[0]![i].id };
+        listings[i] = await getListings(id);
+      }
+    } catch {}
     return (
       <div className="bg-slate-200 ">
         <div className="pt-1 pb-20">
