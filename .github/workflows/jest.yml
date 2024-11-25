@@ -17,5 +17,5 @@ jobs:
         run: npm install
       - name: Run tests
         run: npm test
-      - name: build website
+      - name: Build website
         run: npm run build
