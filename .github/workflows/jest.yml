@@ -13,6 +13,13 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Node version
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+      - name: Setup ENV 
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}        
       - name: Install dependencies
         run: npm install
       - name: Run tests
