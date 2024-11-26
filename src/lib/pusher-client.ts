@@ -17,7 +17,6 @@ export const pusherClient = new PusherClient(
 );
 
 export const connectPusher = async () => {
-  console.log("this ran");
   await new Promise((resolve, reject) => {
     pusherClient.connection.bind("connected", () => {
       console.log("Pusher connected successfully");
