@@ -10,6 +10,7 @@ import MessageInput from "./messageInput";
 import BackIcon from "@/components/icons/backIcon";
 import Link from "next/link";
 import { pusherClient } from "@/lib/pusher-client";
+import { connectPusher } from "@/lib/pusher-client";
 
 const Messaging = ({
   userStatus,
@@ -218,8 +219,10 @@ const Messaging = ({
 
     setLoadingFalse();
   };
+
   useEffect(() => {
-    const subscribeToConversations = () => {
+    const subscribeToConversations = async () => {
+      await connectPusher();
       conversations.forEach((conversation: any) => {
         if (!conversationIds.includes(conversation.conversations.id)) {
           pusherClient.subscribe(conversation.conversations.id);
