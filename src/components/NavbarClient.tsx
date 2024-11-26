@@ -51,18 +51,32 @@ const Navbar = ({
   return (
     <>
       <div className="flex h-24 w-[100%] flex-row justify-between items-center m-auto py-1 px-14 2xl:px-20 sticky z-[40] shadow-lg">
-        <Link className="text-2xl cursor-pointer min-w-[240px]" href="/">
-          <div className="flex flex-col justify-center items-center">
-            <img
-              src="/Favicon.png"
-              alt="Volunteer Opportunities Logo"
-              width={"30px"}
-              height={"30px"}
-              className="float-left mr-[15px]"
-            />
-            <h1 className="text-lg font-bold">Volunteer Opportunities</h1>
-          </div>
-        </Link>
+        <div className="flex w-[10%]">
+          <Link className="text-2xl cursor-pointer min-w-[60px]" href="/">
+            <div className="flex flex-col justify-center items-center">
+              <img
+                src="/Favicon.png"
+                alt="Volunteer Opportunities Logo"
+                width={"50px"}
+                height={"50px"}
+                className="float-left mr-[15px]"
+              />
+            </div>
+          </Link>
+          {authStatus ? (
+            <div className="flex flex-col items-center justify-center pl-5 min-w-[200px] text-black">
+              {userStatus ? <p>Organization</p> : <p>Volunteer</p>}
+              <SwitchToolTipWrapper
+                checked={userStatus}
+                setChecked={changeUserStatus}
+                specialKey={"switch1"}
+                userHasOrganization={userHasOrganization}
+              />
+            </div>
+          ) : (
+            <></>
+          )}
+        </div>
 
         {authStatus?.user ? (
           <>
@@ -179,19 +193,6 @@ const Navbar = ({
                               </div>
                             </div>
                           </div>
-                          <div className="flex flex-col items-center justify-center pl-5 min-w-[200px] text-black">
-                            {userStatus ? (
-                              <p>Organization</p>
-                            ) : (
-                              <p>Volunteer</p>
-                            )}
-                            <SwitchToolTipWrapper
-                              checked={userStatus}
-                              setChecked={changeUserStatus}
-                              specialKey={"switch1"}
-                              userHasOrganization={userHasOrganization}
-                            />
-                          </div>
                         </div>
                         <div className="flex flex-col w-full p-4 gap-3">
                           <ProductItem
@@ -287,19 +288,6 @@ const Navbar = ({
                   </div>
                 </MenuItem>
               </Menu>
-              <div className="flex flex-col items-center justify-center min-w-[100px]">
-                {userStatus ? (
-                  <p className="text-center">Organization</p>
-                ) : (
-                  <p className="text-center">Volunteer</p>
-                )}
-                <SwitchToolTipWrapper
-                  checked={userStatus}
-                  setChecked={changeUserStatus}
-                  specialKey={"switch2"}
-                  userHasOrganization={userHasOrganization}
-                />
-              </div>
             </div>
           </>
         ) : (
