@@ -15,3 +15,16 @@ export const pusherClient = new PusherClient(
     },
   }
 );
+
+export const connectPusher = () =>
+  new Promise((resolve, reject) => {
+    pusherClient.connection.bind("connected", () => {
+      console.log("Pusher connected successfully");
+      resolve(true);
+    });
+
+    pusherClient.connection.bind("error", (err: any) => {
+      console.error("Pusher connection error:", err);
+      reject(err);
+    });
+  });
