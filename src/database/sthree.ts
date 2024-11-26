@@ -143,3 +143,36 @@ const createPresignedUrlGet = ({ bucket, key }: any) => {
   const command = new GetObjectCommand({ Bucket: bucket, Key: key });
   return getSignedUrl(client, command, { expiresIn: 600 });
 };
+
+// From aws docs https://docs.aws.amazon.com/AmazonS3/latest/API/s3_example_s3_DeleteObject_section.html
+export async function deleteImage(key: string) {
+  try {
+    await client.send(
+      new DeleteObjectCommand({
+        Bucket: process.env.BUCKET,
+        Key: key,
+      })
+    );
+
+    // A successful delete, or a delete for a non-existent object, both return
+    // a 204 response code.
+    console.log(
+      `The object "${key}" from bucket "${process.env.BUCKET}" was deleted, or it didn't exist.`
+    );
+  } catch (caught) {
+    if (
+      caught instanceof S3ServiceException &&
+      caught.name === "NoSuchBucket"
+    ) {
+      console.error(
+        `Error from S3 while deleting object from ${process.env.BUCKET}. The bucket doesn't exist.`
+      );
+    } else if (caught instanceof S3ServiceException) {
+      console.error(
+        `Error from S3 while deleting object from ${process.env.BUCKET}.  ${caught.name}: ${caught.message}`
+      );
+    } else {
+      throw caught;
+    }
+  }
+}

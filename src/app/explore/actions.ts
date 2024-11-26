@@ -1,7 +1,7 @@
 "use server";
 
 import { database } from "@/database/index";
-
+import { deleteImage } from "@/database/sthree";
 import { authenticatedAction } from "@/lib/safe-action";
 import { unauthenticatedAction } from "@/lib/safe-action";
 import {
@@ -182,8 +182,11 @@ export const deleteIndividualListing = authenticatedAction
 
     if (!validListing) {
       return;
+    } else {
+      try {
+        deleteImage(validListing[0].listings.thumbnail!.slice(-40));
+      } catch {}
     }
-
     await database.delete(listings).where(eq(listings.id, input));
   });
 
