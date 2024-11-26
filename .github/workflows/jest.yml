@@ -24,6 +24,6 @@ jobs:
       - name: Create .env
         run: |
           touch .env
-          echo DATABASE_URL=${{ DATABASE_URL }} >> .env
+          echo DATABASE_URL=${{ secrets.DATABASE_URL }} >> .env
       - name: Build website
         run: npm run build
