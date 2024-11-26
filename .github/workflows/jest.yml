@@ -10,14 +10,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    
-    services:
-      postgres:
-        image: postgress:13
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        ports:
-          - 5432:5432
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
