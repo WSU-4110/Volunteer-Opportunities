@@ -16,8 +16,9 @@ export const pusherClient = new PusherClient(
   }
 );
 
-export const connectPusher = () =>
-  new Promise((resolve, reject) => {
+export const connectPusher = async () => {
+  console.log("this ran");
+  await new Promise((resolve, reject) => {
     pusherClient.connection.bind("connected", () => {
       console.log("Pusher connected successfully");
       resolve(true);
@@ -28,3 +29,4 @@ export const connectPusher = () =>
       reject(err);
     });
   });
+};
