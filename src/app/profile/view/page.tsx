@@ -9,6 +9,8 @@ import {
 } from "./actions";
 
 import { getImage } from "@/database/sthree";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
 type organizationId = {
   orgID: string;
@@ -24,6 +26,12 @@ export default async function EditProfile() {
   const userSkill = await userSkills();
 
   const organizations = await getOrganizations();
+
+  const authStatus = await auth();
+
+  if (!authStatus?.user) {
+    redirect("/login");
+  }
 
   if (
     skills != null &&

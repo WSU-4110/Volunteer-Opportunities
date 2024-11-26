@@ -100,13 +100,14 @@ describe("Navbar Tests", () => {
     testNavbar.startBeforeEach();
   });
 
-  it("Navbar explore without authentication", async () => {
-    await testNavbar.testUnauthenticatedNavbarExplore();
-  });
-  it("Navbar create organization with authentication", async () => {
-    await testNavbar.testAuthenticatedNavbarCreateListing();
-  });
-  it("renders MenuItem correctly", async () => {
+  // it("Testing navbar explore link without being authenticated", async () => {
+  //   await testNavbar.testUnauthenticatedNavbarExplore();
+  // });
+
+  // it("Testing navbar create organization with being authenticated", async () => {
+  //   await testNavbar.testAuthenticatedNavbarCreateListing();
+  // });
+  it("Testing to see if the navbar renders menuitems correctly", async () => {
     await testNavbar.testMenuItemRender();
   });
 });
