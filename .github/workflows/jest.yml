@@ -25,10 +25,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "20" 
-      - name: Use PostgreSQL
-        uses: actions/postgres@v2
-        with:
-          port: 5432
       - name: Install dependencies
         run: npm install
       - name: Run tests
