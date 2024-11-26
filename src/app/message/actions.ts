@@ -449,7 +449,7 @@ export const createMessage = authenticatedAction
           })
           .returning();
 
-        pusherServer.trigger(conversationId, "incoming-message", {
+        await pusherServer.trigger(conversationId, "incoming-message", {
           ...newMessage[0],
           userImage: userImage,
           organizationImage: organizationImage,
