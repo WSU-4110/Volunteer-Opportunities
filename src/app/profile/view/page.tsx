@@ -43,7 +43,8 @@ export default async function EditProfile() {
     try {
       for (let i = 0; i < organizations[0]!.length; i++) {
         let id: organizationId = { orgID: organizations[0]![i].id };
-        listings[i] = await getListings(id);
+        let [listing, error] = await getListings(id);
+        listings[i] = listing;
       }
     } catch {}
     return (

@@ -48,20 +48,14 @@ describe("Organization Profile View/Edit Tests", () => {
   ];
   const listings = [
     [
-      [
-        [
-          {
-            organizationId: "1",
-            id: "11",
-            name: "123456",
-            description: "The org",
-            thumbnail: "",
-          },
-        ],
-      ],
-      null,
+      {
+        organizationId: "1",
+        id: "11",
+        name: "123456",
+        description: "The org",
+        thumbnail: "",
+      },
     ],
-    [[], null],
   ];
   //Test 1
   test("Organization Page Rendering all elements", async () => {

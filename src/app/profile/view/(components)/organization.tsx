@@ -458,14 +458,13 @@ const ViewOrgPage = (props: any) => {
         </tbody>
       </table>
       <br />
-      {props.listings[props.org.pos][0].length > 0 ? (
+      {props.listings[props.org.pos].length > 0 ? (
         <>
           <Label htmlFor="listing" data-testid="listings">
             Listings:
           </Label>
           <div id="listing">
-            {/* This is not a real error the key listing.id will always unique to that listing */}
-            {props.listings[props.org.pos][0].map((opportunity: any) => (
+            {props.listings[props.org.pos].map((opportunity: any) => (
               <div key={opportunity.id}>
                 <Card className="p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-lg cursor-pointer">
                   <div className="flex items-center gap-4">
