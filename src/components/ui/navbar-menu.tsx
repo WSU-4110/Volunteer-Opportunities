@@ -118,10 +118,12 @@ export const ProductItem = ({
   title,
   description,
   src,
+  customClassName,
 }: {
   title: string;
   description: string;
   src: string;
+  customClassName?: string;
 }) => {
   return (
     <div className="flex space-x-2">
@@ -130,7 +132,7 @@ export const ProductItem = ({
         width={"140px"}
         height={"70px"}
         alt={title}
-        className="flex-shrink-0 rounded-md shadow-2xl"
+        className={cn("flex-shrink-0 rounded-md shadow-2xl", customClassName)}
       />
       <div>
         <h4 className="text-xl font-bold mb-1 text-black ">{title}</h4>

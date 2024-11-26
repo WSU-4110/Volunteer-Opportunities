@@ -27,7 +27,7 @@ const Footer = () => {
   ];
 
   return (
-    <div className="border-t border-neutral-100 px-8 py-20 bg-slate-100 w-full relative overflow-hidden">
+    <div className="border-t border-neutral-100 px-8 py-10 bg-slate-100 w-full relative overflow-hidden">
       <div className="max-w-7xl mx-auto text-sm text-neutral-500 justify-between items-start md:px-8">
         <div className="flex flex-col items-center justify-center w-full relative">
           <div className="mr-0 md:mr-4  md:flex mb-4">
@@ -116,6 +116,7 @@ const Logo = () => {
     <Link
       href="/"
       className="font-normal flex space-x-2 items-center text-sm mr-4  text-black px-2 py-1  relative z-20"
+      data-testid="homePageLink"
     >
       <Image src="/Favicon.png" alt="logo" width={30} height={30} />
       <span className="font-medium text-black dark:text-white">

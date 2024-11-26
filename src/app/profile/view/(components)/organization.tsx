@@ -27,6 +27,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 //From https://ui.shadcn.com/docs/components/form
 import { z } from "zod";
@@ -366,6 +367,7 @@ const EditOrgPage = ({ ...props }: any) => {
 };
 
 const ViewOrgPage = (props: any) => {
+  const router = useRouter();
   //console.log(props.listings[0][0]);
   //console.log(props.org.pos);
   //console.log(props.listings[props.org.pos][0]);
@@ -466,7 +468,10 @@ const ViewOrgPage = (props: any) => {
             {/* This is not a real error the key listing.id will always unique to that listing */}
             {props.listings[props.org.pos][0].map((opportunity: any) => (
               <div key={opportunity.id}>
-                <Card className="p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-lg cursor-pointer">
+                <Card
+                  className="p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-lg cursor-pointer"
+                  onClick={() => router.push(`/view/listing/${opportunity.id}`)}
+                >
                   <div className="flex items-center gap-4">
                     <img
                       src={opportunity.thumbnail || ""}

@@ -19,6 +19,7 @@ const config = {
   },
   moduleNameMapper: {
     "/actions": "<rootDir>/_mocks_/actions.tsx",
+    "\\.(css|less|scss|sass)$": "identity-obj-proxy",
   },
   moduleDirectories: ["node_modules", "src", "_mocks_"],
   modulePathIgnorePatterns: ["/node_modules/", "^.*/lib/"],

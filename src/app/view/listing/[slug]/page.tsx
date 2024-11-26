@@ -7,6 +7,8 @@ const ListingPage = async ({ params }: { params: { slug: string } }) => {
   const { slug } = params;
   const [listing, error] = await getListingById(slug);
 
+  console.log(listing);
+
   return (
     <div className="py-12 bg-slate-200 min-h-[70vh]">
       <div className="w-[90%] m-auto max-w-4xl">
@@ -122,7 +124,9 @@ const ListingPage = async ({ params }: { params: { slug: string } }) => {
               <h2 className="text-xl font-semibold mb-4 text-center">
                 Volunteers
               </h2>
-              <div className="grid grid-cols-1 xl:grid-cols-4 gap-4">
+              <div
+                className={`${listing?.volunteers && listing?.volunteers.length > 0 ? "grid grid-cols-1 xl:grid-cols-4 gap-4" : null}`}
+              >
                 {listing?.volunteers && listing?.volunteers.length > 0 ? (
                   <>
                     {listing.volunteers.map((vol) => {

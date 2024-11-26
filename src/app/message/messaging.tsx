@@ -74,7 +74,6 @@ const Messaging = ({
   };
 
   const addMessage = (message: any) => {
-    console.log("ran");
     if (message.senderId) {
       const newMessage = {
         ...message,
