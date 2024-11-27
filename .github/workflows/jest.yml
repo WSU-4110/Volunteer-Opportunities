@@ -10,6 +10,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -22,6 +24,4 @@ jobs:
       - name: Run tests
         run: npm test
       - name: Build website
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: npm run build
