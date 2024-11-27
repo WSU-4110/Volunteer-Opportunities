@@ -14,7 +14,7 @@ import {
 } from "@/database/schema";
 
 import { z } from "zod";
-import { and, eq, inArray, sql, ilike } from "drizzle-orm";
+import { and, eq, inArray, sql, ilike, count } from "drizzle-orm";
 import { list } from "postcss";
 import { PgColumn } from "drizzle-orm/pg-core";
 import { revalidateListingPaths } from "../edit/[slug]/actions";
@@ -70,6 +70,82 @@ export const getListings = unauthenticatedAction
       console.log(err);
     }
   });
+
+  export const getListingsWithOffset = unauthenticatedAction
+  .createServerAction()
+  .input(z.object({
+    limit: z.number().default(2),
+    offset: z.number()
+  }))
+  .handler(async ({
+    input: {
+    limit, offset
+  }}) => {
+    try {
+      const results = await database
+        .select({
+          listings,
+          skills: sql`
+        COALESCE(
+          (
+            SELECT json_agg(subquery) 
+            FROM (
+              SELECT DISTINCT ON (s.id) 
+                s.id, s.name, s."iconUrl"
+              FROM "skills" AS s
+              JOIN "listings_skills" AS ls ON ls."skill_id" = s.id
+              WHERE ls."listingId" = listings.id
+            ) as subquery
+          ), '[]'::json
+        ) AS skills`,
+          organizations,
+          volunteers: sql`
+          COALESCE(
+            (
+              SELECT json_agg(subquery) 
+              FROM (
+                SELECT DISTINCT ON (u.id)
+                  u.id, u.name, u.image
+                FROM "user" AS u
+                JOIN "listing_volunteers" AS ltu ON ltu."userId" = u.id
+                WHERE ltu."listing_id" = listings.id
+              ) as subquery
+            ), '[]'::json
+          ) AS users`,
+        })
+        .from(listings)
+        .leftJoin(organizations, eq(listings.organizationId, organizations.id))
+        .groupBy(listings.id, organizations.id)
+        .limit(limit)
+        .offset(offset)
+        .execute();
+
+      return results;
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+export const getNumberOfPagesOfListings = unauthenticatedAction
+.createServerAction()
+.input(z.object({
+  limit: z.number().default(2)
+}))
+.handler(async ({
+  input: {
+  limit
+}}) => {
+  try {
+    const results = await database
+      .select({ count: count() })
+      .from(listings)
+
+      const numberOfPages = (results[0].count - 1) / limit + 1 // Equivalent to ceiling(results[0].count / limit)
+    return numberOfPages;
+  } catch (err) {
+    console.log(err);
+  }
+});
 
 export const getAllSkills = unauthenticatedAction
   .createServerAction()
