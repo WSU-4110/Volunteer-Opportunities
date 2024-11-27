@@ -1,0 +1,1 @@
+ALTER TABLE "listing_volunteers" ADD COLUMN "dateSignedUp" timestamp DEFAULT NOW() NOT NULL;

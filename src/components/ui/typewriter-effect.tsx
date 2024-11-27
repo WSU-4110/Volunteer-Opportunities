@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { motion, stagger, useAnimate, useInView } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { MutableRefObject, useEffect, useRef, useState } from "react";
 
 export const TypewriterEffect = ({
   words,
@@ -146,10 +146,12 @@ export const TypewriterEffectDeleting = ({
         return;
       }
 
+      setIsAnimating(true);
       const word = words[currentWordIndex].text.split("");
       animationInProgress.current = true; // Set flag to prevent other animations from starting
 
       for (let i = 0; i < word.length; i++) {
+        if (!isMounted.current) return; // Stop animation if unmounted
         await animate(
           `span.char-${i}`,
           { opacity: 1, display: "inline" },
@@ -164,6 +166,7 @@ export const TypewriterEffectDeleting = ({
 
       if (isDeleting) {
         if (currentWordIndex === words.length - 1) {
+          setIsAnimating(false);
           return;
         }
         for (let i = word.length - 1; i >= 0; i--) {
@@ -187,6 +190,7 @@ export const TypewriterEffectDeleting = ({
   }, [isInViewStable, currentWordIndex, isDeleting]);
 
   const renderWords = () => {
+    console.log(isAnimating);
     const word = words[currentWordIndex].text.split("");
     return (
       <motion.div ref={scope} className="inline">
@@ -220,18 +224,8 @@ export const TypewriterEffectDeleting = ({
         animate={{ opacity: 1 }}
         transition={{
           duration: 0.8,
-          repeat: Math.ceil(
-            (words.reduce((acc, curr) => {
-              return acc + curr.text.length * 0.1;
-            }, 0) *
-              2) /
-              0.8 +
-              (2 / 0.8) * words.length
-          ),
+          repeat: isAnimating ? Infinity : 0,
           repeatType: "reverse",
-        }}
-        onAnimationComplete={() => {
-          setIsAnimating(false);
         }}
         className={cn(
           "inline-block rounded-sm w-[4px] h-10 lg:h-[5.2rem] bg-blue-500",

@@ -234,6 +234,9 @@ export const listingsToUsers = pgTable(
     volunteerId: text("userId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
+    dateSignedUp: timestamp("dateSignedUp", { mode: "date" })
+      .notNull()
+      .default(sql`NOW()`),
   },
   (table) => ({
     pk: primaryKey({ columns: [table.volunteerId, table.listingId] }),
