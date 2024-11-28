@@ -152,6 +152,40 @@ export default function Userpage({
     await deleteIndividualListing(listingId);
   };
 
+  const paginationSemiCount = 3;
+  const paginationCount = 2 * paginationSemiCount + 1;
+
+  const paginationRadius = Math.min(
+    paginationSemiCount,
+    currentPage,
+    numberOfPages - 1 - currentPage
+  );
+
+  const paginationInitialStartIndex = Math.max(
+    0,
+    currentPage - paginationRadius
+  );
+  const paginationInitialEndIndex = Math.min(
+    currentPage + paginationRadius,
+    numberOfPages - 1
+  );
+
+  const paginationDifference =
+    paginationCount -
+    (paginationInitialEndIndex + 1 - paginationInitialStartIndex);
+
+  const paginationStartIndex = Math.max(
+    0,
+    paginationInitialStartIndex - paginationDifference
+  );
+  const paginationEndIndex = Math.min(
+    paginationInitialEndIndex + paginationDifference,
+    numberOfPages - 1
+  );
+
+  console.log(paginationInitialStartIndex, paginationInitialEndIndex);
+  console.log(paginationStartIndex, paginationEndIndex);
+
   return (
     <>
       <div className="w-full mt-12">
@@ -414,20 +448,35 @@ export default function Userpage({
                         <PaginationPrevious href={`?page=${currentPage - 1}`} />
                       </PaginationItem>
 
-                      {[...Array(numberOfPages).keys()].map((value) => (
-                        <PaginationItem key={value}>
-                          <PaginationLink
-                            className={
-                              value === currentPage
-                                ? "bg-slate-200 hover:bg-slate-300"
-                                : ""
-                            }
-                            href={`?page=${value}`}
-                          >
-                            {value + 1}
-                          </PaginationLink>
-                        </PaginationItem>
-                      ))}
+                      {[
+                        ...Array(
+                          paginationEndIndex + 1 - paginationStartIndex
+                        ).keys(),
+                      ]
+                        .map((val) => val + paginationStartIndex)
+                        .map((pageIndex) =>
+                          (paginationStartIndex === pageIndex &&
+                            pageIndex !== 0) ||
+                          (paginationEndIndex === pageIndex &&
+                            pageIndex !== numberOfPages - 1) ? (
+                            <PaginationItem>
+                              <PaginationEllipsis />
+                            </PaginationItem>
+                          ) : (
+                            <PaginationItem key={pageIndex}>
+                              <PaginationLink
+                                className={
+                                  pageIndex === currentPage
+                                    ? "bg-slate-200 hover:bg-slate-300"
+                                    : ""
+                                }
+                                href={`?page=${pageIndex}`}
+                              >
+                                {pageIndex + 1}
+                              </PaginationLink>
+                            </PaginationItem>
+                          )
+                        )}
 
                       <PaginationItem
                         className={

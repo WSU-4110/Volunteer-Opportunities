@@ -140,7 +140,7 @@ export const getNumberOfPagesOfListings = unauthenticatedAction
       .select({ count: count() })
       .from(listings)
 
-      const numberOfPages = (results[0].count - 1) / limit + 1 // Equivalent to ceiling(results[0].count / limit)
+      const numberOfPages = Math.ceil(results[0].count / limit)
     return numberOfPages;
   } catch (err) {
     console.log(err);
