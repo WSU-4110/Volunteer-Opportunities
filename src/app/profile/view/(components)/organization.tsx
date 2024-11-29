@@ -27,7 +27,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-
+import { useRouter } from "next/navigation";
 //From https://ui.shadcn.com/docs/components/form
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -169,7 +169,7 @@ const EditOrgPage = ({ ...props }: any) => {
         form.append("data", data);
       }
       await updateOrganization({
-        picture: props.organizations[props.org.pos].image.storageId,
+        picture: props.organizations[props.org.pos].image.key,
         name: values.name,
         id: props.org.id,
         data: form,
@@ -370,6 +370,8 @@ const EditOrgPage = ({ ...props }: any) => {
 };
 
 const ViewOrgPage = (props: any) => {
+  const router = useRouter();
+
   return (
     <div>
       <div className="w-full m-auto mt-10">
@@ -466,7 +468,10 @@ const ViewOrgPage = (props: any) => {
           <div id="listing">
             {props.listings[props.org.pos].map((opportunity: any) => (
               <div key={opportunity.id}>
-                <Card className="p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-lg cursor-pointer">
+                <Card
+                  className="p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-lg cursor-pointer"
+                  onClick={() => router.push(`/view/listing/${opportunity.id}`)}
+                >
                   <div className="flex items-center gap-4">
                     <img
                       src={opportunity.thumbnail || ""}

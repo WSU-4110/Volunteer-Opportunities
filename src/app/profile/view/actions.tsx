@@ -337,6 +337,8 @@ async function internalUpdateOrg(
   email: string
 ) {
   let image = picture;
+  console.log("submit");
+  console.log(image);
   //Either overwrites current image or adds a new image
   if (picture != "") {
     image = await rePutImage(data.get("data"), image);

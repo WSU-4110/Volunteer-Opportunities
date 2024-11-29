@@ -15,6 +15,10 @@ afterEach(() => {
   cleanup();
 });
 
+jest.mock("next/navigation", () => ({
+  useRouter: jest.fn(),
+}));
+
 describe("Organization Profile View/Edit Tests", () => {
   // Using
   const organizations = [
