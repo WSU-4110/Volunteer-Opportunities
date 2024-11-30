@@ -16,23 +16,25 @@ const ViewerPageClient = ({ organizations }: { organizations: any }) => {
           <div className="w-[90%] mx-auto">
             <div className="w-fit mx-auto p-12 border border-gray-300 bg-white rounded-lg">
               {/* Profile Section with Organization Name */}
-              <section className="w-full max-w-4xl mx-auto flex items-center mb-8">
-                <div className="mr-6">
+              <section className="w-full max-w-4xl mx-auto text-center mb-8">
+                <div className="flex flex-col items-center md:flex-row md:items-center md:justify-start gap-6">
+                  {/* Organization Logo */}
                   <img
                     src={
-                      (organizations!.thumbnail! as { storageId: string })
-                        .storageId || ""
+                      (organizations!.thumbnail! as { storageId: string }).storageId || ""
                     }
                     alt={organizations?.name}
-                    className="rounded-md object-cover w-[200px] h-[200px] bg-white"
+                    className="rounded-md object-cover w-[150px] h-[150px] bg-white"
                   />
-                  <p className="text-sm text-gray-600 mt-2 ml-2 text-center">
-                    Created By: {organizations!.users!.name}
-                  </p>
+
+                  {/* Organization Details */}
+                  <div className="text-center md:text-left">
+                    <h1 className="text-4xl font-bold text-gray-800">{organizations.name}</h1>
+                    <p className="text-gray-600 mt-2">
+                      Created By: <span className="font-medium">{organizations!.users!.name}</span>
+                    </p>
+                  </div>
                 </div>
-                <h1 className="text-4xl font-bold text-gray-800">
-                  {organizations.name}
-                </h1>
               </section>
 
               <div className="w-full max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
