@@ -2,7 +2,17 @@
 
 import { database } from "@/database";
 import { authenticatedAction } from "@/lib/safe-action";
-import { and, eq, inArray, not, sql } from "drizzle-orm";
+import {
+  and,
+  eq,
+  exists,
+  inArray,
+  ne,
+  not,
+  or,
+  sql,
+  notInArray,
+} from "drizzle-orm";
 import {
   conversations,
   conversationsRelations,
@@ -16,6 +26,8 @@ import {
 import { z } from "zod";
 import { CustomError } from "@/util";
 import { pusherServer } from "@/lib/pusher";
+import { except } from "drizzle-orm/pg-core";
+import { revalidatePath } from "next/cache";
 
 export const getOtherVolunteersAction = authenticatedAction
   .createServerAction()
@@ -455,6 +467,170 @@ export const createMessage = authenticatedAction
           organizationImage: organizationImage,
         });
         return newMessage;
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  );
+
+export const getOtherOrganizationsNotInConversationAction = authenticatedAction
+  .createServerAction()
+  .input(z.string())
+  .handler(async ({ ctx: { user }, input: inputConversationId }) => {
+    try {
+      const conversationOrganizationIds = await database
+        .select({ organizationId: conversationsToUsers.organizationId })
+        .from(conversationsToUsers)
+        .where(eq(conversationsToUsers.conversationId, inputConversationId));
+      const otherOrganizations = await database
+        .select()
+        .from(organizations)
+        .where(
+          and(
+            ne(organizations.creator, user.id),
+            notInArray(
+              organizations.id,
+              conversationOrganizationIds.map(
+                (convOrgId) => convOrgId.organizationId || ""
+              )
+            )
+          )
+        );
+
+      console.log(otherOrganizations);
+
+      return otherOrganizations;
+    } catch (err) {
+      console.error("Error fetching organizations:", err);
+      throw new Error("Failed to fetch organizations");
+    }
+  });
+
+export const getOtherVolunteersNotInConversationAction = authenticatedAction
+  .createServerAction()
+  .input(z.string())
+  .handler(async ({ ctx: { user }, input: inputConversationId }) => {
+    try {
+      const conversationUserIds = await database
+        .select({ userId: conversationsToUsers.userId })
+        .from(conversationsToUsers)
+        .where(eq(conversationsToUsers.conversationId, inputConversationId));
+      const otherVolunteers = await database
+        .select()
+        .from(users)
+        .where(
+          and(
+            ne(users.id, user.id),
+            notInArray(
+              users.id,
+              conversationUserIds.map((convUserId) => convUserId.userId || "")
+            )
+          )
+        );
+
+      return otherVolunteers;
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+export const revalidateMessages = () => {
+  revalidatePath("/message");
+};
+
+export const addVolunteerToConversation = authenticatedAction
+  .createServerAction()
+  .input(z.object({ volunteerId: z.string(), inputConversationId: z.string() }))
+  .handler(
+    async ({ ctx: { user }, input: { volunteerId, inputConversationId } }) => {
+      try {
+        const conversationExists = await database
+          .select()
+          .from(conversationsToUsers)
+          .where(
+            and(
+              eq(conversationsToUsers.conversationId, inputConversationId),
+              or(
+                eq(conversationsToUsers.userId, user.id),
+                inArray(
+                  conversationsToUsers.organizationId,
+                  database
+                    .select({ id: organizations.id })
+                    .from(organizations)
+                    .where(eq(organizations.creator, user.id))
+                )
+              )
+            )
+          );
+
+        if (conversationExists.length > 0) {
+          const newUserInfo = await database
+            .insert(conversationsToUsers)
+            .values({
+              userId: volunteerId,
+              organizationId: null,
+              conversationId: inputConversationId,
+            })
+            .returning();
+
+          const info = await database.query.users.findFirst({
+            where: eq(users.id, newUserInfo[0].userId || ""),
+          });
+
+          return info;
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  );
+
+export const addOrganizationToConversation = authenticatedAction
+  .createServerAction()
+  .input(
+    z.object({ organizationId: z.string(), inputConversationId: z.string() })
+  )
+  .handler(
+    async ({
+      ctx: { user },
+      input: { organizationId, inputConversationId },
+    }) => {
+      try {
+        const conversationExists = await database
+          .select()
+          .from(conversationsToUsers)
+          .where(
+            and(
+              eq(conversationsToUsers.conversationId, inputConversationId),
+              or(
+                eq(conversationsToUsers.userId, user.id),
+                inArray(
+                  conversationsToUsers.organizationId,
+                  database
+                    .select({ id: organizations.id })
+                    .from(organizations)
+                    .where(eq(organizations.creator, user.id))
+                )
+              )
+            )
+          );
+
+        if (conversationExists.length > 0) {
+          const newUserInfo = await database
+            .insert(conversationsToUsers)
+            .values({
+              userId: null,
+              organizationId: organizationId,
+              conversationId: inputConversationId,
+            })
+            .returning();
+
+          const info = await database.query.organizations.findFirst({
+            where: eq(organizations.id, newUserInfo[0].organizationId || ""),
+          });
+
+          return info;
+        }
       } catch (err) {
         console.log(err);
       }

@@ -7,7 +7,7 @@ const MapMultipleLocations = ({ listings }: { listings: any }) => {
   const [selectedListing, setSelectedListing] = useState<string | null>(null);
 
   return (
-    <div className="h-[400px] w-[400px] mx-auto xl:w-full xl:h-full">
+    <div className="h-[300px] w-[300px] sm:h-[400px] sm:w-[400px] mx-auto xl:w-full xl:h-full">
       <Map
         initialViewState={{
           latitude: 39.8283,

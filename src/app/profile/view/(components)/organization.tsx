@@ -216,9 +216,7 @@ const EditOrgPage = ({ ...props }: any) => {
             <img
               src={props.organizations[props.org.pos].image.storageId}
               alt="Organization Profile Picture"
-              className="m-auto rounded-xl"
-              width="250px"
-              height="250px"
+              className="m-auto rounded-xl w-[250px] h-[250px]"
             />
             <Button
               onClick={() => {
@@ -377,88 +375,51 @@ const ViewOrgPage = (props: any) => {
         <img
           src={props.organizations[props.org.pos].image.storageId}
           alt="Organization Profile Picture"
-          className="m-auto rounded-xl"
-          width="250px"
-          height="250px"
+          className="m-auto rounded-xl w-[250px] h-[250px]"
         />
       </div>
 
-      <table>
-        <tbody>
-          <tr>
-            <td className="p-2">
-              <Label className="align-text-top" htmlFor="name">
-                Company Name:&nbsp;
-              </Label>
-            </td>
-            <td className="p-2">
-              <p id="name" className="align-text-top">
-                {props.organizations[props.org.pos].name}
-              </p>
-            </td>
-          </tr>
-
-          <tr>
-            <td className="p-2">
-              <Label className="align-text-top" htmlFor="email">
-                Email Address:&nbsp;
-              </Label>
-            </td>
-            <td className="p-2">
-              <p id="email" className="align-text-top">
-                {props.organizations[props.org.pos].email}
-              </p>
-            </td>
-          </tr>
-
-          <tr>
-            <td className="p-2">
-              <Label className="align-text-top" htmlFor="bio">
-                Biography:&nbsp;
-              </Label>
-            </td>
-            <td className="p-2">
-              <p id="bio" className="align-text-top">
-                {props.organizations[props.org.pos].bio}
-              </p>
-            </td>
-          </tr>
-
-          <tr>
-            <td className="p-2">
-              <Label className="align-text-top" htmlFor="address">
-                Address:&nbsp;
-              </Label>
-            </td>
-            <td className="p-2">
-              <p id="address" className="align-text-top">
-                {props.organizations[props.org.pos].address}
-              </p>
-            </td>
-          </tr>
-
-          <tr>
-            <td className="p-2">
-              <Label className="align-text-top" htmlFor="phone">
-                Phone:&nbsp;
-              </Label>
-            </td>
-            <td className="p-2">
-              <p id="phone" className="align-text-top">
-                {"+" +
-                  props.organizations[props.org.pos].phoneNumber.slice(0, 1) +
-                  " (" +
-                  props.organizations[props.org.pos].phoneNumber.slice(1, 4) +
-                  ") " +
-                  props.organizations[props.org.pos].phoneNumber.slice(4, 7) +
-                  "-" +
-                  props.organizations[props.org.pos].phoneNumber.slice(7, 11)}
-              </p>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <br />
+      <div className="grid grid-cols-3 xl:grid-cols-5 gap-y-5 justify-center items-start my-10">
+        <div className="col-span-1">
+          <Label htmlFor="name">Company Name:&nbsp;</Label>
+        </div>
+        <div className="col-span-2 xl:col-span-4 text-left">
+          <p id="name">{props.organizations[props.org.pos].name}</p>
+        </div>
+        <div className="col-span-1 text-left">
+          <Label htmlFor="email">Email Address:&nbsp;</Label>
+        </div>
+        <div className="col-span-2 xl:col-span-4 text-left">
+          <p id="email">{props.organizations[props.org.pos].email}</p>
+        </div>
+        <div className="col-span-1 text-left">
+          <Label htmlFor="bio">Biography:&nbsp;</Label>
+        </div>
+        <div className="col-span-2 xl:col-span-4 text-left">
+          <p id="bio">{props.organizations[props.org.pos].bio}</p>
+        </div>
+        <div className="col-span-1 text-left">
+          <Label htmlFor="address">Address:&nbsp;</Label>
+        </div>
+        <div className="col-span-2 xl:col-span-4 text-left">
+          <p id="address">{props.organizations[props.org.pos].address}</p>
+        </div>
+        <div className="col-span-1 text-left">
+          <Label htmlFor="phone">Phone:&nbsp;</Label>
+        </div>
+        <div className="col-span-2 xl:col-span-4 text-left">
+          <p id="phone">
+            {"+" +
+              props.organizations[props.org.pos].phoneNumber.slice(0, 1) +
+              " (" +
+              props.organizations[props.org.pos].phoneNumber.slice(1, 4) +
+              ") " +
+              props.organizations[props.org.pos].phoneNumber.slice(4, 7) +
+              "-" +
+              props.organizations[props.org.pos].phoneNumber.slice(7, 11)}
+          </p>
+        </div>
+      </div>
       {props.listings[props.org.pos][0].length > 0 ? (
         <>
           <Label htmlFor="listing" data-testid="listings">
@@ -494,15 +455,17 @@ const ViewOrgPage = (props: any) => {
           </div>
         </>
       ) : null}
-
-      <Button
-        onClick={() => {
-          props.setEditProfile(true);
-        }}
-        type="button"
-      >
-        Edit
-      </Button>
+      <div className="w-full">
+        <Button
+          onClick={() => {
+            props.setEditProfile(true);
+          }}
+          type="button"
+          className="block w-fit mx-auto"
+        >
+          Edit
+        </Button>
+      </div>
     </div>
   );
 };
@@ -532,8 +495,8 @@ export default function Organization(props: input) {
   }
 
   return (
-    <div className="w-1/2 m-auto mt-20 bg-white p-8 rounded-lg shadow-md">
-      <header className="text-2xl text-center font-bold">
+    <div className="w-[90%] xl:w-1/2 m-auto mt-20 bg-white p-8 rounded-lg shadow-md">
+      <header className="text-2xl text-center font-bold my-4">
         Organization Page
       </header>
       <>
