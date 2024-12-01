@@ -7,6 +7,8 @@ const ListingPage = async ({ params }: { params: { slug: string } }) => {
   const { slug } = params;
   const [listing, error] = await getListingById(slug);
 
+  console.log(listing);
+
   return (
     <div className="py-12 bg-slate-200 min-h-[70vh]">
       <div className="w-[90%] m-auto max-w-4xl">

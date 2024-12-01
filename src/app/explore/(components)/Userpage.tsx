@@ -135,7 +135,7 @@ export default function Userpage({
   return (
     <>
       <div className="w-full mt-12">
-        <h1 className="text-2xl text-center font-bold my-12">
+        <h1 className="text-2xl text-center font-bold my-12 w-[90%] m-auto">
           Explore Volunteer Opportunities
         </h1>
         <Form {...form}>
@@ -250,7 +250,7 @@ export default function Userpage({
         </Form>
         <div className="mt-20 h-full">
           <div className="flex flex-col xl:flex-row justify-between h-full shadow-lg bg-slate-200 py-12 gap-10 w-full">
-            <div className="xl:flex-3 p-20 bg-white shadow-lg rounded-xl xl:w-[1000px]">
+            <div className="xl:flex-3 p-2 md:p-10 bg-white shadow-lg rounded-xl xl:w-[1000px]">
               <h1 className="text-2xl font-bold text-center">Listings</h1>
               {listings.length > 0 ? (
                 <div className="grid grid-cols-1 xl:grid-cols-2 flex-wrap max-h-[700px] overflow-y-auto mt-5 gap-4">
@@ -281,7 +281,7 @@ export default function Userpage({
                             <h1 className="font-bold text-xl mt-4">
                               Skills Needed:
                             </h1>
-                            <div className="flex flex-row gap-2 flex-wrap">
+                            <div className="flex flex-col md:flex-row gap-2 flex-wrap">
                               {listing.skills.length > 0 ? (
                                 listing.skills.map((skill: any) => {
                                   return (
@@ -302,9 +302,9 @@ export default function Userpage({
                               )}
                             </div>
                           </div>
-                          <div className="flex flex-row justify-between items-end mt-4">
+                          <div className="w-full flex flex-col md:flex-row justify-between items-center md:items-end gap-5 md:gap-0 mt-4">
                             <div
-                              className="flex flex-col justify-center items-center cursor-pointer"
+                              className="flex flex-col justify-center items-center cursor-pointer w-fit"
                               onClick={() =>
                                 router.push(
                                   `/view/organization/${listing.organizations.id}`
@@ -312,23 +312,25 @@ export default function Userpage({
                               }
                             >
                               <h1 className="font-bold">Created By:</h1>
-                              <h1>{listing.organizations.name}</h1>
+                              <h1 className="whitespace-nowrap">
+                                {listing.organizations.name}
+                              </h1>
                               <img
                                 src={listing.organizations.thumbnail.storageId}
                                 className="w-[60px] h-[60px]"
                               ></img>
                             </div>
-                            <div>
+                            <div className="flex flex-row justify-between items-center">
                               {userStatus &&
                               userId == listing.organizations.creator ? (
-                                <div className="flex flex-col gap-4 items-center">
+                                <div className="flex flex-row justify-center md:justify-start md:flex-col gap-4 items-center md:items-end">
                                   <Button
                                     onClick={() =>
                                       router.push(
                                         `/edit/${listing.listings.id}`
                                       )
                                     }
-                                    className="bg-blue-500 text-white hover:bg-blue-400 w-full"
+                                    className="bg-blue-500 text-white hover:bg-blue-400 w-fit"
                                   >
                                     Edit
                                   </Button>
@@ -337,7 +339,7 @@ export default function Userpage({
                                       deleteSpecificListing(listing.listings.id)
                                     }
                                     variant="destructive"
-                                    className="w-full"
+                                    className="w-fit"
                                   >
                                     Delete
                                   </Button>

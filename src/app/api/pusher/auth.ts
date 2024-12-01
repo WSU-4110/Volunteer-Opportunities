@@ -7,8 +7,6 @@ import { eq, and } from "drizzle-orm";
 export async function POST(req: Request) {
   const { socketId, channelName } = req.json() as any;
 
-  console.log(channelName);
-
   if (!socketId || !channelName) {
     return new Response("Missing socket Id or channel name", { status: 400 });
   }

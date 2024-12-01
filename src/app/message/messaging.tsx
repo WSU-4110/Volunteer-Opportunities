@@ -1,6 +1,13 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { getOrganizationMessages, getVolunteerMessages } from "./actions";
+import {
+  addOrganizationToConversation,
+  addVolunteerToConversation,
+  getOrganizationMessages,
+  getOtherOrganizationsNotInConversationAction,
+  getOtherVolunteersNotInConversationAction,
+  getVolunteerMessages,
+} from "./actions";
 import {
   AnimatedLinkTooltip,
   AnimatedTooltip,
@@ -10,6 +17,37 @@ import MessageInput from "./messageInput";
 import BackIcon from "@/components/icons/backIcon";
 import Link from "next/link";
 import { pusherClient } from "@/lib/pusher-client";
+import { connectPusher } from "@/lib/pusher-client";
+import { Popover } from "@/components/ui/popover";
+import { PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
+import { Button } from "@/components/ui/button";
+
+type otherOrganizations = {
+  email: string | null;
+  id: string;
+  name: string;
+  bio: string | null;
+  createdAt: Date;
+  thumbnail: unknown;
+  creator: string;
+  images: unknown;
+  address: string | null;
+  phoneNumber: string | null;
+  latitude: string | null;
+  longitude: string | null;
+}[];
+
+type otherVolunteers = {
+  image: string | null;
+  email: string;
+  id: string;
+  name: string;
+  emailVerified: Date | null;
+  bio: string;
+  createdAt: Date;
+  customFile: boolean | null;
+  userImage: unknown;
+}[];
 
 const Messaging = ({
   userStatus,
@@ -27,12 +65,42 @@ const Messaging = ({
   loading: boolean;
 }) => {
   const [conversations, setConversations] = useState<any>([]);
-  const [selectedConversation, setSelectedConversation] = useState<any>();
+  const [selectedConversation, setSelectedConversation] = useState<any>(null);
   const [conversationIds, setConversationIds] = useState<any>([]);
 
   const [mobileViewConvSelected, setMobileViewConvSelected] = useState(false);
 
+  const [volunteersNotInConversations, setVolunteersNotInConversations] =
+    useState<otherVolunteers>([]);
+
+  const [organizationsNotInConversations, setOrganizationsNotInConversations] =
+    useState<otherOrganizations>([]);
+
   const chatContainerRef = useRef(null);
+
+  const getOtherVolunteersNotInConversation = async () => {
+    if (selectedConversation) {
+      const [otherVolunteers, getOtherVolunteersError] =
+        await getOtherVolunteersNotInConversationAction(
+          selectedConversation.conversations.id || ""
+        );
+
+      if (otherVolunteers) {
+        setVolunteersNotInConversations(otherVolunteers);
+      }
+    }
+  };
+
+  const getOtherOrganizationsNotInConversation = async () => {
+    const [otherOrganizations, getOtherOrganizationsError] =
+      await getOtherOrganizationsNotInConversationAction(
+        selectedConversation.conversations.id || ""
+      );
+
+    if (otherOrganizations) {
+      setOrganizationsNotInConversations(otherOrganizations);
+    }
+  };
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -40,7 +108,95 @@ const Messaging = ({
         chatContainerRef.current as any
       ).scrollHeight;
     }
+
+    if (selectedConversation) {
+      getOtherOrganizationsNotInConversation();
+      getOtherVolunteersNotInConversation();
+    }
   }, [selectedConversation]);
+
+  const inviteVolunteer = async (volunteerId: string) => {
+    const [newUserInfo, getNewUserInfoError] = await addVolunteerToConversation(
+      {
+        volunteerId: volunteerId,
+        inputConversationId: selectedConversation.conversations.id,
+      }
+    );
+    if (newUserInfo) {
+      const desiredConvInfo = conversations.find(
+        (conv: any) =>
+          conv.conversations.id == selectedConversation.conversations.id
+      );
+      const desiredConversation = {
+        ...desiredConvInfo,
+        users: [...desiredConvInfo.users, { ...newUserInfo }],
+      };
+
+      const desiredConversationIndex = conversations.findIndex(
+        (conv: any) =>
+          conv.conversations.id == selectedConversation.conversations.id
+      );
+
+      setConversations((prevState: any) => {
+        const updatedList = [...prevState];
+
+        updatedList.splice(desiredConversationIndex, 1, desiredConversation);
+
+        return updatedList;
+      });
+
+      setSelectedConversation((prevState: any) => {
+        return {
+          ...prevState,
+          users: [...prevState.users, { ...newUserInfo }],
+        };
+      });
+    }
+  };
+
+  const inviteOrganization = async (organizationId: string) => {
+    const [newUserInfo, getNewUserInfoError] =
+      await addOrganizationToConversation({
+        organizationId: organizationId,
+        inputConversationId: selectedConversation.conversations.id,
+      });
+    if (newUserInfo) {
+      const desiredConvInfo = conversations.find(
+        (conv: any) =>
+          conv.conversations.id == selectedConversation.conversations.id
+      );
+      const desiredConversation = {
+        ...desiredConvInfo,
+        users: [...desiredConvInfo.users, { ...newUserInfo }],
+      };
+
+      const desiredConversationIndex = conversations.findIndex(
+        (conv: any) =>
+          conv.conversations.id == selectedConversation.conversations.id
+      );
+
+      setConversations((prevState: any) => {
+        const updatedList = [...prevState];
+
+        updatedList.splice(desiredConversationIndex, 1, desiredConversation);
+
+        return updatedList;
+      });
+
+      setSelectedConversation((prevState: any) => {
+        return {
+          ...prevState,
+          organizations: [
+            ...prevState.organizations,
+            {
+              ...newUserInfo,
+              thumbnail: JSON.stringify(newUserInfo.thumbnail),
+            },
+          ],
+        };
+      });
+    }
+  };
 
   const changeSelectedConversation = (selectedConversationId: string) => {
     setConversations((prevState: any) => {
@@ -74,7 +230,6 @@ const Messaging = ({
   };
 
   const addMessage = (message: any) => {
-    console.log("ran");
     if (message.senderId) {
       const newMessage = {
         ...message,
@@ -219,8 +374,10 @@ const Messaging = ({
 
     setLoadingFalse();
   };
+
   useEffect(() => {
-    const subscribeToConversations = () => {
+    const subscribeToConversations = async () => {
+      await connectPusher();
       conversations.forEach((conversation: any) => {
         if (!conversationIds.includes(conversation.conversations.id)) {
           pusherClient.subscribe(conversation.conversations.id);
@@ -280,7 +437,7 @@ const Messaging = ({
                     return {
                       id: org.id,
                       name: org.name,
-                      image: JSON.parse(org.thumbnail).storageId,
+                      image: JSON.parse(org.thumbnail).storageId || "",
                       designation: "ORGANIZATION",
                     };
                   }
@@ -344,57 +501,164 @@ const Messaging = ({
                         {selectedConversation.conversations.subject}
                       </h1>
                     </div>
-                    <div className="flex flex-row w-full justify-between gap-2 px-5 items-center">
+                    <div className="flex flex-row w-full justify-between px-5 items-center">
                       <div className="flex flex-col items-center justify-center font-bold">
-                        <h1 className="text-sm">Users</h1>
-                        <div className="flex flex-row items-center justify-start">
-                          {selectedConversation.users.length > 0 ? (
-                            <AnimatedLinkTooltip
-                              key={
-                                selectedConversation.conversations.id + "user"
-                              }
-                              items={selectedConversation.users.map(
-                                (user: any, index: number) => {
-                                  return {
-                                    id: user.id,
-                                    name: user.name,
-                                    image: user.image,
-                                    designation: user.bio,
-                                  };
+                        <h1 className="text-sm">Volunteers</h1>
+                        <div className="flex flex-col xl:flex-row gap-2 xl:gap-10 items-center justify-center">
+                          <div className="flex flex-row items-center justify-start">
+                            {selectedConversation.users.length > 0 ? (
+                              <AnimatedLinkTooltip
+                                key={
+                                  selectedConversation.conversations.id + "user"
                                 }
-                              )}
-                              type="volunteer"
-                              className="cursor-pointer"
-                            />
-                          ) : (
-                            <h1 className="text-center w-full">NONE</h1>
-                          )}
+                                items={selectedConversation.users.map(
+                                  (user: any, index: number) => {
+                                    return {
+                                      id: user.id,
+                                      name: user.name,
+                                      image: user.image,
+                                      designation: user.bio,
+                                    };
+                                  }
+                                )}
+                                type="volunteer"
+                                className="cursor-pointer"
+                              />
+                            ) : (
+                              <h1 className="text-center w-full">NONE</h1>
+                            )}
+                          </div>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button>Invite Others</Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="z-30 max-w-[300px] xl:max-w-[400px] data-[state=closed]:animate-out data-[state=closed]:fade-out-10 data-[state=closed]:zoom-out-50 data-[state=open]:zoom-in-50 data-[state=open]:fade-in-10 data-[state=open]:animate-in">
+                              <div
+                                className="p-10 bg-white rounded-xl shadow-xl"
+                                key={"volunteers"}
+                              >
+                                <h1 className="font-medium text-xs xl:text-md text-center">
+                                  Choose A Volunteer To Invite:
+                                </h1>
+                                <div className="flex flex-col gap-4 justify-start items-start">
+                                  {volunteersNotInConversations.map(
+                                    (volunteer) => (
+                                      <div className="w-full flex gap-4 overflow-y-auto flex-row justify-between items-center">
+                                        <div
+                                          className="flex flex-row gap-2 justify-start items-center"
+                                          key={volunteer.id}
+                                        >
+                                          <img
+                                            src={volunteer.image || ""}
+                                            alt={volunteer.name + "'s image"}
+                                            className="w-[15px] h-[15px] xl:w-[30px] xl:h-[30px]"
+                                          />
+                                          <h1 className="text-xs xl:text-sm">
+                                            {volunteer.name}
+                                          </h1>
+                                        </div>
+                                        <Button
+                                          onClick={() =>
+                                            inviteVolunteer(volunteer.id)
+                                          }
+                                          className="text-xs xl:text-sm p-2 xl:p-4"
+                                        >
+                                          Invite
+                                        </Button>
+                                      </div>
+                                    )
+                                  )}
+                                </div>
+                              </div>
+                            </PopoverContent>
+                          </Popover>
                         </div>
                       </div>
-                      <div className="flex flex-col items-center justify-center font-bold">
-                        <h1 className="text-sm">Organizations</h1>
-                        <div className="flex flex-row items-center justify-center">
-                          {selectedConversation.organizations.length > 0 ? (
-                            <AnimatedLinkTooltip
-                              key={
-                                selectedConversation.conversations.id + "org"
-                              }
-                              items={selectedConversation.organizations.map(
-                                (org: any, index: number) => {
-                                  return {
-                                    id: org.id,
-                                    name: org.name,
-                                    image: JSON.parse(org.thumbnail).storageId,
-                                    designation: "ORGANIZATION",
-                                  };
-                                }
+                      <div className="flex flex-row items-center justify-center">
+                        <div className="flex flex-col items-center justify-center font-bold">
+                          <h1 className="text-sm">Organizations</h1>
+                          <div className="flex flex-col xl:flex-row gap-2 xl:gap-10 items-center justify-center">
+                            <div className="flex flex-row items-center justify-center">
+                              {selectedConversation.organizations.length > 0 ? (
+                                <AnimatedLinkTooltip
+                                  key={
+                                    selectedConversation.conversations.id +
+                                    "org"
+                                  }
+                                  items={selectedConversation.organizations.map(
+                                    (org: any, index: number) => {
+                                      return {
+                                        id: org.id,
+                                        name: org.name,
+                                        image:
+                                          JSON.parse(org.thumbnail).storageId ||
+                                          "",
+                                        designation: "ORGANIZATION",
+                                      };
+                                    }
+                                  )}
+                                  className="cursor-pointer"
+                                  type="organization"
+                                />
+                              ) : (
+                                <h1 className="text-center w-full">NONE</h1>
                               )}
-                              className="cursor-pointer"
-                              type="organization"
-                            />
-                          ) : (
-                            <h1 className="text-center w-full">NONE</h1>
-                          )}
+                            </div>
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <Button>Invite Others</Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="z-30 max-w-[300px] xl:max-w-[400px] data-[state=closed]:animate-out data-[state=closed]:fade-out-10 data-[state=closed]:zoom-out-50 data-[state=open]:zoom-in-50 data-[state=open]:fade-in-10 data-[state=open]:animate-in">
+                                <div
+                                  className="p-10 bg-white rounded-xl shadow-xl"
+                                  key={"organizations"}
+                                >
+                                  <h1 className="font-medium text-xs xl:text-md text-center">
+                                    Choose An Organization To Invite:
+                                  </h1>
+                                  <div className="flex flex-col gap-4 justify-start items-start overflow-y-auto max-h-[300px]">
+                                    {organizationsNotInConversations.map(
+                                      (organization) => (
+                                        <div
+                                          className="w-full flex gap-4 flex-row justify-between items-center"
+                                          key={organization.id}
+                                        >
+                                          <div
+                                            className="flex flex-row gap-2 justify-start items-center"
+                                            key={organization.id}
+                                          >
+                                            <img
+                                              src={
+                                                (organization.thumbnail as any)
+                                                  .storageId || ""
+                                              }
+                                              alt={
+                                                organization.name + "'s image"
+                                              }
+                                              className="w-[15px] h-[15px] xl:w-[30px] xl:h-[30px]"
+                                            />
+                                            <h1 className="text-xs xl:text-sm">
+                                              {organization.name}
+                                            </h1>
+                                          </div>
+                                          <Button
+                                            onClick={() =>
+                                              inviteOrganization(
+                                                organization.id
+                                              )
+                                            }
+                                            className="text-xs xl:text-sm p-2 xl:p-4"
+                                          >
+                                            Invite
+                                          </Button>
+                                        </div>
+                                      )
+                                    )}
+                                  </div>
+                                </div>
+                              </PopoverContent>
+                            </Popover>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -424,7 +688,8 @@ const Messaging = ({
                           <div className="flex flex-row gap-3" key={message.id}>
                             <img
                               src={
-                                JSON.parse(message.organizationImage).storageId
+                                JSON.parse(message.organizationImage)
+                                  .storageId || ""
                               }
                               alt="Sender Organization"
                               className="w-[40px] h-[40px] rounded-full"

@@ -204,7 +204,7 @@ const InitializeMessageComponent = ({
                 <TabsTrigger value="organizations">Organizations</TabsTrigger>
               </TabsList>
               <TabsContent value="users">
-                <div className="grid grid-cols-3 gap-4 mt-20">
+                <div className="grid grid-cols-2 xl:grid-cols-3 gap-4 mt-20">
                   <>
                     {messagesOthers.map((otherUser: any) => {
                       return (
@@ -225,7 +225,7 @@ const InitializeMessageComponent = ({
                             </div>
                             <div className="font-bold text-underline w-full text-center">
                               <h1 className="font-bold">Talents</h1>
-                              <ul className="flex flex-row gap-2 font-normal justify-center items-center w-full">
+                              <ul className="flex flex-col xl:flex-row gap-2 font-normal justify-center items-center w-full">
                                 {otherUser.skills.length > 0 ? (
                                   otherUser.skills.map((skill: any) => {
                                     return (
@@ -256,7 +256,7 @@ const InitializeMessageComponent = ({
                 ) : null}
               </TabsContent>
               <TabsContent value="organizations">
-                <div className="grid grid-cols-3 gap-4 mt-20">
+                <div className="grid grid-cols-2 xl:grid-cols-3 gap-4 mt-20">
                   {organizationMessages.map((otherUser: any) => {
                     return (
                       <Card
@@ -340,7 +340,7 @@ export const MessagesClient = ({
     setCurrentOrganizationSelected((prevState) => prevState - 1);
   };
   const formSchema = z.object({
-    subject: z.string(),
+    subject: z.string().min(1, "Please enter something for this field"),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({

@@ -103,8 +103,7 @@ const Navbar = ({
                             <img
                               src="/Favicon.png"
                               alt="Volunteer Opportunities Logo"
-                              width={"100px"}
-                              height={"100px"}
+                              className="w-[50px] h-[50px]"
                             />
                             <h1>Volunteer Opportunities</h1>
                           </div>
@@ -113,17 +112,15 @@ const Navbar = ({
                     </SheetTitle>
                     <SheetDescription className="h-full overflow-auto">
                       <div className="flex flex-col justify-between h-full">
-                        <div className="flex justify-start flex-col gap-5 mt-5">
+                        <div className="flex justify-start flex-col gap-5 mt-2">
                           <div className="flex flex-col gap-5">
                             <h1 className="font-medium text-xl text-black">
                               Explore
                             </h1>
-                            <div className="ml-5 mb-5 flex flex-col gap-3">
+                            <div className="ml-5 flex flex-col gap-3">
                               <SheetClose asChild>
                                 <Link href={"/explore"} className="block">
-                                  {!userStatus
-                                    ? "Search for listings that suit you"
-                                    : "Search for volunteers for your organization"}
+                                  Search for listings that suit you
                                 </Link>
                               </SheetClose>
                             </div>
@@ -133,7 +130,7 @@ const Navbar = ({
                               <h1 className="font-medium text-xl text-black">
                                 Message
                               </h1>
-                              <div className="ml-5 mb-5 flex flex-col gap-3">
+                              <div className="ml-5 flex flex-col gap-3">
                                 <SheetClose asChild>
                                   <Link href="/message">
                                     Message other users who need your help
@@ -147,7 +144,7 @@ const Navbar = ({
                               <h1 className="font-medium text-xl text-black">
                                 Create
                               </h1>
-                              <div className="ml-5 mb-5 flex flex-col gap-3">
+                              <div className="ml-5 flex flex-col gap-3">
                                 {!userStatus ? (
                                   <SheetClose asChild>
                                     <Link href="/profile/view">
@@ -170,7 +167,7 @@ const Navbar = ({
                               <h1 className="font-medium text-xl text-black">
                                 Profile
                               </h1>
-                              <div className="ml-5 mb-5 flex flex-col gap-3">
+                              <div className="ml-5 flex flex-col gap-3">
                                 <SheetClose asChild>
                                   <Link
                                     href={"/profile/view"}
@@ -203,6 +200,7 @@ const Navbar = ({
                             src={
                               authStatus?.user.image || "/blank_profile_pic.png"
                             }
+                            customClassName="w-[60px] h-[60px]"
                           ></ProductItem>
                           <SheetClose asChild>
                             <Button
@@ -229,9 +227,7 @@ const Navbar = ({
                     item="Explore"
                   >
                     <div className="flex flex-col space-y-4 text-sm">
-                      {!userStatus
-                        ? "Search for listings that suit you"
-                        : "Search for volunteers for your organization"}
+                      Search for listings that suit you
                     </div>
                   </MenuItem>
                 </HoveredLink>
@@ -339,30 +335,30 @@ const Navbar = ({
                 >
                   <SheetHeader>
                     <SheetTitle>
-                      <div className="flex flex-col justify-center items-center">
+                      <SheetClose asChild>
                         <Link href={"/"}>
-                          <img
-                            src="/Favicon.png"
-                            alt="Volunteer Opportunities Logo"
-                            width={"100px"}
-                            height={"100px"}
-                          />
-                          <h1>Volunteer Opportunities</h1>
+                          <div className="flex flex-col justify-center items-center">
+                            <img
+                              src="/Favicon.png"
+                              alt="Volunteer Opportunities Logo"
+                              className="w-[50px] h-[50px]"
+                            />
+                            <h1>Volunteer Opportunities</h1>
+                          </div>
                         </Link>
-                      </div>
+                      </SheetClose>
                     </SheetTitle>
                     <SheetDescription>
-                      <div className="flex justify-start flex-col gap-5 mt-5">
+                      <div className="flex justify-start flex-col gap-5">
                         <div className="flex justify-start flex-col gap-5">
                           <div className="flex flex-col gap-5">
                             <h1 className="font-medium text-xl text-black">
                               Explore
                             </h1>
-                            <div className="ml-5 mb-5 flex flex-col gap-3">
+                            <div className="ml-5 flex flex-col gap-3">
                               <SheetClose asChild>
                                 <Link href={"/explore"} className="block">
-                                  Search for your volunteering or organizational
-                                  needs
+                                  Search for listings that suit you
                                 </Link>
                               </SheetClose>
                             </div>
@@ -371,12 +367,9 @@ const Navbar = ({
                             <h1 className="font-medium text-xl text-black">
                               Login/Register
                             </h1>
-                            <div className="ml-5 mb-5 flex flex-col gap-3">
+                            <div className="ml-5 flex flex-col gap-3">
                               <SheetClose asChild>
-                                <Link
-                                  href={"/api/auth/signin"}
-                                  className="block"
-                                >
+                                <Link href={"/login"} className="block">
                                   Sign In
                                 </Link>
                               </SheetClose>
@@ -398,9 +391,7 @@ const Navbar = ({
                     item="Explore"
                   >
                     <div className="flex flex-col space-y-4 text-sm">
-                      {!userStatus
-                        ? "Search for listings that suit you"
-                        : "Search for volunteers for your organization"}
+                      Search for listings that suit you
                     </div>
                   </MenuItem>
                 </HoveredLink>

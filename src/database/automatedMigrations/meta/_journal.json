@@ -50,6 +50,13 @@
       "when": 1731355885040,
       "tag": "0006_thin_namorita",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1732638781844,
+      "tag": "0007_robust_sabra",
+      "breakpoints": true
     }
   ]
 }
