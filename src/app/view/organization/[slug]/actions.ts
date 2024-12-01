@@ -34,6 +34,7 @@ export const getOrganizationById = unauthenticatedAction
         if (!volunteerData[userId]) {
           volunteerData[userId] = {
             name: volunteer.volunteers.name,
+            image: volunteer.volunteers.image,
             participatedListings: [],
           };
         }
@@ -53,6 +54,7 @@ export const getOrganizationById = unauthenticatedAction
       volunteers: Object.values(volunteerData), 
     };
   });
+
 //I got this code for formatting a phone number from ChatGPT. The prompt I used was "Can you write code to display this in a normal phone number format? 12345678910"
 const formatPhoneNumber = (phoneNumber: string) => {
   // Ensure the phone number is exactly 10 digits

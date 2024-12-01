@@ -132,40 +132,49 @@ const ViewerPageClient = ({ organizations }: { organizations: any }) => {
                   ))}
                 </div>
               </section>
-
               {/* Volunteers Section */}
               <section className="w-full max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-8 mt-8">
                 <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center">
-                  Volunteers
+                  Our Amazing Volunteers
                 </h2>
-                <div className="space-y-4">
+                <div className="flex flex-col gap-6">
                   {organizations?.volunteers?.length > 0 ? (
                     organizations.volunteers.map((volunteer: any, index: number) => (
-                      <div
+                      <Card
                         key={index}
-                        className="p-4 border border-gray-300 rounded-lg bg-slate-100"
+                        className="p-6 shadow-lg transition-shadow duration-300 rounded-lg "
                       >
-                        <h3 className="text-lg font-bold text-gray-800">{volunteer.name}</h3>
-                        <p className="text-gray-700 mt-2">Participated in:</p>
-                        <ul className="list-disc ml-6 mt-1">
-                          {volunteer.participatedListings.map((listing: any, idx: number) => (
-                            <li key={idx}>
-                              <span className="font-medium">{listing.name}</span> -{" "}
-                              <span className="text-gray-500">
-                                {listing.dateSignedUp
-                                  ? new Date(listing.dateSignedUp).toLocaleDateString()
-                                  : "No date"}
-                              </span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
+                        <div className="flex items-center gap-4">
+                          <img
+                            src={volunteer?.image || "/default-avatar.png"} // Fallback avatar
+                            alt={volunteer?.name || "Volunteer"}
+                            className="rounded-full w-[70px] h-[70px] object-cover"
+                          />
+                          <div className="flex flex-col">
+                            <h3 className="font-bold text-gray-800">{volunteer.name}</h3>
+                            <p className="text-gray-700 mt-2">Participated in:</p>
+                            <ul className="list-disc ml-6 mt-1">
+                              {volunteer.participatedListings.map((listing: any, idx: number) => (
+                                <li key={idx}>
+                                  <span className="font-medium">{listing.name}</span> -{" "}
+                                  <span className="text-gray-500">
+                                    {listing.dateSignedUp
+                                      ? new Date(listing.dateSignedUp).toLocaleDateString()
+                                      : "No date"}
+                                  </span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      </Card>
                     ))
                   ) : (
                     <p className="text-gray-600 text-center">No volunteers found.</p>
                   )}
                 </div>
               </section>
+
 
             </div>
           </div>
