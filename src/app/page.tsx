@@ -103,7 +103,7 @@ export default function Home() {
           <CarouselContent>
             <CarouselItem>
               <div className="container mx-auto">
-                <div className="flex flex-row items-center jusify-center gap-5">
+                <div className="flex flex-col sm:flex-row items-center jusify-center gap-5">
                   <div className="flex flex-col justify-center items-center flex-1">
                     <img
                       className="w-[200px] h-[200px]"
@@ -134,7 +134,7 @@ export default function Home() {
             </CarouselItem>
             <CarouselItem>
               <div className="container mx-auto">
-                <div className="flex flex-row items-center jusify-center gap-5">
+                <div className="flex flex-col sm:flex-row items-center jusify-center gap-5">
                   <div className="flex flex-col justify-center items-center flex-1">
                     <img
                       className="w-[200px] h-[200px]"
@@ -160,7 +160,7 @@ export default function Home() {
             </CarouselItem>
             <CarouselItem>
               <div className="container mx-auto">
-                <div className="flex flex-row items-center jusify-center gap-5">
+                <div className="flex flex-col sm:flex-row items-center jusify-center gap-5">
                   <div className="flex flex-col justify-center items-center flex-1">
                     <img
                       className="w-[200px] h-[200px]"
@@ -185,7 +185,7 @@ export default function Home() {
             </CarouselItem>
             <CarouselItem>
               <div className="container mx-auto">
-                <div className="flex flex-row items-center jusify-center gap-5">
+                <div className="flex flex-col sm:flex-row items-center jusify-center gap-5">
                   <div className="flex flex-col justify-center items-center flex-1">
                     <img
                       className="w-[200px] h-[200px]"
@@ -212,7 +212,7 @@ export default function Home() {
             </CarouselItem>
             <CarouselItem>
               <div className="container mx-auto">
-                <div className="flex flex-row items-center jusify-center gap-5">
+                <div className="flex flex-col sm:flex-row items-center jusify-center gap-5">
                   <div className="flex flex-col justify-center items-center flex-1">
                     <img
                       className="w-[200px] h-[200px]"
