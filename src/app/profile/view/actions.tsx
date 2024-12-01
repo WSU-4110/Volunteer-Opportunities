@@ -207,7 +207,7 @@ async function internalUpdateUser(
         image: picture,
         bio: bio,
         customFile: customImage,
-        userImage: { id: userImage, date: now },
+        userImage: { id: userImage },
       })
       .where(eq(users.id, id))
       .returning();
@@ -221,7 +221,7 @@ async function internalUpdateUser(
         image: picture,
         bio: bio,
         customFile: customImage,
-        userImage: { id: "", date: "" },
+        userImage: { id: "" },
       })
       .where(eq(users.id, id))
       .returning();
@@ -248,19 +248,6 @@ export const getOrganizations = authenticatedAction
         })
         .from(organizations)
         .where(eq(organizations.creator, user.id));
-      const now = new Date();
-      const check = new Date().setHours(now.getHours() - 1);
-      // Check image times
-      for (let i = 0; i < orgs.length; i++) {
-        let json: any = orgs[i].image;
-        let image = JSON.parse(json);
-        if (image.date < check) {
-          let url = await getImage(image.key);
-          let date = new Date().toISOString();
-
-          await organizationImage({ picture: url, id: orgs[i].id, date: date });
-        }
-      }
       return orgs;
     } else return null;
   });
