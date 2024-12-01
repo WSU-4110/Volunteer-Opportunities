@@ -286,7 +286,7 @@ export default function Userpage({
                                 listing.skills.map((skill: any) => {
                                   return (
                                     <div
-                                      className="p-2 hover:bg-slate-100 flex flex-col items-center justify-start cursor-pointer"
+                                      className="p-2 hover:bg-slate-100 flex flex-col items-center justify-start"
                                       key={skill.id}
                                     >
                                       <img
