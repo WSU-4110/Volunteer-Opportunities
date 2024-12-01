@@ -71,54 +71,55 @@ export default function Talents(props: input) {
   }
   return (
     <>
-      <div className="flex flex-row items-center gap-4 w-full">
-        {props.skillsUserHas.map((skill) => (
-          <div key={skill.skillId}>
-            <Talent
-              skillName={skill.skillName}
-              skillId={skill.skillId}
-              skillUrl={skill.url}
-              removeSkill={props.removeSkill}
+      <div className="my-8 space-y-4">
+        <div className="flex flex-row items-center gap-4 w-full ">
+          {props.skillsUserHas.map((skill) => (
+            <div key={skill.skillId}>
+              <Talent
+                skillName={skill.skillName}
+                skillId={skill.skillId}
+                skillUrl={skill.url}
+                removeSkill={props.removeSkill}
+              />
+            </div>
+          ))}
+        </div>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="skillId"
+              render={({ field }) => (
+                <FormItem>
+                  <Select onValueChange={field.onChange}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {props.skillsUserDoesntHave.map(
+                        (skill: { skillId: string; skillName: string }) => (
+                          <SelectItem
+                            value={skill.skillId}
+                            key={skill.skillId}
+                            id={skill.skillId}
+                          >
+                            {skill.skillName}
+                          </SelectItem>
+                        )
+                      )}
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>Add another skill</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-        ))}
+            <Button type="submit">Add</Button>
+          </form>
+        </Form>
       </div>
-      <br />
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <FormField
-            control={form.control}
-            name="skillId"
-            render={({ field }) => (
-              <FormItem>
-                <Select onValueChange={field.onChange}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {props.skillsUserDoesntHave.map(
-                      (skill: { skillId: string; skillName: string }) => (
-                        <SelectItem
-                          value={skill.skillId}
-                          key={skill.skillId}
-                          id={skill.skillId}
-                        >
-                          {skill.skillName}
-                        </SelectItem>
-                      )
-                    )}
-                  </SelectContent>
-                </Select>
-                <FormDescription>Add another skill</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button type="submit">Add</Button>
-        </form>
-      </Form>
     </>
   );
 }

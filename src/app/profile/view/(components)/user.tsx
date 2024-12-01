@@ -152,7 +152,7 @@ const EditUserPage = ({ ...props }: any) => {
 
   // Form layout from https://ui.shadcn.com/docs/components/form
   return (
-    <div className="w-1/2 m-auto mt-20 bg-white p-8 rounded-lg shadow-md">
+    <div className="w-[90%] xl:w-1/2 m-auto mt-20 bg-white p-8 rounded-lg shadow-md">
       <header className="text-2xl text-center font-bold">Volunteer Form</header>
       {editImage ? (
         <div>
@@ -171,7 +171,7 @@ const EditUserPage = ({ ...props }: any) => {
           </Button>
         </div>
       ) : (
-        <div className="w-full m-auto mt-10">
+        <div className="w-full mx-auto mt-10">
           <img
             src={props.values.picture}
             alt="User Profile Picture"
@@ -187,7 +187,6 @@ const EditUserPage = ({ ...props }: any) => {
           </Button>
         </div>
       )}
-      <br />
       <div id="skills">
         <Talents
           addSkill={addSkill}
@@ -196,7 +195,6 @@ const EditUserPage = ({ ...props }: any) => {
           skillsUserDoesntHave={skillsUserDoesntHave}
         />
       </div>
-      <br />
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -232,26 +230,18 @@ const EditUserPage = ({ ...props }: any) => {
               </FormItem>
             )}
           />
-          <table>
-            <tbody>
-              <tr>
-                <td>
-                  <Button type="submit">Submit</Button>
-                </td>
-                <td>
-                  <Button
-                    onClick={() => {
-                      props.setEditProfile(false);
-                    }}
-                    type="button"
-                    variant="destructive"
-                  >
-                    Cancel
-                  </Button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div className="flex flex-row w-full justify-center gap-5">
+            <Button type="submit">Submit</Button>
+            <Button
+              onClick={() => {
+                props.setEditProfile(false);
+              }}
+              type="button"
+              variant="destructive"
+            >
+              Cancel
+            </Button>
+          </div>
         </form>
       </Form>
     </div>
