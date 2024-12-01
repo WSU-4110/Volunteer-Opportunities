@@ -33,17 +33,19 @@ import {
 } from "@/components/ui/command";
 import { Textarea } from "@/components/ui/textarea";
 
+//Exported for testing
+export const orgSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email(),
+  address: z.string().min(1, "Address is required"),
+  phoneNumber: z.string().min(1, "Phone Number is required"),
+  bio: z.string().min(1, "Bio is required"),
+});
+
 export default function AddAnOrganization(props: any) {
   const [addressSuggestions, setAddressSuggestions] = useState([]);
   const [coordinates, setCoordinates] = useState({ longitude: 0, latitude: 0 });
   const [validAddressSelected, setValidAddressSelected] = useState(false);
-  const orgSchema = z.object({
-    name: z.string().min(1, "Name is required"),
-    email: z.string().email(),
-    address: z.string().min(1, "Address is required"),
-    phoneNumber: z.string().min(1, "Phone Number is required"),
-    bio: z.string().min(1, "Bio is required"),
-  });
 
   const form = useForm<z.infer<typeof orgSchema>>({
     resolver: zodResolver(orgSchema),

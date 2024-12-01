@@ -207,7 +207,7 @@ async function internalUpdateUser(
         image: picture,
         bio: bio,
         customFile: customImage,
-        userImage: { id: userImage },
+        userImage: { id: userImage, date: now },
       })
       .where(eq(users.id, id))
       .returning();
@@ -221,7 +221,7 @@ async function internalUpdateUser(
         image: picture,
         bio: bio,
         customFile: customImage,
-        userImage: { id: "" },
+        userImage: { id: "", date: "" },
       })
       .where(eq(users.id, id))
       .returning();
@@ -234,7 +234,7 @@ export const getOrganizations = authenticatedAction
   .createServerAction()
   .handler(async ({ ctx: { user } }) => {
     if (user != undefined) {
-      return await database
+      const orgs = await database
         .select({
           id: organizations.id,
           name: organizations.name,
@@ -248,6 +248,20 @@ export const getOrganizations = authenticatedAction
         })
         .from(organizations)
         .where(eq(organizations.creator, user.id));
+      const now = new Date();
+      const check = new Date().setHours(now.getHours() - 1);
+      // Check image times
+      for (let i = 0; i < orgs.length; i++) {
+        let json: any = orgs[i].image;
+        let image = JSON.parse(json);
+        if (image.date < check) {
+          let url = await getImage(image.key);
+          let date = new Date().toISOString();
+
+          await organizationImage({ picture: url, id: orgs[i].id, date: date });
+        }
+      }
+      return orgs;
     } else return null;
   });
 
@@ -337,6 +351,8 @@ async function internalUpdateOrg(
   email: string
 ) {
   let image = picture;
+  console.log("submit");
+  console.log(image);
   //Either overwrites current image or adds a new image
   if (picture != "") {
     image = await rePutImage(data.get("data"), image);

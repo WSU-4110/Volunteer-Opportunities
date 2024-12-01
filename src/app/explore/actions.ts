@@ -19,6 +19,7 @@ import { list } from "postcss";
 import { PgColumn } from "drizzle-orm/pg-core";
 import { revalidateListingPaths } from "../edit/[slug]/actions";
 import { revalidatePath } from "next/cache";
+import { deleteImage } from "@/database/sthree";
 
 export const getUser = authenticatedAction
   .createServerAction()
@@ -182,8 +183,11 @@ export const deleteIndividualListing = authenticatedAction
 
     if (!validListing) {
       return;
+    } else {
+      try {
+        deleteImage(validListing[0].listings.thumbnail!.substring(-40));
+      } catch {}
     }
-
     await database.delete(listings).where(eq(listings.id, input));
   });
 

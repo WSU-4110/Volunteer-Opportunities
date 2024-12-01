@@ -1,0 +1,28 @@
+name: Jest Test Workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+env:
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    environment: Production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Node version
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20" 
+      - name: Install dependencies
+        run: npm install
+      - name: Run tests
+        run: npm test
+      - name: Build website
+        run: npm run build

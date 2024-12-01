@@ -28,7 +28,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-
 //From https://ui.shadcn.com/docs/components/form
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -69,6 +68,14 @@ type choice = {
 const formSchema = z.object({
   id: z.string(),
 });
+// exported schema for testing
+export const orgSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email(),
+  address: z.string().min(1, "Address is required"),
+  phoneNumber: z.string().min(1, "Phone Number is required"),
+  bio: z.string().min(1, "Bio is required"),
+});
 
 const EditOrgPage = ({ ...props }: any) => {
   const [addressSuggestions, setAddressSuggestions] = useState([]);
@@ -77,13 +84,6 @@ const EditOrgPage = ({ ...props }: any) => {
     latitude: parseFloat(props.organizations[props.org.pos].latitude) || 0,
   });
   const [validAddressSelected, setValidAddressSelected] = useState(true);
-  const orgSchema = z.object({
-    name: z.string().min(1, "Name is required"),
-    email: z.string().email(),
-    address: z.string().min(1, "Address is required"),
-    phoneNumber: z.string().min(1, "Phone Number is required"),
-    bio: z.string().min(1, "Bio is required"),
-  });
 
   const form = useForm<z.infer<typeof orgSchema>>({
     resolver: zodResolver(orgSchema),
@@ -163,13 +163,13 @@ const EditOrgPage = ({ ...props }: any) => {
   async function onSubmit(values: z.infer<typeof orgSchema>) {
     try {
       const form: FormData = new FormData();
-      //console.log(files);
+
       if (files.length > 0) {
         const data: File = await files[0];
         form.append("data", data);
       }
       await updateOrganization({
-        picture: props.organizations[props.org.pos].image.storageId,
+        picture: props.organizations[props.org.pos].image.key,
         name: values.name,
         id: props.org.id,
         data: form,
@@ -349,11 +349,14 @@ const EditOrgPage = ({ ...props }: any) => {
             )}
           />
           <div className="flex justify-start gap-4">
-            <Button type="submit">Submit</Button>
+            <Button type="submit" data-testid="submit">
+              Submit
+            </Button>
             <Button
               onClick={() => props.setEditProfile(false)}
               type="button"
               variant="destructive"
+              data-testid="cancel"
             >
               Cancel
             </Button>
@@ -366,9 +369,7 @@ const EditOrgPage = ({ ...props }: any) => {
 
 const ViewOrgPage = (props: any) => {
   const router = useRouter();
-  //console.log(props.listings[0][0]);
-  //console.log(props.org.pos);
-  //console.log(props.listings[props.org.pos][0]);
+
   return (
     <div>
       <div className="w-full m-auto mt-10">
@@ -426,8 +427,7 @@ const ViewOrgPage = (props: any) => {
             Listings:
           </Label>
           <div id="listing">
-            {/* This is not a real error the key listing.id will always unique to that listing */}
-            {props.listings[props.org.pos][0].map((opportunity: any) => (
+            {props.listings[props.org.pos].map((opportunity: any) => (
               <div key={opportunity.id}>
                 <Card
                   className="p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-lg cursor-pointer"
