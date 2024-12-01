@@ -17,8 +17,26 @@ const ViewerPageClient = ({ organizations }: { organizations: any }) => {
           <div className="w-[90%] mx-auto">
             <div className="w-fit mx-auto p-12 shadow-lg bg-white rounded-lg">
               {/* Profile Section with Organization Name */}
-              <section className="w-full max-w-4xl mx-auto flex items-center mb-8">
-                <div className="mr-6">
+              <section className="w-full max-w-4xl mx-auto flex flex-col justify-center items-center mb-8 xl:hidden block">
+                <div className="w-full">
+                  <img
+                    src={
+                      (organizations!.thumbnail! as { storageId: string })
+                        .storageId || ""
+                    }
+                    alt={organizations?.name}
+                    className="rounded-md object-cover w-[200px] h-[200px] bg-white mx-auto"
+                  />
+                  <h1 className="text-4xl font-bold text-gray-800 text-center">
+                    {organizations.name}
+                  </h1>
+                </div>
+                <p className="text-sm text-gray-600 text-center">
+                  Created By: {organizations!.users!.name}
+                </p>
+              </section>
+              <section className="w-full max-w-4xl mx-auto flex flex-col justify-start items-center mb-8 hidden xl:block">
+                <div className="flex flex-row items-center justify-start gap-6">
                   <img
                     src={
                       (organizations!.thumbnail! as { storageId: string })
@@ -27,18 +45,19 @@ const ViewerPageClient = ({ organizations }: { organizations: any }) => {
                     alt={organizations?.name}
                     className="rounded-md object-cover w-[200px] h-[200px] bg-white"
                   />
-                  <p className="text-sm text-gray-600 mt-2 ml-2 text-center">
-                    Created By: {organizations!.users!.name}
-                  </p>
+
+                  <h1 className="text-4xl font-bold text-gray-800">
+                    {organizations.name}
+                  </h1>
                 </div>
-                <h1 className="text-4xl font-bold text-gray-800">
-                  {organizations.name}
-                </h1>
+                <p className="text-sm text-gray-600 mt-2 ml-2 text-start">
+                  Created By: {organizations!.users!.name}
+                </p>
               </section>
 
               <div className="w-full max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
                 {/* Description Section */}
-                <section className="col-span-2 bg-white rounded-lg shadow-lg p-8">
+                <section className="md:col-span-2 bg-white rounded-lg shadow-lg p-8">
                   <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">
                     About us
                   </h2>
@@ -113,7 +132,7 @@ const ViewerPageClient = ({ organizations }: { organizations: any }) => {
                         router.push(`/view/listing/${opportunity.id}`)
                       }
                     >
-                      <div className="flex items-center gap-4">
+                      <div className="flex flex-col xl:flex-row items-center gap-4">
                         <img
                           src={opportunity.thumbnail || ""}
                           alt={opportunity.name}
@@ -130,6 +149,63 @@ const ViewerPageClient = ({ organizations }: { organizations: any }) => {
                       </div>
                     </Card>
                   ))}
+                </div>
+              </section>
+              {/* Volunteers Section */}
+              <section className="w-full max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-8 mt-8">
+                <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center">
+                  Our Amazing Volunteers
+                </h2>
+                <div className="flex flex-col gap-6">
+                  {organizations?.volunteers?.length > 0 ? (
+                    organizations.volunteers.map(
+                      (volunteer: any, index: number) => (
+                        <Card
+                          key={index}
+                          className="p-6 shadow-lg transition-shadow duration-300 rounded-lg "
+                        >
+                          <div className="flex flex-col xl:flex-row items-center gap-4">
+                            <img
+                              src={volunteer?.image || "/default-avatar.png"} // Fallback avatar
+                              alt={volunteer?.name || "Volunteer"}
+                              className="rounded-full w-[70px] h-[70px] object-cover"
+                            />
+                            <div className="flex flex-col">
+                              <h3 className="font-bold text-gray-800">
+                                {volunteer.name}
+                              </h3>
+                              <p className="text-gray-700 mt-2">
+                                Participated in:
+                              </p>
+                              <ul className="list-disc ml-6 mt-1">
+                                {volunteer.participatedListings.map(
+                                  (listing: any, idx: number) => (
+                                    <li key={idx}>
+                                      <span className="font-medium">
+                                        {listing.name}
+                                      </span>{" "}
+                                      -{" "}
+                                      <span className="text-gray-500">
+                                        {listing.dateSignedUp
+                                          ? new Date(
+                                              listing.dateSignedUp
+                                            ).toLocaleDateString()
+                                          : "No date"}
+                                      </span>
+                                    </li>
+                                  )
+                                )}
+                              </ul>
+                            </div>
+                          </div>
+                        </Card>
+                      )
+                    )
+                  ) : (
+                    <p className="text-gray-600 text-center">
+                      No volunteers found.
+                    </p>
+                  )}
                 </div>
               </section>
             </div>

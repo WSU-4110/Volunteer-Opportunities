@@ -234,7 +234,7 @@ export const getOrganizations = authenticatedAction
   .createServerAction()
   .handler(async ({ ctx: { user } }) => {
     if (user != undefined) {
-      return await database
+      const orgs = await database
         .select({
           id: organizations.id,
           name: organizations.name,
@@ -248,6 +248,7 @@ export const getOrganizations = authenticatedAction
         })
         .from(organizations)
         .where(eq(organizations.creator, user.id));
+      return orgs;
     } else return null;
   });
 
@@ -337,6 +338,8 @@ async function internalUpdateOrg(
   email: string
 ) {
   let image = picture;
+  console.log("submit");
+  console.log(image);
   //Either overwrites current image or adds a new image
   if (picture != "") {
     image = await rePutImage(data.get("data"), image);

@@ -28,7 +28,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-
 //From https://ui.shadcn.com/docs/components/form
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -69,6 +68,14 @@ type choice = {
 const formSchema = z.object({
   id: z.string(),
 });
+// exported schema for testing
+export const orgSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email(),
+  address: z.string().min(1, "Address is required"),
+  phoneNumber: z.string().min(1, "Phone Number is required"),
+  bio: z.string().min(1, "Bio is required"),
+});
 
 const EditOrgPage = ({ ...props }: any) => {
   const [addressSuggestions, setAddressSuggestions] = useState([]);
@@ -77,13 +84,6 @@ const EditOrgPage = ({ ...props }: any) => {
     latitude: parseFloat(props.organizations[props.org.pos].latitude) || 0,
   });
   const [validAddressSelected, setValidAddressSelected] = useState(true);
-  const orgSchema = z.object({
-    name: z.string().min(1, "Name is required"),
-    email: z.string().email(),
-    address: z.string().min(1, "Address is required"),
-    phoneNumber: z.string().min(1, "Phone Number is required"),
-    bio: z.string().min(1, "Bio is required"),
-  });
 
   const form = useForm<z.infer<typeof orgSchema>>({
     resolver: zodResolver(orgSchema),
@@ -163,13 +163,13 @@ const EditOrgPage = ({ ...props }: any) => {
   async function onSubmit(values: z.infer<typeof orgSchema>) {
     try {
       const form: FormData = new FormData();
-      //console.log(files);
+
       if (files.length > 0) {
         const data: File = await files[0];
         form.append("data", data);
       }
       await updateOrganization({
-        picture: props.organizations[props.org.pos].image.storageId,
+        picture: props.organizations[props.org.pos].image.key,
         name: values.name,
         id: props.org.id,
         data: form,
@@ -216,9 +216,7 @@ const EditOrgPage = ({ ...props }: any) => {
             <img
               src={props.organizations[props.org.pos].image.storageId}
               alt="Organization Profile Picture"
-              className="m-auto rounded-xl"
-              width="250px"
-              height="250px"
+              className="m-auto rounded-xl w-[250px] h-[250px]"
             />
             <Button
               onClick={() => {
@@ -351,11 +349,14 @@ const EditOrgPage = ({ ...props }: any) => {
             )}
           />
           <div className="flex justify-start gap-4">
-            <Button type="submit">Submit</Button>
+            <Button type="submit" data-testid="submit">
+              Submit
+            </Button>
             <Button
               onClick={() => props.setEditProfile(false)}
               type="button"
               variant="destructive"
+              data-testid="cancel"
             >
               Cancel
             </Button>
@@ -368,105 +369,65 @@ const EditOrgPage = ({ ...props }: any) => {
 
 const ViewOrgPage = (props: any) => {
   const router = useRouter();
-  //console.log(props.listings[0][0]);
-  //console.log(props.org.pos);
-  //console.log(props.listings[props.org.pos][0]);
+
   return (
     <div>
       <div className="w-full m-auto mt-10">
         <img
           src={props.organizations[props.org.pos].image.storageId}
           alt="Organization Profile Picture"
-          className="m-auto rounded-xl"
-          width="250px"
-          height="250px"
+          className="m-auto rounded-xl w-[250px] h-[250px]"
         />
       </div>
 
-      <table>
-        <tbody>
-          <tr>
-            <td className="p-2">
-              <Label className="align-text-top" htmlFor="name">
-                Company Name:&nbsp;
-              </Label>
-            </td>
-            <td className="p-2">
-              <p id="name" className="align-text-top">
-                {props.organizations[props.org.pos].name}
-              </p>
-            </td>
-          </tr>
-
-          <tr>
-            <td className="p-2">
-              <Label className="align-text-top" htmlFor="email">
-                Email Address:&nbsp;
-              </Label>
-            </td>
-            <td className="p-2">
-              <p id="email" className="align-text-top">
-                {props.organizations[props.org.pos].email}
-              </p>
-            </td>
-          </tr>
-
-          <tr>
-            <td className="p-2">
-              <Label className="align-text-top" htmlFor="bio">
-                Biography:&nbsp;
-              </Label>
-            </td>
-            <td className="p-2">
-              <p id="bio" className="align-text-top">
-                {props.organizations[props.org.pos].bio}
-              </p>
-            </td>
-          </tr>
-
-          <tr>
-            <td className="p-2">
-              <Label className="align-text-top" htmlFor="address">
-                Address:&nbsp;
-              </Label>
-            </td>
-            <td className="p-2">
-              <p id="address" className="align-text-top">
-                {props.organizations[props.org.pos].address}
-              </p>
-            </td>
-          </tr>
-
-          <tr>
-            <td className="p-2">
-              <Label className="align-text-top" htmlFor="phone">
-                Phone:&nbsp;
-              </Label>
-            </td>
-            <td className="p-2">
-              <p id="phone" className="align-text-top">
-                {"+" +
-                  props.organizations[props.org.pos].phoneNumber.slice(0, 1) +
-                  " (" +
-                  props.organizations[props.org.pos].phoneNumber.slice(1, 4) +
-                  ") " +
-                  props.organizations[props.org.pos].phoneNumber.slice(4, 7) +
-                  "-" +
-                  props.organizations[props.org.pos].phoneNumber.slice(7, 11)}
-              </p>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <br />
-      {props.listings[props.org.pos][0].length > 0 ? (
+      <div className="grid grid-cols-3 xl:grid-cols-5 gap-y-5 justify-center items-start my-10">
+        <div className="col-span-1">
+          <Label htmlFor="name">Company Name:&nbsp;</Label>
+        </div>
+        <div className="col-span-2 xl:col-span-4 text-left">
+          <p id="name">{props.organizations[props.org.pos].name}</p>
+        </div>
+        <div className="col-span-1 text-left">
+          <Label htmlFor="email">Email Address:&nbsp;</Label>
+        </div>
+        <div className="col-span-2 xl:col-span-4 text-left">
+          <p id="email">{props.organizations[props.org.pos].email}</p>
+        </div>
+        <div className="col-span-1 text-left">
+          <Label htmlFor="bio">Biography:&nbsp;</Label>
+        </div>
+        <div className="col-span-2 xl:col-span-4 text-left">
+          <p id="bio">{props.organizations[props.org.pos].bio}</p>
+        </div>
+        <div className="col-span-1 text-left">
+          <Label htmlFor="address">Address:&nbsp;</Label>
+        </div>
+        <div className="col-span-2 xl:col-span-4 text-left">
+          <p id="address">{props.organizations[props.org.pos].address}</p>
+        </div>
+        <div className="col-span-1 text-left">
+          <Label htmlFor="phone">Phone:&nbsp;</Label>
+        </div>
+        <div className="col-span-2 xl:col-span-4 text-left">
+          <p id="phone">
+            {"+" +
+              props.organizations[props.org.pos].phoneNumber.slice(0, 1) +
+              " (" +
+              props.organizations[props.org.pos].phoneNumber.slice(1, 4) +
+              ") " +
+              props.organizations[props.org.pos].phoneNumber.slice(4, 7) +
+              "-" +
+              props.organizations[props.org.pos].phoneNumber.slice(7, 11)}
+          </p>
+        </div>
+      </div>
+      {props.listings[props.org.pos].length > 0 ? (
         <>
           <Label htmlFor="listing" data-testid="listings">
             Listings:
           </Label>
           <div id="listing">
-            {/* This is not a real error the key listing.id will always unique to that listing */}
-            {props.listings[props.org.pos][0].map((opportunity: any) => (
+            {props.listings[props.org.pos].map((opportunity: any) => (
               <div key={opportunity.id}>
                 <Card
                   className="p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-lg cursor-pointer"
@@ -494,15 +455,17 @@ const ViewOrgPage = (props: any) => {
           </div>
         </>
       ) : null}
-
-      <Button
-        onClick={() => {
-          props.setEditProfile(true);
-        }}
-        type="button"
-      >
-        Edit
-      </Button>
+      <div className="w-full">
+        <Button
+          onClick={() => {
+            props.setEditProfile(true);
+          }}
+          type="button"
+          className="block w-fit mx-auto"
+        >
+          Edit
+        </Button>
+      </div>
     </div>
   );
 };
@@ -532,8 +495,8 @@ export default function Organization(props: input) {
   }
 
   return (
-    <div className="w-1/2 m-auto mt-20 bg-white p-8 rounded-lg shadow-md">
-      <header className="text-2xl text-center font-bold">
+    <div className="w-[90%] xl:w-1/2 m-auto mt-20 bg-white p-8 rounded-lg shadow-md">
+      <header className="text-2xl text-center font-bold my-4">
         Organization Page
       </header>
       <>
