@@ -141,7 +141,7 @@ export async function getImage(key: string) {
 // From aws docs https://docs.aws.amazon.com/AmazonS3/latest/API/s3_example_s3_Scenario_PresignedUrl_section.html
 const createPresignedUrlGet = ({ bucket, key }: any) => {
   const command = new GetObjectCommand({ Bucket: bucket, Key: key });
-  return getSignedUrl(client, command, { expiresIn: 600 });
+  return getSignedUrl(client, command, { expiresIn: 3660 }); //Keys last 61  minutes
 };
 
 // From aws docs https://docs.aws.amazon.com/AmazonS3/latest/API/s3_example_s3_DeleteObject_section.html
