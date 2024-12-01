@@ -3,7 +3,7 @@ import { database } from "@/database/index";
 import { unauthenticatedAction } from "@/lib/safe-action";
 import { z } from "zod";
 import { eq } from "drizzle-orm";
-import { organizations } from "@/database/schema";
+import { organizations, listings, listingsToUsers, users } from "@/database/schema";
 
 export const getOrganizationById = unauthenticatedAction
   .createServerAction()
@@ -12,9 +12,39 @@ export const getOrganizationById = unauthenticatedAction
     const organization = await database.query.organizations.findFirst({
       where: eq(organizations.id, input),
       with: {
-        listings: true,
-        users: true,
+        listings: {
+          with: {
+            volunteers: {
+              with: {
+                volunteers: true, 
+              },
+            },
+          },
+        },
+        users: true, 
       },
+    });
+
+    if (!organization) return null;
+
+    const volunteerData: Record<string, any> = {};
+    organization.listings.forEach((listing: any) => {
+      listing.volunteers.forEach((volunteer: any) => {
+        const userId = volunteer.volunteers.id;
+
+        if (!volunteerData[userId]) {
+          volunteerData[userId] = {
+            name: volunteer.volunteers.name,
+            image: volunteer.volunteers.image,
+            participatedListings: [],
+          };
+        }
+
+        volunteerData[userId].participatedListings.push({
+          name: listing.name,
+          dateSignedUp: volunteer.dateSignedUp,
+        });
+      });
     });
 
     return {
@@ -22,6 +52,7 @@ export const getOrganizationById = unauthenticatedAction
       phoneNumber: organization?.phoneNumber
         ? formatPhoneNumber(organization?.phoneNumber)
         : "No Phone Number",
+      volunteers: Object.values(volunteerData), 
     };
   });
 
