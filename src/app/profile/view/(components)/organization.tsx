@@ -421,7 +421,7 @@ const ViewOrgPage = (props: any) => {
           </p>
         </div>
       </div>
-      {props.listings[props.org.pos][0].length > 0 ? (
+      {props.listings[props.org.pos].length > 0 ? (
         <>
           <Label htmlFor="listing" data-testid="listings">
             Listings:
