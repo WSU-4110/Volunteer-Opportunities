@@ -228,7 +228,7 @@ export const TypewriterEffectDeleting = ({
           repeatType: "reverse",
         }}
         className={cn(
-          "inline-block rounded-sm w-[4px] h-10 lg:h-[5.2rem] bg-blue-500",
+          "inline-block rounded-sm w-[4px] h-[1.58rem] lg:h-[3.3rem] xl:h-[5.3rem] bg-blue-500",
           cursorClassName,
           !isAnimating ? "hidden" : ""
         )}

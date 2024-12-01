@@ -89,7 +89,7 @@ export default function Home() {
         </div>
 
         <Carousel
-          className="bg-sky-500 text-center w-full select-none cursor-grab"
+          className="bg-sky-500 text-center w-[70%] xl:w-full mx-auto select-none cursor-grab"
           plugins={[
             Autoplay({
               delay: 5000,
@@ -102,7 +102,7 @@ export default function Home() {
         >
           <CarouselContent>
             <CarouselItem>
-              <div className="container mx-auto">
+              <div className="container">
                 <div className="flex flex-col sm:flex-row items-center jusify-center gap-5">
                   <div className="flex flex-col justify-center items-center flex-1">
                     <img

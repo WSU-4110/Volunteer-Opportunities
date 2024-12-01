@@ -36,18 +36,18 @@ const typewriter = () => {
     >
       <div className="relative z-[30] w-full">
         <div className="relative block m-auto text-center">
-          <div className="inline-block text-4xl xl:text-8xl text-black">
+          <div className="inline-block text-2xl lg:text-6xl xl:text-8xl text-black">
             Volunteers are&nbsp;
             <TypewriterEffectDeleting
               words={words}
               handleIndexChange={handleIndexChange}
             />
             <div>
-              <h1 className="font-medium font-bold text-4xl xl:text-6xl">
+              <h1 className="font-medium font-bold text-xl lg:text-3xl xl:text-5xl">
                 Welcome to Volunteer Opportunities
               </h1>
             </div>
-            <div className="font-medium text-[12pt] text-center">
+            <div className="font-medium text-sm xl:text-lg text-center">
               <h1>
                 “It's easy to make a buck. It's a lot tougher to make a
                 difference”
