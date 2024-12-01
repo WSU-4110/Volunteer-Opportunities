@@ -103,7 +103,7 @@ const Navbar = ({
                             <img
                               src="/Favicon.png"
                               alt="Volunteer Opportunities Logo"
-                              className="w-[50px] h-[50px]"
+                              className="w-[40px] h-[40px]"
                             />
                             <h1>Volunteer Opportunities</h1>
                           </div>
@@ -113,7 +113,7 @@ const Navbar = ({
                     <SheetDescription className="h-full overflow-auto">
                       <div className="flex flex-col justify-between h-full">
                         <div className="flex justify-start flex-col gap-5 mt-2">
-                          <div className="flex flex-col gap-5">
+                          <div className="flex flex-col gap-2">
                             <h1 className="font-medium text-xl text-black">
                               Explore
                             </h1>
@@ -126,7 +126,7 @@ const Navbar = ({
                             </div>
                           </div>
                           <div className="flex justify-start flex-col gap-5">
-                            <div className="flex flex-col gap-5">
+                            <div className="flex flex-col gap-2">
                               <h1 className="font-medium text-xl text-black">
                                 Message
                               </h1>
@@ -140,7 +140,7 @@ const Navbar = ({
                             </div>
                           </div>
                           <div className="flex justify-start flex-col gap-5">
-                            <div className="flex flex-col gap-5">
+                            <div className="flex flex-col gap-2">
                               <h1 className="font-medium text-xl text-black">
                                 Create
                               </h1>
@@ -163,7 +163,7 @@ const Navbar = ({
                             </div>
                           </div>
                           <div className="flex justify-start flex-col gap-5">
-                            <div className="flex flex-col gap-5">
+                            <div className="flex flex-col gap-2">
                               <h1 className="font-medium text-xl text-black">
                                 Profile
                               </h1>
@@ -351,7 +351,7 @@ const Navbar = ({
                     <SheetDescription>
                       <div className="flex justify-start flex-col gap-5">
                         <div className="flex justify-start flex-col gap-5">
-                          <div className="flex flex-col gap-5">
+                          <div className="flex flex-col gap-2">
                             <h1 className="font-medium text-xl text-black">
                               Explore
                             </h1>
@@ -363,7 +363,7 @@ const Navbar = ({
                               </SheetClose>
                             </div>
                           </div>
-                          <div className="flex flex-col gap-5">
+                          <div className="flex flex-col gap-2">
                             <h1 className="font-medium text-xl text-black">
                               Login/Register
                             </h1>
