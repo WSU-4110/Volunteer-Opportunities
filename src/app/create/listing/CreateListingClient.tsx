@@ -215,7 +215,7 @@ const CreateListing = ({
 
   return (
     <div className="bg-slate-200 py-12">
-      <div className="w-1/2 m-auto bg-white p-8 rounded-lg shadow-md">
+      <div className="w-[90%] xl:w-1/2 m-auto bg-white p-8 rounded-lg shadow-md">
         <header className="text-3xl text-center font-semibold text-gray-800">
           Create a Listing
         </header>
@@ -383,6 +383,7 @@ const CreateListing = ({
               <Button
                 className="w-24 text-lg bg-volunteer hover:bg-blue-400"
                 type="submit"
+                disabled={orgId == ""}
               >
                 Submit
               </Button>

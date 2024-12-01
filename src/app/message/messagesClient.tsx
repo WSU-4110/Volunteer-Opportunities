@@ -418,8 +418,8 @@ export const MessagesClient = ({
       ) : (
         <MaxWidthWrapper>
           <Button onClick={clickBackButton}>Go Back</Button>
-          <div className="w-[90%] xl:w-1/2 m-auto">
-            <div className="flex flex-row items-center justify-center">
+          <div className="w-[90%] xl:w-1/2 mx-auto my-10">
+            <div className="flex flex-row items-center justify-center mb-10">
               {userStatus ? (
                 <div className="flex flex-col items-center gap-2 justify-center w-1/2">
                   <img
