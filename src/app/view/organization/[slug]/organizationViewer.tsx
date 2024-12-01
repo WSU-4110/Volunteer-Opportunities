@@ -138,12 +138,28 @@ const ViewerPageClient = ({ organizations }: { organizations: any }) => {
                 <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center">
                   Volunteers
                 </h2>
-                <div className="space-y-2">
+                <div className="space-y-4">
                   {organizations?.volunteers?.length > 0 ? (
-                    organizations.volunteers.map((volunteer: string, index: number) => (
-                      <p key={index} className="text-gray-800 text-lg font-medium">
-                        {volunteer}
-                      </p>
+                    organizations.volunteers.map((volunteer: any, index: number) => (
+                      <div
+                        key={index}
+                        className="p-4 border border-gray-300 rounded-lg bg-slate-100"
+                      >
+                        <h3 className="text-lg font-bold text-gray-800">{volunteer.name}</h3>
+                        <p className="text-gray-700 mt-2">Participated in:</p>
+                        <ul className="list-disc ml-6 mt-1">
+                          {volunteer.participatedListings.map((listing: any, idx: number) => (
+                            <li key={idx}>
+                              <span className="font-medium">{listing.name}</span> -{" "}
+                              <span className="text-gray-500">
+                                {listing.dateSignedUp
+                                  ? new Date(listing.dateSignedUp).toLocaleDateString()
+                                  : "No date"}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     ))
                   ) : (
                     <p className="text-gray-600 text-center">No volunteers found.</p>
