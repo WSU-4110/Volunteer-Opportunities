@@ -26,7 +26,7 @@ export default function Viewer(props: any) {
         <div className="flex flex-row jusifty-start items-center w-full">
           {props.values.userS.map(
             (skill: { skillId: string; skillName: string; url: string }) => (
-              <div className="hover:bg-slate-100">
+              <div className="hover:bg-slate-100" key={skill.skillId}>
                 <div className="p-2 hover:bg-slate-100 flex flex-row gap-2 items-center justify-center">
                   <img className="w-[40px] h-[40px]" src={skill.url} />
                   <h1>{skill.skillName}</h1>
