@@ -20,7 +20,7 @@ Meetings: [Wiki](https://github.com/WSU-4110/Volunteer-Opportunities/wiki)
 
 - Next.js [Docs](https://nextjs.org/docs)
 - React.js [Docs](https://react.dev/reference/react)
-- TailWind CSS [Docs](https://tailwindcss.com/docs/installation)
+- Tailwind CSS [Docs](https://tailwindcss.com/docs/installation)
 - Pusher Websockets [Docs](https://pusher.com/docs/)
 - Drizzle ORM [Docs](https://orm.drizzle.team/docs/overview)
 - AWS S3 [Docs](https://pusher.com/docs/)
