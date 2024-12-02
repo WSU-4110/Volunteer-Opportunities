@@ -4,7 +4,7 @@ Volunteer Opportunities is a website that aims to connect organizations and volu
 
 Website: [Link](https://volunteer-opportunities.vercel.app/)
 
-[VolunteerOpportunities](https://github.com/WSU-4110/Volunteer-Opportunities/public/Volunteer_Opportunities.png)
+[VolunteerOpportunities](public/Volunteer_Opportunities.png)
 
 Team:
 
