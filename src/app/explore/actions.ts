@@ -72,16 +72,15 @@ export const getListings = unauthenticatedAction
     }
   });
 
-  export const getListingsWithOffset = unauthenticatedAction
+export const getListingsWithOffset = unauthenticatedAction
   .createServerAction()
-  .input(z.object({
-    limit: z.number().default(2),
-    offset: z.number()
-  }))
-  .handler(async ({
-    input: {
-    limit, offset
-  }}) => {
+  .input(
+    z.object({
+      limit: z.number().default(2),
+      offset: z.number(),
+    })
+  )
+  .handler(async ({ input: { limit, offset } }) => {
     try {
       const results = await database
         .select({
@@ -128,25 +127,22 @@ export const getListings = unauthenticatedAction
   });
 
 export const getNumberOfPagesOfListings = unauthenticatedAction
-.createServerAction()
-.input(z.object({
-  limit: z.number().default(2)
-}))
-.handler(async ({
-  input: {
-  limit
-}}) => {
-  try {
-    const results = await database
-      .select({ count: count() })
-      .from(listings)
+  .createServerAction()
+  .input(
+    z.object({
+      limit: z.number().default(2),
+    })
+  )
+  .handler(async ({ input: { limit } }) => {
+    try {
+      const results = await database.select({ count: count() }).from(listings);
 
-      const numberOfPages = Math.ceil(results[0].count / limit)
-    return numberOfPages;
-  } catch (err) {
-    console.log(err);
-  }
-});
+      const numberOfPages = Math.ceil(results[0].count / limit);
+      return numberOfPages;
+    } catch (err) {
+      console.log(err);
+    }
+  });
 
 export const getAllSkills = unauthenticatedAction
   .createServerAction()
@@ -224,6 +220,99 @@ export const filterListings = unauthenticatedAction
       const data = await query.execute();
 
       return data;
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+export const filterListingsWithOffset = unauthenticatedAction
+  .createServerAction()
+  .input(
+    z.object({
+      title: z.string(),
+      description: z.string(),
+      skills: z.array(z.string()),
+    })
+  )
+  .handler(async ({ input: { title, description, skills: listingSkills } }) => {
+    try {
+      const query = database
+        .select({
+          listings,
+          skills: sql`
+        COALESCE(
+          (
+            SELECT json_agg(subquery) 
+            FROM (
+              SELECT DISTINCT ON (s.id) 
+                s.id, s.name, s."iconUrl"
+              FROM "skills" AS s
+              JOIN "listings_skills" AS ls ON ls."skill_id" = s.id
+              WHERE ls."listingId" = listings.id
+            ) as subquery
+          ), '[]'::json
+        ) AS skills`,
+          organizations,
+          volunteers: sql`
+          COALESCE(
+            (
+              SELECT json_agg(subquery) 
+              FROM (
+                SELECT DISTINCT ON (u.id)
+                  u.id, u.name, u.image
+                FROM "user" AS u
+                JOIN "listing_volunteers" AS ltu ON ltu."userId" = u.id
+                WHERE ltu."listing_id" = listings.id
+              ) as subquery
+            ), '[]'::json
+          ) AS users`,
+        })
+        .from(listings)
+        .leftJoin(organizations, eq(listings.organizationId, organizations.id))
+        .leftJoin(skillsToListings, eq(listings.id, skillsToListings.listingId))
+        .leftJoin(skills, eq(skillsToListings.skillId, skills.id))
+        .groupBy(listings.id, organizations.id);
+
+      const conditions = [];
+
+      // Add conditions based on the presence of values
+      if (title != "") {
+        conditions.push(ilike(listings.name, `%${title}%`));
+      }
+      if (description != "") {
+        conditions.push(ilike(listings.description, `%${description}%`));
+      }
+      if (listingSkills && listingSkills.length > 0) {
+        conditions.push(inArray(skills.id, listingSkills));
+      }
+
+      // Use and() to combine all conditions with AND
+
+      if (conditions.length > 0) {
+        query.where(and(...conditions));
+      }
+
+      const data = await query.execute();
+
+      return data;
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+export const getNumberOfPagesOfListingsWithFilter = unauthenticatedAction
+  .createServerAction()
+  .input(
+    z.object({
+      limit: z.number().default(2),
+    })
+  )
+  .handler(async ({ input: { limit } }) => {
+    try {
+      const results = await database.select({ count: count() }).from(listings);
+
+      const numberOfPages = Math.ceil(results[0].count / limit);
+      return numberOfPages;
     } catch (err) {
       console.log(err);
     }

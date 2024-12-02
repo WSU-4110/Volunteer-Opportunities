@@ -27,6 +27,7 @@ import { Card } from "@/components/ui/card";
 import {
   deleteIndividualListing,
   filterListings,
+  filterListingsWithOffset,
   getNumberOfPagesOfListings,
 } from "../actions";
 import { useRouter } from "next/navigation";
@@ -61,13 +62,13 @@ export default function Userpage({
   skills,
   userId,
   currentPage,
-  numberOfPages,
+  initialNumberOfPages,
 }: {
   initialListings: any;
   skills: Skill[];
   userId: string;
   currentPage: number;
-  numberOfPages: number;
+  initialNumberOfPages: number;
 }) {
   const { userStatus, changeUserStatus } = useUserStatusStore((state) => state);
 
@@ -75,6 +76,7 @@ export default function Userpage({
   const [skillOptions, setSkillOptions] = useState<Skill[]>(skills);
   const [filterSkills, setFilterSkills] = useState<Skill[]>([]);
   const [showMap, setShowMap] = useState<boolean>(true);
+  const [numberOfPages, setNumberOfPages] = useState(initialNumberOfPages);
 
   const [currentSkill, setCurrentSkill] = useState("");
 
@@ -131,7 +133,7 @@ export default function Userpage({
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const [newListings, newListingsError] = await filterListings({
+    const [newListings, newListingsError] = await filterListingsWithOffset({
       ...values,
       skills: filterSkills.map((skill) => skill.id),
     });

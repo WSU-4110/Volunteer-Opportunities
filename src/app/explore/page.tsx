@@ -34,7 +34,7 @@ export default async function Explore({
         skills={!skills ? [] : skills}
         userId={userId ? userId : ""}
         currentPage={parseInt(searchParams?.page || "0")}
-        numberOfPages={numberOfPages || 0}
+        initialNumberOfPages={numberOfPages || 0}
       />
     </>
   );
