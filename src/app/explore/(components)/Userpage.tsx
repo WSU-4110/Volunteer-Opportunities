@@ -62,25 +62,60 @@ export default function Userpage({
   skills,
   userId,
   currentPage,
-  initialNumberOfPages,
 }: {
   initialListings: any;
   skills: Skill[];
   userId: string;
   currentPage: number;
-  initialNumberOfPages: number;
 }) {
-  const { userStatus, changeUserStatus } = useUserStatusStore((state) => state);
+  const {
+    userStatus,
+    numberOfPages,
+    userListings,
+    changeUserStatus,
+    getNumberOfPages,
+    filterListings,
+    initialSkills,
+    initialDescription,
+    initialTitle,
+    setMetadata,
+  } = useUserStatusStore((state) => state);
 
   const router = useRouter();
-  const [skillOptions, setSkillOptions] = useState<Skill[]>(skills);
-  const [filterSkills, setFilterSkills] = useState<Skill[]>([]);
-  const [showMap, setShowMap] = useState<boolean>(true);
-  const [numberOfPages, setNumberOfPages] = useState(initialNumberOfPages);
+  const [skillOptions, setSkillOptions] = useState<Skill[]>(
+    skills.filter(
+      (allSkill) => !initialSkills.some((skill) => skill == allSkill.id)
+    )
+  );
+  const [filterSkills, setFilterSkills] = useState<Skill[]>(
+    skills.filter((allSkill) =>
+      initialSkills.some((skill) => skill == allSkill.id)
+    )
+  );
+  const [numberOfPagesState, setNumberOfPagesState] = useState(numberOfPages);
+
+  useEffect(() => {
+    setListings(userListings);
+  }, [userListings]);
+
+  const initializeListings = async () => {
+    await getNumberOfPages(2, initialTitle, initialDescription, initialSkills);
+    await filterListings(
+      initialTitle,
+      initialDescription,
+      initialSkills,
+      2,
+      currentPage * 2
+    );
+  };
+
+  useEffect(() => {
+    initializeListings();
+  }, [currentPage]);
 
   const [currentSkill, setCurrentSkill] = useState("");
 
-  const [listings, setListings] = useState<any>(initialListings);
+  const [listings, setListings] = useState<any>(userListings);
   const formSchema = z.object({
     title: z.string(),
     description: z.string(),
@@ -88,14 +123,10 @@ export default function Userpage({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "",
-      description: "",
+      title: initialTitle,
+      description: initialDescription,
     },
   });
-
-  useEffect(() => {
-    setListings(initialListings);
-  }, [initialListings]);
 
   const handleSkillOptionSelect = (id: string) => {
     setCurrentSkill(id);
@@ -133,14 +164,30 @@ export default function Userpage({
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const [newListings, newListingsError] = await filterListingsWithOffset({
-      ...values,
-      skills: filterSkills.map((skill) => skill.id),
-    });
+    await filterListings(
+      values.title,
+      values.description,
+      filterSkills.map((skill) => skill.id),
+      2,
+      currentPage * 2
+    );
 
-    if (newListings) {
-      setListings([...newListings]);
-    }
+    setMetadata(
+      values.title,
+      values.description,
+      filterSkills.map((skill) => skill.id)
+    );
+
+    await getNumberOfPages(
+      2,
+      values.title,
+      values.description,
+      filterSkills.map((skill) => skill.id)
+    );
+
+    setNumberOfPagesState(numberOfPages);
+
+    router.push("/explore?page=0");
   }
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -184,9 +231,6 @@ export default function Userpage({
     paginationInitialEndIndex + paginationDifference,
     numberOfPages - 1
   );
-
-  console.log(paginationInitialStartIndex, paginationInitialEndIndex);
-  console.log(paginationStartIndex, paginationEndIndex);
 
   return (
     <>
@@ -304,13 +348,13 @@ export default function Userpage({
             </div>
           </form>
         </Form>
-        <div className="mt-20 h-full">
-          <div className="flex flex-col xl:flex-row justify-between h-full shadow-lg bg-slate-200 py-12 gap-10 w-full">
+        <div className="mt-20">
+          <div className="flex flex-col xl:flex-row justify-between h-full shadow-lg bg-slate-200 py-12 gap-10 w-full min-h-[900px]">
             <div className="xl:flex-3 p-2 md:p-10 bg-white shadow-lg rounded-xl xl:w-[1000px]">
               <h1 className="text-2xl font-bold text-center">Listings</h1>
               {listings.length > 0 ? (
-                <div className="flex flex-col gap-10 justify-center items-center">
-                  <div className="grid grid-cols-1 xl:grid-cols-2 flex-wrap max-h-[700px] overflow-y-auto mt-5 gap-4">
+                <div className="flex flex-col gap-10 justify-center items-center ">
+                  <div className="h-full grid grid-cols-1 xl:grid-cols-2 flex-wrap max-h-[700px] overflow-y-auto mt-5 gap-4">
                     {listings?.map((listing: any) => {
                       return (
                         <Card
