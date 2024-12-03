@@ -1,36 +1,26 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Volunteer-Opportunities
 
-## Getting Started
+Volunteer Opportunities is a website that aims to connect organizations and volunteers together so that they can work on the things that matter to them the most. Other websites don't offer a simple service dedicated to volunteering that allows users to easily connect with one another. Our website will present users with a feed of relevant organizations or volunteers that may me appropriate for the things they want to work on. Here we will present and explain our entire process, from start to finish, of creating this website designed to connect skilled volunteers with organizations who list volunteer opportunities and are in need of skilled labor.
 
-First, run the development server:
+Website: [Link](https://volunteer-opportunities.vercel.app/)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+![VolunteerOpportunities](public/Volunteer_Opportunities.png)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Team:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Sebastian Newberry
+- Ian Crowe-Sittig
+- Parsa Nematollahe
+- Loc Phan
+- Jacob Ulbrich
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Meetings: [Wiki](https://github.com/WSU-4110/Volunteer-Opportunities/wiki)
 
-## Learn More
+# Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Next.js [Docs](https://nextjs.org/docs)
+- React.js [Docs](https://react.dev/reference/react)
+- Tailwind CSS [Docs](https://tailwindcss.com/docs/installation)
+- Pusher Websockets [Docs](https://pusher.com/docs/)
+- Drizzle ORM [Docs](https://orm.drizzle.team/docs/overview)
+- AWS S3 [Docs](https://docs.aws.amazon.com/s3/)

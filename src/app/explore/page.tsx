@@ -23,9 +23,6 @@ export default async function Explore({
   });
   const [skills, skillsError] = await getAllSkills();
   const [userId, getUserError] = await getUser();
-  const [numberOfPages, getNumberOfPages] = await getNumberOfPagesOfListings({
-    limit: limit,
-  });
 
   return (
     <>
@@ -34,7 +31,6 @@ export default async function Explore({
         skills={!skills ? [] : skills}
         userId={userId ? userId : ""}
         currentPage={parseInt(searchParams?.page || "0")}
-        numberOfPages={numberOfPages || 0}
       />
     </>
   );
