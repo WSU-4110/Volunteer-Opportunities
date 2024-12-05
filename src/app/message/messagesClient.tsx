@@ -62,7 +62,7 @@ const InitializeMessageComponent = ({
   authStatus: Session;
   userStatus: boolean;
   otherOrganizations: Organizations[];
-  userOrganizations: Organizations[];
+  userOrganizations: Organizations[] | null;
   currentOrganizationSelected: number;
   increaseOrgSelected: () => void;
   decreaseOrgSelected: () => void;
@@ -149,20 +149,22 @@ const InitializeMessageComponent = ({
         {userStatus ? (
           <CustomCarousel className="w-1/2 xl:w-fit m-auto select-none">
             <CarouselContent>
-              {userOrganizations.map((org, index) => (
-                <CarouselItem key={org.id}>
-                  <div className="flex flex-col items-center gap-2 justify-center w-fit m-auto ">
-                    <img
-                      src={(org.thumbnail as any).storageId || ""}
-                      alt={`${org.name}'s image`}
-                      className="rounded-full w-[100px] h-[100px]"
-                    />
-                    <h1 className="text-center w-full font-bold text-xl">
-                      {org.name}
-                    </h1>
-                  </div>
-                </CarouselItem>
-              ))}
+              {userOrganizations
+                ? userOrganizations.map((org, index) => (
+                    <CarouselItem key={org.id}>
+                      <div className="flex flex-col items-center gap-2 justify-center w-fit m-auto ">
+                        <img
+                          src={(org.thumbnail as any).storageId || ""}
+                          alt={`${org.name}'s image`}
+                          className="rounded-full w-[100px] h-[100px]"
+                        />
+                        <h1 className="text-center w-full font-bold text-xl">
+                          {org.name}
+                        </h1>
+                      </div>
+                    </CarouselItem>
+                  ))
+                : null}
             </CarouselContent>
             <CustomCarouselPrevious extraClick={decreaseOrgSelected} />
             <CustomCarouselNext extraClick={increaseOrgSelected} />
@@ -184,7 +186,13 @@ const InitializeMessageComponent = ({
           <div className="flex flex-col justify-start items-center mt-10 w-full gap-10">
             <Messaging
               userStatus={userStatus}
-              organizationId={userOrganizations[currentOrganizationSelected].id}
+              organizationId={
+                userOrganizations
+                  ? userOrganizations.length > 0
+                    ? userOrganizations[currentOrganizationSelected].id
+                    : ""
+                  : ""
+              }
               userId={authStatus.user.id}
               loading={messagesLoading}
               setLoadingTrue={setMessagesLoadingTrue}
