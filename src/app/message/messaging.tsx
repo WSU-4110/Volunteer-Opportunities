@@ -165,9 +165,14 @@ const Messaging = ({
         (conv: any) =>
           conv.conversations.id == selectedConversation.conversations.id
       );
+
+      console.log(desiredConvInfo);
       const desiredConversation = {
         ...desiredConvInfo,
-        users: [...desiredConvInfo.users, { ...newUserInfo }],
+        organizations: [
+          ...desiredConvInfo.organizations,
+          { ...newUserInfo, thumbnail: JSON.stringify(newUserInfo.thumbnail) },
+        ],
       };
 
       const desiredConversationIndex = conversations.findIndex(
@@ -543,7 +548,10 @@ const Messaging = ({
                                 <div className="flex flex-col gap-4 justify-start items-start">
                                   {volunteersNotInConversations.map(
                                     (volunteer) => (
-                                      <div className="w-full flex gap-4 overflow-y-auto flex-row justify-between items-center">
+                                      <div
+                                        className="w-full flex gap-4 overflow-y-auto flex-row justify-between items-center"
+                                        key={volunteer.id}
+                                      >
                                         <div
                                           className="flex flex-row gap-2 justify-start items-center"
                                           key={volunteer.id}

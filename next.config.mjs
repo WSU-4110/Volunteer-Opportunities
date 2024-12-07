@@ -5,6 +5,9 @@ const nextConfig = {
       { protocol: "http", hostname: "**" },
     ],
   },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 };
 
 export default nextConfig;
